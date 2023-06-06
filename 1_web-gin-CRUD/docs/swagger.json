@@ -1,0 +1,1110 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "http server api docs",
+        "title": "user api docs",
+        "contact": {},
+        "version": "v0.0.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/api/v1/course": {
+            "post": {
+                "description": "submit information to create course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "create course",
+                "parameters": [
+                    {
+                        "description": "course information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateCourseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/course/delete/ids": {
+            "post": {
+                "description": "delete courses by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "delete courses",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteCoursesByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/course/list": {
+            "post": {
+                "description": "list of courses by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "list of courses by query parameters",
+                "parameters": [
+                    {
+                        "description": "query parameters",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Params"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/course/list/ids": {
+            "post": {
+                "description": "list of courses by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "list of courses by batch id",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.GetCoursesByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/course/{id}": {
+            "get": {
+                "description": "get course detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "get course detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update course information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "update course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "course information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateCourseByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete course by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "delete course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach": {
+            "post": {
+                "description": "submit information to create teach",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "create teach",
+                "parameters": [
+                    {
+                        "description": "teach information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateTeachRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach/delete/ids": {
+            "post": {
+                "description": "delete teachs by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "delete teachs",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteTeachsByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach/list": {
+            "post": {
+                "description": "list of teachs by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "list of teachs by query parameters",
+                "parameters": [
+                    {
+                        "description": "query parameters",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Params"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach/list/ids": {
+            "post": {
+                "description": "list of teachs by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "list of teachs by batch id",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.GetTeachsByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach/{id}": {
+            "get": {
+                "description": "get teach detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "get teach detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update teach information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "update teach",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "teach information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateTeachByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete teach by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "delete teach",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher": {
+            "post": {
+                "description": "submit information to create teacher",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "create teacher",
+                "parameters": [
+                    {
+                        "description": "teacher information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateTeacherRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher/delete/ids": {
+            "post": {
+                "description": "delete teachers by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "delete teachers",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteTeachersByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher/list": {
+            "post": {
+                "description": "list of teachers by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "list of teachers by query parameters",
+                "parameters": [
+                    {
+                        "description": "query parameters",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Params"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher/list/ids": {
+            "post": {
+                "description": "list of teachers by batch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "list of teachers by batch id",
+                "parameters": [
+                    {
+                        "description": "id array",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.GetTeachersByIDsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher/{id}": {
+            "get": {
+                "description": "get teacher detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "get teacher detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update teacher information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "update teacher",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "teacher information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateTeacherByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete teacher by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "delete teacher",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.Column": {
+            "type": "object",
+            "properties": {
+                "exp": {
+                    "description": "expressions, which default to = when the value is null, have =, ! =, \u003e, \u003e=, \u003c, \u003c=, like",
+                    "type": "string"
+                },
+                "logic": {
+                    "description": "logical type, defaults to and when value is null, only \u0026(and), ||(or)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "column name",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "column value"
+                }
+            }
+        },
+        "types.CreateCourseRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "课程代号",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "credit": {
+                    "description": "学分",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "课程名称",
+                    "type": "string"
+                },
+                "place": {
+                    "description": "上课地点",
+                    "type": "string"
+                },
+                "semester": {
+                    "description": "学期",
+                    "type": "string"
+                },
+                "time": {
+                    "description": "上课时间",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateTeachRequest": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "description": "课程id",
+                    "type": "integer"
+                },
+                "courseName": {
+                    "description": "课程名称",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "学生评价教学质量，5个等级：A,B,C,D,E",
+                    "type": "string"
+                },
+                "teacherId": {
+                    "description": "老师id",
+                    "type": "integer"
+                },
+                "teacherName": {
+                    "description": "老师名称",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateTeacherRequest": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "description": "年龄",
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "birthday": {
+                    "description": "出生日期",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮件",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "性别，1:男，2:女，其他值:未知",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "profile": {
+                    "description": "个人简介",
+                    "type": "string"
+                },
+                "schoolName": {
+                    "description": "学校名称",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "职称",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteCoursesByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.DeleteTeachersByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.DeleteTeachsByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.GetCoursesByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.GetTeachersByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.GetTeachsByIDsRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "id list",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.Params": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "description": "query conditions",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Column"
+                    }
+                },
+                "page": {
+                    "description": "page number, starting from page 0",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "size": {
+                    "description": "lines per page",
+                    "type": "integer"
+                },
+                "sort": {
+                    "description": "sorted fields, multi-column sorting separated by commas",
+                    "type": "string"
+                }
+            }
+        },
+        "types.Result": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateCourseByIDRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "课程代号",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "credit": {
+                    "description": "学分",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "课程名称",
+                    "type": "string"
+                },
+                "place": {
+                    "description": "上课地点",
+                    "type": "string"
+                },
+                "semester": {
+                    "description": "学期",
+                    "type": "string"
+                },
+                "time": {
+                    "description": "上课时间",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateTeachByIDRequest": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "description": "课程id",
+                    "type": "integer"
+                },
+                "courseName": {
+                    "description": "课程名称",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "score": {
+                    "description": "学生评价教学质量，5个等级：A,B,C,D,E",
+                    "type": "string"
+                },
+                "teacherId": {
+                    "description": "老师id",
+                    "type": "integer"
+                },
+                "teacherName": {
+                    "description": "老师名称",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateTeacherByIDRequest": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "description": "年龄",
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "birthday": {
+                    "description": "出生日期",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮件",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "性别，1:男，2:女，其他值:未知",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "profile": {
+                    "description": "个人简介",
+                    "type": "string"
+                },
+                "schoolName": {
+                    "description": "学校名称",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "职称",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer your-jwt-token\" to Value",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
