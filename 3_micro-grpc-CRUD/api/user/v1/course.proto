@@ -1,0 +1,253 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+//import "validate/validate.proto";
+
+option go_package = "user/api/user/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:8080"
+  base_path: ""
+  info: {
+    title: "user api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Input a \"Bearer your-jwt-token\" to Value";
+      }
+    }
+  }
+};
+
+service courseService {
+  rpc Create(CreateCourseRequest) returns (CreateCourseReply) {
+    option (google.api.http) = {
+      post: "/api/v1/course"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create course",
+      description: "submit information to create course",
+      tags: "course",
+    };
+  }
+
+  rpc DeleteByID(DeleteCourseByIDRequest) returns (DeleteCourseByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/course/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete course",
+      description: "delete course by id",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  rpc DeleteByIDs(DeleteCourseByIDsRequest) returns (DeleteCourseByIDsReply) {
+    option (google.api.http) = {
+      post: "/api/v1/course/delete/ids"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete courses by batch id",
+      description: "delete courses by batch id",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  rpc UpdateByID(UpdateCourseByIDRequest) returns (UpdateCourseByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/course/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update course",
+      description: "update course by id",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  rpc GetByID(GetCourseByIDRequest) returns (GetCourseByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/course/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get course detail",
+      description: "get course detail by id",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  rpc ListByIDs(ListCourseByIDsRequest) returns (ListCourseByIDsReply) {
+    option (google.api.http) = {
+      post: "/api/v1/course/list/ids"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of courses by batch id",
+      description: "list of courses by batch id",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  rpc List(ListCourseRequest) returns (ListCourseReply) {
+    option (google.api.http) = {
+      post: "/api/v1/course/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of courses by parameters",
+      description: "list of courses by paging and conditions",
+      tags: "course",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+}
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string foo_bar = 1 [json_name = "foo_bar"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (3) If the declared route path includes a variable, such as /api/v1/course/{id},
+//      the request parameter of the rpc method contains the route variable field and this field
+//      must be annotated, such as int64 id = 1 [(tagger.tags) = "uri:\"id\"" ]
+
+
+message CreateCourseRequest {
+	string code = 1;  // 课程代号
+	string name = 2;  // 课程名称
+	int32 credit = 3;  // 学分
+	string college = 4;  // 学院
+	string semester = 5;  // 学期
+	string time = 6;  // 上课时间
+	string place = 7;  // 上课地点
+}
+
+message CreateCourseReply {
+  uint64   id =1;
+}
+
+message DeleteCourseByIDRequest {
+  uint64   id =1 [(tagger.tags) = "uri:\"id\"" ];
+}
+
+message DeleteCourseByIDReply {
+
+}
+
+message DeleteCourseByIDsRequest {
+  repeated uint64 ids = 1;
+}
+
+message DeleteCourseByIDsReply {
+
+}
+
+message UpdateCourseByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	string code = 2;  // 课程代号
+	string name = 3;  // 课程名称
+	int32 credit = 4;  // 学分
+	string college = 5;  // 学院
+	string semester = 6;  // 学期
+	string time = 7;  // 上课时间
+	string place = 8;  // 上课地点
+}
+
+message UpdateCourseByIDReply {
+
+}
+
+message Course {
+	uint64 id = 1; 
+	int64 createdAt = 2; 
+	int64 updatedAt = 3; 
+	string code = 4;  // 课程代号
+	string name = 5;  // 课程名称
+	int32 credit = 6;  // 学分
+	string college = 7;  // 学院
+	string semester = 8;  // 学期
+	string time = 9;  // 上课时间
+	string place = 10;  // 上课地点
+}
+
+message GetCourseByIDRequest {
+  uint64   id =1 [(tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetCourseByIDReply {
+  Course course = 1;
+}
+
+message ListCourseByIDsRequest {
+  repeated uint64 ids = 1;
+}
+
+message ListCourseByIDsReply {
+  repeated Course courses = 1;
+}
+
+message ListCourseRequest {
+  types.Params params = 1;
+}
+
+message ListCourseReply {
+  int64 total =1;
+  repeated Course courses = 2;
+}
+
+
