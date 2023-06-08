@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-gw-svc
+  namespace: eshop
+spec:
+  selector:
+    app: shop-gw
+  type: ClusterIP
+  ports:
+    - name: shop-gw-svc-http-port
+      port: 8080
+      targetPort: 8080
+

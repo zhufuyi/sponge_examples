@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.product.v1;
+
+import "validate/validate.proto";
+
+option go_package = "shopgw/api/product/v1;v1";
+
+service Product {
+  // get product by id
+  rpc GetByID(GetByIDRequest) returns (GetByIDReply) {}
+}
+
+message GetByIDRequest {
+  uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+}
+
+message ProductDetail {
+  uint64 id = 1;
+  string name = 2;
+  float price = 3;
+  string description = 4;
+}
+
+message GetByIDReply {
+  ProductDetail productDetail = 1;
+  uint64 inventoryID = 2;
+}

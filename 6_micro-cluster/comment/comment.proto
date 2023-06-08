@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api.comment.v1;
+
+option go_package = "shopgw/api/comment/v1;v1";
+
+service Comment {
+  rpc ListByProductID(ListByProductIDRequest) returns (ListByProductIDReply) {}
+}
+
+message ListByProductIDRequest {
+  int64 productID = 1;
+}
+
+message CommentDetail {
+  int64  id=1;
+  string username = 2;
+  string content = 3;
+}
+
+message ListByProductIDReply {
+  int32 total = 1;
+  int64 productID = 2;
+  repeated CommentDetail commentDetails = 3;
+}

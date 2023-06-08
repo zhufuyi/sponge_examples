@@ -11,7 +11,7 @@ Four proto files have been prepared in advance. Each proto file generates corres
 - The comment.proto file defines RPC methods to obtain comment data based on the product ID and is used to generate the comment RPC service code.
 - The inventory.proto file defines RPC methods to obtain inventory data based on the product ID and is used to generate the inventory RPC service code.
 - The product.proto file defines RPC methods to obtain product details based on the product ID and is used to generate the product RPC service code.
-- The shopgw.proto file defines RPC methods to assemble the data required by the product details page based on the product ID and is used to generate the shop RPC gateway service code.
+- The shop_gw.proto file defines RPC methods to assemble the data required by the product details page based on the product ID and is used to generate the shop RPC gateway service code.
 
 <br>
 
@@ -182,16 +182,16 @@ In order to connect to the comment, inventory, and product RPC services, you nee
 
 ![micro-rpc-cli](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_micro-cluster-rpc-cli.png)
 
-In order to call the methods of the RPC services in the RPC gateway service, you need to copy the proto files of the comment, inventory, and product RPC services to the api/shopgw/v1 directory of the RPC gateway service.
+In order to call the methods of the RPC services in the RPC gateway service, you need to copy the proto files of the comment, inventory, and product RPC services to the api/shop_gw/v1 directory of the RPC gateway service.
 
-Switch to the shopgw directory and perform the following steps:
+Switch to the shop_gw directory and perform the following steps:
 (1) Generate pb.go code, generate registered routing code, generate template code, and generate swagger documentation
 
 ```shell
 make proto
 ```
 
-(2) Open internal/service/shopgw_logic.go, which is the generated API interface code. Fill in the business logic code here, fill in the following simple business logic code:
+(2) Open internal/service/shop_gw_logic.go, which is the generated API interface code. Fill in the business logic code here, fill in the following simple business logic code:
 
 ```go
 package service
@@ -199,14 +199,18 @@ package service
 import (
 	"context"
 
-	commentV1 "shopgw/api/comment/v1"
-	inventoryV1 "shopgw/api/inventory/v1"
-	productV1 "shopgw/api/product/v1"
-	shopgwV1 "shopgw/api/shopgw/v1"
-	"shopgw/internal/rpcclient"
+	commentV1 "shop_gw/api/comment/v1"
+	inventoryV1 "shop_gw/api/inventory/v1"
+	productV1 "shop_gw/api/product/v1"
+	shop_gwV1 "shop_gw/api/shop_gw/v1"
+	"shop_gw/internal/ecode"
+	"shop_gw/internal/rpcclient"
+
+	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
+	"github.com/zhufuyi/sponge/pkg/logger"
 )
 
-var _ shopgwV1.ShopGwLogicer = (*shopGwClient)(nil)
+var _ shop_gwV1.ShopGwLogicer = (*shopGwClient)(nil)
 
 type shopGwClient struct {
 	productCli   productV1.ProductClient
@@ -214,8 +218,8 @@ type shopGwClient struct {
 	commentCli   commentV1.CommentClient
 }
 
-// NewShopGwClient creating rpc clients
-func NewShopGwClient() shopgwV1.ShopGwLogicer {
+// NewShopGwClient create a client
+func NewShopGwClient() shop_gwV1.ShopGwLogicer {
 	return &shopGwClient{
 		productCli:   productV1.NewProductClient(rpcclient.GetProductRPCConn()),
 		inventoryCli: inventoryV1.NewInventoryClient(rpcclient.GetInventoryRPCConn()),
@@ -223,37 +227,44 @@ func NewShopGwClient() shopgwV1.ShopGwLogicer {
 	}
 }
 
-func (c *shopGwClient) GetDetailsByProductID(ctx context.Context, req *shopgwV1.GetDetailsByProductIDRequest) (*shopgwV1.GetDetailsByProductIDReply, error) {
-	productRep, err := c.productCli.GetByID(ctx, &productV1.GetByIDRequest{
+// GetDetailsByProductID get page detail by product id
+func (c *shopGwClient) GetDetailsByProductID(ctx context.Context, req *shop_gwV1.GetDetailsByProductIDRequest) (*shop_gwV1.GetDetailsByProductIDReply, error) {
+	err := req.Validate()
+	if err != nil {
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInvalidParams.Err()
+	}
+
+	productReply, err := c.productCli.GetByID(ctx, &productV1.GetByIDRequest{
 		Id: req.ProductID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	inventoryRep, err := c.inventoryCli.GetByID(ctx, &inventoryV1.GetByIDRequest{
-		Id: productRep.InventoryID,
+	inventoryReply, err := c.inventoryCli.GetByID(ctx, &inventoryV1.GetByIDRequest{
+		Id: productReply.InventoryID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	commentRep, err := c.commentCli.ListByProductID(ctx, &commentV1.ListByProductIDRequest{
+	commentReply, err := c.commentCli.ListByProductID(ctx, &commentV1.ListByProductIDRequest{
 		ProductID: req.ProductID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &shopgwV1.GetDetailsByProductIDReply{
-		ProductDetail:   productRep.ProductDetail,
-		InventoryDetail: inventoryRep.InventoryDetail,
-		CommentDetails:  commentRep.CommentDetails,
+	return &shop_gwV1.GetDetailsByProductIDReply{
+		ProductDetail:   productReply.ProductDetail,
+		InventoryDetail: inventoryReply.InventoryDetail,
+		CommentDetails:  commentReply.CommentDetails,
 	}, nil
 }
 ```
 
-(3) Open the configs/shopgw.yml configuration file, find grpcClient, and add the addresses of the comment, inventory, and product RPC services:
+(3) Open the configs/shop_gw.yml configuration file, find grpcClient, and add the addresses of the comment, inventory, and product RPC services:
 
 ```yaml
 grpcClient:
@@ -268,7 +279,7 @@ grpcClient:
     port: 38282
 ```
 
-(4) Compile and start the shopgw service
+(4) Compile and start the shop_gw service
 
 ```shell
 make run

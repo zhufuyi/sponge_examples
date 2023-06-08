@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.comment.v1;
+
+import "validate/validate.proto";
+
+option go_package = "shopgw/api/comment/v1;v1";
+
+service Comment {
+  // list of comments by product id
+  rpc ListByProductID(ListByProductIDRequest) returns (ListByProductIDReply) {}
+}
+
+message ListByProductIDRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gte  = 1];
+}
+
+message CommentDetail {
+  uint64  id=1;
+  string username = 2;
+  string content = 3;
+}
+
+message ListByProductIDReply {
+  int32 total = 1;
+  uint64 productID = 2;
+  repeated CommentDetail commentDetails = 3;
+}

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-gw-dm
+  namespace: eshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shop-gw
+  template:
+    metadata:
+      name: shop-gw-pod
+      labels:
+        app: shop-gw
+    spec:
+      containers:
+        - name: shop-gw
+          image: /eshop.shop-gw:latest
+          # If using a local image, use Never, default is Always
+          #imagePullPolicy: Never
+          command: ["./shop_gw", "-c", "/app/configs/shop_gw.yml"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          volumeMounts:
+            - name: shop-gw-vl
+              mountPath: /app/configs/
+              readOnly: true
+
+          ports:
+            - name: http-port
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              port: http-port
+              path: /health
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              port: http-port
+              path: /health
+
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      # todo for private repositories, you need to create a secret (here docker-auth-secret) to store the account and password to log into docker
+      imagePullSecrets:
+        - name: docker-auth-secret
+      volumes:
+        - name: shop-gw-vl
+          configMap:
+            name: shop-gw-config

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-svc
+  namespace: eshop
+spec:
+  selector:
+    app: product
+  type: ClusterIP
+  ports:
+    - name: product-svc-http-port
+      port: 8080
+      targetPort: 8080
+

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comment-dm
+  namespace: eshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comment
+  template:
+    metadata:
+      name: comment-pod
+      labels:
+        app: comment
+    spec:
+      containers:
+        - name: comment
+          image: /eshop.comment:latest
+          # If using a local image, use Never, default is Always
+          #imagePullPolicy: Never
+          command: ["./comment", "-c", "/app/configs/comment.yml"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          volumeMounts:
+            - name: comment-vl
+              mountPath: /app/configs/
+              readOnly: true
+
+          ports:
+            - name: http-port
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              port: http-port
+              path: /health
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              port: http-port
+              path: /health
+
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      # todo for private repositories, you need to create a secret (here docker-auth-secret) to store the account and password to log into docker
+      imagePullSecrets:
+        - name: docker-auth-secret
+      volumes:
+        - name: comment-vl
+          configMap:
+            name: comment-config

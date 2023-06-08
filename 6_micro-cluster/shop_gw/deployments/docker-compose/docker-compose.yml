@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  shop-gw:
+    image: eshop.shop-gw:latest
+    container_name: shop-gw
+    restart: always
+    command: ["./shop_gw", "-c", "/app/configs/shop_gw.yml"]
+    volumes:
+      - $PWD/configs:/app/configs
+    ports:
+      - "8080:8080"   # http port
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]   # http health check, note: mirror must contain curl command
+
+      interval: 10s         # interval time
+      timeout: 5s           # timeout time
+      retries: 3              # number of retries
+      start_period: 10s  # how long after start-up does the check begin

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package api.inventory.v1;
+
+option go_package = "shopgw/api/inventory/v1;v1";
+
+service Inventory {
+  rpc GetByID(GetByIDRequest) returns (GetByIDReply) {}
+}
+
+message GetByIDRequest {
+  int64 id = 1;
+}
+
+message InventoryDetail {
+  int64 id = 1;
+  float num = 4;
+  int32 soldNum =3;
+}
+
+message GetByIDReply {
+  InventoryDetail inventoryDetail = 1;
+}
