@@ -1,0 +1,293 @@
+syntax = "proto3";
+
+package api.community.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "community/api/community/v1;v1";
+
+// Default settings for generating swagger documents
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	host: "localhost:8080"
+	base_path: ""
+	info: {
+		title: "comment api docs";
+		version: "2.0";
+	}
+	schemes: HTTP;
+	schemes: HTTPS;
+	consumes: "application/json";
+	produces: "application/json";
+	security_definitions: {
+		security: {
+			key: "BearerAuth";
+			value: {
+				type: TYPE_API_KEY;
+				in: IN_HEADER;
+				name: "Authorization";
+				description: "Input a \"Bearer your-jwt-token\" to Value";
+			}
+		}
+	}
+};
+
+service CommentService {
+	// 创建评论
+	rpc Create (CreateCommentRequest) returns (CreateCommentReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "创建评论",
+			description: "创建评论",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 删除评论
+	rpc DeleteByID (DeleteCommentByIDRequest) returns (DeleteCommentByIDReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/delete"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "删除评论",
+			description: "删除评论",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 更新评论
+	rpc UpdateByID (UpdateCommentByIDRequest) returns (UpdateCommentByIDReply) {
+		option (google.api.http) = {
+			put: "/api/v1/comment/update"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "更新评论内容",
+			description: "更新评论内容",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 回复评论
+	rpc Reply (ReplyCommentRequest) returns (ReplyCommentReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/reply"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "回复评论",
+			description: "回复评论",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 根据id获取评论
+	rpc GetByID (GetCommentByIDRequest) returns (GetCommentByIDReply) {
+		option (google.api.http) = {
+			get: "/api/v1/comment/{id}"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "获取评论",
+			description: "获取评论",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 根据批量id获取评论列表
+	rpc ListByIDs(ListCommentByIDsRequest) returns (ListCommentByIDsReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/list/ids"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "根据批量id获取评论列表",
+			description: "根据批量id获取评论列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 最新评论列表
+	rpc ListLatest (ListCommentLatestRequest) returns (ListCommentLatestReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/latest/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "最新评论列表",
+			description: "最新评论列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 热门评论列表
+	rpc ListHot (ListCommentHotRequest) returns (ListCommentHotReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/hot/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "热门评论列表",
+			description: "热门评论列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 评论回复列表
+	rpc ListReply (ListCommentReplyRequest) returns (ListCommentReplyReply) {
+		option (google.api.http) = {
+			post: "/api/v1/comment/reply/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "评论回复列表",
+			description: "评论回复列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+}
+
+message CommentInfo {
+	uint64 id = 1;
+	uint64 postId = 2;
+	uint64 userId = 3;
+	string content = 4;
+	uint64 parentId = 5;
+	int32 replyCount = 6;
+	int32 likeCount = 7;
+	int64 score = 8;
+	int32 delFlag = 9;
+	int64 createdAt = 10;
+	int64 updatedAt = 11;
+	string deviceType = 12;
+	string ip = 13;
+}
+
+message CreateCommentRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	string content = 3 [(validate.rules).string.min_len  = 1];
+	string deviceType = 4;
+	string ip = 5;
+}
+
+message CreateCommentReply {
+	CommentInfo comment = 1;
+}
+
+message DeleteCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 delFlag = 3 [(validate.rules).int32  = {gte:0, lte: 2}];
+}
+
+message DeleteCommentByIDReply {}
+
+message UpdateCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	string content = 2 [(validate.rules).string.min_len  = 1];
+}
+
+message UpdateCommentByIDReply {}
+
+message ReplyCommentRequest {
+	uint64 commentId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	string content = 3 [(validate.rules).string.min_len  = 1];
+	string deviceType = 4;
+	string ip = 5;
+}
+
+message ReplyCommentReply {
+	CommentInfo comment = 1;
+}
+
+message GetCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetCommentByIDReply {
+	CommentInfo comment = 1;
+}
+
+message ListCommentByIDsRequest {
+	repeated uint64 ids = 1 [(validate.rules).repeated = {min_items: 1, max_items: 100}];
+}
+
+message ListCommentByIDsReply {
+	repeated CommentInfo comments = 1;
+}
+
+message ListCommentHotRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentHotReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}
+
+message ListCommentLatestRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentLatestReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}
+
+message ListCommentReplyRequest {
+	uint64 commentId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentReplyReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}

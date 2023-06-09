@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package api.community.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "community/api/community/v1;v1";
+
+// Default settings for generating swagger documents
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	host: "localhost:8080"
+	base_path: ""
+	info: {
+		title: "comment api docs";
+		version: "2.0";
+	}
+	schemes: HTTP;
+	schemes: HTTPS;
+	consumes: "application/json";
+	produces: "application/json";
+	security_definitions: {
+		security: {
+			key: "BearerAuth";
+			value: {
+				type: TYPE_API_KEY;
+				in: IN_HEADER;
+				name: "Authorization";
+				description: "Input a \"Bearer your-jwt-token\" to Value";
+			}
+		}
+	}
+};
+
+service LikeService {
+	// 点赞
+	rpc Create (CreateLikeRequest) returns (CreateLikeReply) {
+		option (google.api.http) = {
+			post: "/api/v1/like"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "点赞",
+			description: "点赞",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 取消点赞
+	rpc Delete (DeleteLikeRequest) returns (DeleteLikeReply) {
+		option (google.api.http) = {
+			post: "/api/v1/like/delete"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "取消点赞",
+			description: "取消点赞",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 获取帖子点赞列表
+	rpc ListPost (ListPostLikeRequest) returns (ListPostLikeReply) {
+		option (google.api.http) = {
+			post: "/api/v1/like/post/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "获取贴子点赞列表",
+			description: "获取贴子点赞列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 获取评论点赞列表
+	rpc ListComment (ListCommentLikeRequest) returns (ListCommentLikeReply) {
+		option (google.api.http) = {
+			post: "/api/v1/like/comment/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "获取评论点赞列表",
+			description: "获取评论点赞列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+}
+
+message LikeInfo {
+	uint64 id = 1;
+	uint64 userId = 2;
+	int32 objType = 3;
+	uint64 objId = 4;
+	int32 status = 5;
+	int64 createdAt = 6;
+	int64 updatedAt = 7;
+}
+
+message CreateLikeRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 objType = 2 [(validate.rules).int32  = {gte:1, lte: 2}];
+	uint64 objId = 3 [(validate.rules).uint64.gte  = 1];
+}
+
+message CreateLikeReply {}
+
+message DeleteLikeRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 objType = 2 [(validate.rules).int32  = {gte:1, lte: 2}];
+	uint64 objId = 3 [(validate.rules).uint64.gte  = 1];
+}
+
+message DeleteLikeReply {}
+
+message ListPostLikeRequest {
+	uint64 postId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 page = 3 [(validate.rules).int32.gte  = 0];
+	int32 limit = 4 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostLikeReply {
+	repeated LikeInfo likes = 1;
+	int64 total = 2;
+}
+
+message ListCommentLikeRequest {
+	uint64 commentId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 page = 3 [(validate.rules).int32.gte  = 0];
+	int32 limit = 4 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentLikeReply {
+	repeated LikeInfo likes = 1;
+	int64 total = 2;
+}

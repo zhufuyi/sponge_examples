@@ -1,0 +1,2819 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "comment api docs",
+    "version": "2.0"
+  },
+  "tags": [
+    {
+      "name": "CollectService"
+    },
+    {
+      "name": "CommentService"
+    },
+    {
+      "name": "LikeService"
+    },
+    {
+      "name": "PostService"
+    },
+    {
+      "name": "RelationService"
+    },
+    {
+      "name": "UserService"
+    }
+  ],
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/auth/email": {
+      "post": {
+        "summary": "发送邮件验证码",
+        "description": "发送邮件验证码",
+        "operationId": "UserService_SendEmailVerifyCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendEmailVerifyCodeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SendEmailVerifyCodeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "登录",
+        "description": "登录",
+        "operationId": "UserService_Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LoginReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "summary": "登出",
+        "description": "登出",
+        "operationId": "UserService_Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LogoutReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "summary": "注册",
+        "description": "注册",
+        "operationId": "UserService_Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RegisterReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RegisterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/api/v1/collect": {
+      "post": {
+        "summary": "收藏",
+        "description": "收藏",
+        "operationId": "CollectService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCollectReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCollectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CollectService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/collect/delete": {
+      "post": {
+        "summary": "删除收藏",
+        "description": "删除收藏",
+        "operationId": "CollectService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCollectReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCollectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CollectService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/collect/list": {
+      "post": {
+        "summary": "获取用户的收藏列表",
+        "description": "获取用户的收藏列表",
+        "operationId": "CollectService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCollectReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListCollectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CollectService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment": {
+      "post": {
+        "summary": "创建评论",
+        "description": "创建评论",
+        "operationId": "CommentService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCommentReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCommentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/delete": {
+      "post": {
+        "summary": "删除评论",
+        "description": "删除评论",
+        "operationId": "CommentService_DeleteByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCommentByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCommentByIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/hot/list": {
+      "post": {
+        "summary": "热门评论列表",
+        "description": "热门评论列表",
+        "operationId": "CommentService_ListHot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentHotReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentHotRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/latest/list": {
+      "post": {
+        "summary": "最新评论列表",
+        "description": "最新评论列表",
+        "operationId": "CommentService_ListLatest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentLatestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentLatestRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/list/ids": {
+      "post": {
+        "summary": "根据批量id获取评论列表",
+        "description": "根据批量id获取评论列表",
+        "operationId": "CommentService_ListByIDs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentByIDsReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint64"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/reply": {
+      "post": {
+        "summary": "回复评论",
+        "description": "回复评论",
+        "operationId": "CommentService_Reply",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReplyCommentReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ReplyCommentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/reply/list": {
+      "post": {
+        "summary": "评论回复列表",
+        "description": "评论回复列表",
+        "operationId": "CommentService_ListReply",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentReplyReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentReplyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/update": {
+      "put": {
+        "summary": "更新评论内容",
+        "description": "更新评论内容",
+        "operationId": "CommentService_UpdateByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateCommentByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateCommentByIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/comment/{id}": {
+      "get": {
+        "summary": "获取评论",
+        "description": "获取评论",
+        "operationId": "CommentService_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCommentByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "CommentService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/like": {
+      "post": {
+        "summary": "点赞",
+        "description": "点赞",
+        "operationId": "LikeService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateLikeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateLikeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LikeService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/like/comment/list": {
+      "post": {
+        "summary": "获取评论点赞列表",
+        "description": "获取评论点赞列表",
+        "operationId": "LikeService_ListComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentLikeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentLikeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LikeService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/like/delete": {
+      "post": {
+        "summary": "取消点赞",
+        "description": "取消点赞",
+        "operationId": "LikeService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteLikeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteLikeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LikeService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/like/post/list": {
+      "post": {
+        "summary": "获取贴子点赞列表",
+        "description": "获取贴子点赞列表",
+        "operationId": "LikeService_ListPost",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPostLikeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListPostLikeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LikeService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post": {
+      "post": {
+        "summary": "创建帖子",
+        "description": "创建帖子",
+        "operationId": "PostService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreatePostReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreatePostRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/delete": {
+      "post": {
+        "summary": "删除帖子",
+        "description": "删除帖子",
+        "operationId": "PostService_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeletePostReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeletePostRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/hot/list": {
+      "post": {
+        "summary": "热门的帖子列表",
+        "description": "热门的帖子列表",
+        "operationId": "PostService_ListHot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPostHotReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListPostHotRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/latest/list": {
+      "post": {
+        "summary": "最新的帖子列表",
+        "description": "最新的帖子列表",
+        "operationId": "PostService_ListLatest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPostLatestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListPostLatestRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/list/ids": {
+      "post": {
+        "summary": "根据批量id获取帖子列表",
+        "description": "根据批量id获取帖子列表",
+        "operationId": "PostService_ListByIDs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPostByIDsReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint64"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/share": {
+      "post": {
+        "summary": "分享数量+1",
+        "description": "分享数量+1",
+        "operationId": "PostService_IncrShareCount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1IncrPostShareCountReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IncrPostShareCountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/update": {
+      "put": {
+        "summary": "更新帖子内容",
+        "description": "更新帖子内容",
+        "operationId": "PostService_UpdateContent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePostContentReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePostContentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/user/list": {
+      "post": {
+        "summary": "用户发布过的帖子列表",
+        "description": "用户发布过的帖子列表",
+        "operationId": "PostService_ListByUserID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPostByUserIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListPostByUserIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/view": {
+      "post": {
+        "summary": "观看数量+1",
+        "description": "观看数量+1",
+        "operationId": "PostService_IncrViewCount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1IncrPostViewCountReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1IncrPostViewCountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/post/{id}": {
+      "get": {
+        "summary": "获取帖子信息",
+        "description": "获取帖子信息",
+        "operationId": "PostService_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPostByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "PostService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/relation/check/list": {
+      "post": {
+        "summary": "批量获取关注关系",
+        "description": "批量获取关注关系",
+        "operationId": "RelationService_BatchGetRelation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1BatchGetRelationReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BatchGetRelationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RelationService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/relation/follow": {
+      "post": {
+        "summary": "关注",
+        "description": "关注",
+        "operationId": "RelationService_Follow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FollowReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FollowRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RelationService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/relation/follower/list": {
+      "get": {
+        "summary": "粉丝列表",
+        "description": "粉丝列表",
+        "operationId": "RelationService_ListFollower",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListFollowerReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "RelationService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/relation/following/list": {
+      "get": {
+        "summary": "关注列表",
+        "description": "关注列表",
+        "operationId": "RelationService_ListFollowing",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListFollowingReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "RelationService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/relation/unfollow": {
+      "post": {
+        "summary": "取消关注",
+        "description": "取消关注",
+        "operationId": "RelationService_Unfollow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UnfollowReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UnfollowRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RelationService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/user/list": {
+      "post": {
+        "summary": "获取用户列表",
+        "description": "通过参数获取用户列表，支持分页，条件过滤",
+        "operationId": "UserService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "params.page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "params.limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "params.sort",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/user/password/{id}": {
+      "put": {
+        "summary": "更新密码",
+        "description": "更新密码",
+        "operationId": "UserService_UpdatePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePasswordReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/user/{id}": {
+      "get": {
+        "summary": "用户详情",
+        "description": "通过id获取用户详情",
+        "operationId": "UserService_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "删除用户",
+        "description": "通过id删除用户，软删除",
+        "operationId": "UserService_DeleteByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteUserByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "更新用户",
+        "description": "通过id更新用户",
+        "operationId": "UserService_UpdateByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateUserByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "nickName": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "gender": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "age": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "birthday": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "typesColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "exp": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "logic": {
+          "type": "string"
+        }
+      }
+    },
+    "typesParams": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typesColumn"
+          }
+        }
+      }
+    },
+    "v1BatchGetRelationReply": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "v1BatchGetRelationRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "uids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        }
+      }
+    },
+    "v1CollectInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1CommentInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "content": {
+          "type": "string"
+        },
+        "parentId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "replyCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "likeCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "score": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delFlag": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "deviceType": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateCollectReply": {
+      "type": "object"
+    },
+    "v1CreateCollectRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateCommentReply": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1CommentInfo"
+        }
+      }
+    },
+    "v1CreateCommentRequest": {
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "content": {
+          "type": "string"
+        },
+        "deviceType": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateLikeReply": {
+      "type": "object"
+    },
+    "v1CreateLikeRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "objType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "objId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreatePostReply": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1PostInfo"
+        }
+      }
+    },
+    "v1CreatePostRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "picKeys": {
+          "type": "string"
+        },
+        "videoKey": {
+          "type": "string"
+        },
+        "videoDuration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "coverKey": {
+          "type": "string"
+        },
+        "coverWidth": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "coverHeight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "position": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteCollectReply": {
+      "type": "object"
+    },
+    "v1DeleteCollectRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1DeleteCommentByIDReply": {
+      "type": "object"
+    },
+    "v1DeleteCommentByIDRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "delFlag": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1DeleteLikeReply": {
+      "type": "object"
+    },
+    "v1DeleteLikeRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "objType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "objId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1DeletePostReply": {
+      "type": "object"
+    },
+    "v1DeletePostRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "delFlag": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1DeleteUserByIDReply": {
+      "type": "object"
+    },
+    "v1FollowReply": {
+      "type": "object"
+    },
+    "v1FollowRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "followedUid": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1GetCommentByIDReply": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1CommentInfo"
+        }
+      }
+    },
+    "v1GetPostByIDReply": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1PostInfo"
+        }
+      }
+    },
+    "v1GetUserByIDReply": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "$ref": "#/definitions/v1User"
+        }
+      }
+    },
+    "v1IncrPostShareCountReply": {
+      "type": "object"
+    },
+    "v1IncrPostShareCountRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1IncrPostViewCountReply": {
+      "type": "object"
+    },
+    "v1IncrPostViewCountRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1LikeInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "objType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "objId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCollectReply": {
+      "type": "object",
+      "properties": {
+        "collects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CollectInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCollectRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListCommentByIDsReply": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CommentInfo"
+          }
+        }
+      }
+    },
+    "v1ListCommentHotReply": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CommentInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCommentHotRequest": {
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListCommentLatestReply": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CommentInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCommentLatestRequest": {
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListCommentLikeReply": {
+      "type": "object",
+      "properties": {
+        "likes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1LikeInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCommentLikeRequest": {
+      "type": "object",
+      "properties": {
+        "commentId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListCommentReplyReply": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CommentInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCommentReplyRequest": {
+      "type": "object",
+      "properties": {
+        "commentId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListFollowerReply": {
+      "type": "object",
+      "properties": {
+        "followerUids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListFollowingReply": {
+      "type": "object",
+      "properties": {
+        "followedUids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListPostByIDsReply": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PostInfo"
+          }
+        }
+      }
+    },
+    "v1ListPostByUserIDReply": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PostInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListPostByUserIDRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListPostHotReply": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PostInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListPostHotRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListPostLatestReply": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PostInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListPostLatestRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListPostLikeReply": {
+      "type": "object",
+      "properties": {
+        "likes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1LikeInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListPostLikeRequest": {
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListUserReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userInfos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1User"
+          }
+        }
+      }
+    },
+    "v1LoginReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LogoutReply": {
+      "type": "object"
+    },
+    "v1LogoutRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PostInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "postType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "viewCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "likeCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "commentCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "collectCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "shareCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delFlag": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "visible": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "position": {
+          "type": "number",
+          "format": "float"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1RegisterReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "emailCode": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ReplyCommentReply": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1CommentInfo"
+        }
+      }
+    },
+    "v1ReplyCommentRequest": {
+      "type": "object",
+      "properties": {
+        "commentId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "content": {
+          "type": "string"
+        },
+        "deviceType": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SendEmailVerifyCodeReply": {
+      "type": "object"
+    },
+    "v1SendEmailVerifyCodeRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UnfollowReply": {
+      "type": "object"
+    },
+    "v1UnfollowRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "followedUid": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1UpdateCommentByIDReply": {
+      "type": "object"
+    },
+    "v1UpdateCommentByIDRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdatePasswordReply": {
+      "type": "object"
+    },
+    "v1UpdatePostContentReply": {
+      "type": "object"
+    },
+    "v1UpdatePostContentRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "picKeys": {
+          "type": "string"
+        },
+        "videoKey": {
+          "type": "string"
+        },
+        "videoDuration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "coverKey": {
+          "type": "string"
+        },
+        "coverWidth": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "coverHeight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float"
+        },
+        "position": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateUserByIDReply": {
+      "type": "object"
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "loginAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "loginIp": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "description": "Input a \"Bearer your-jwt-token\" to Value",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}
