@@ -26,7 +26,7 @@ type ListByProductIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ProductID uint64 `protobuf:"varint,1,opt,name=productID,proto3" json:"productID,omitempty"`
+	ProductID uint64 `protobuf:"varint,1,opt,name=productID,proto3" json:"productID"`
 }
 
 func (x *ListByProductIDRequest) Reset() {
@@ -73,9 +73,9 @@ type CommentDetail struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Content  string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username"`
+	Content  string `protobuf:"bytes,3,opt,name=content,proto3" json:"content"`
 }
 
 func (x *CommentDetail) Reset() {
@@ -136,9 +136,9 @@ type ListByProductIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Total          int32            `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	ProductID      uint64           `protobuf:"varint,2,opt,name=productID,proto3" json:"productID,omitempty"`
-	CommentDetails []*CommentDetail `protobuf:"bytes,3,rep,name=commentDetails,proto3" json:"commentDetails,omitempty"`
+	Total          int32            `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	ProductID      uint64           `protobuf:"varint,2,opt,name=productID,proto3" json:"productID"`
+	CommentDetails []*CommentDetail `protobuf:"bytes,3,rep,name=commentDetails,proto3" json:"commentDetails"`
 }
 
 func (x *ListByProductIDReply) Reset() {

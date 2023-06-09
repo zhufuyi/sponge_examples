@@ -26,7 +26,7 @@ type GetByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (x *GetByIDRequest) Reset() {
@@ -73,9 +73,9 @@ type InventoryDetail struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id      uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Num     float32 `protobuf:"fixed32,4,opt,name=num,proto3" json:"num,omitempty"`
-	SoldNum int32   `protobuf:"varint,3,opt,name=soldNum,proto3" json:"soldNum,omitempty"`
+	Id      uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Num     float32 `protobuf:"fixed32,4,opt,name=num,proto3" json:"num"`
+	SoldNum int32   `protobuf:"varint,3,opt,name=soldNum,proto3" json:"soldNum"`
 }
 
 func (x *InventoryDetail) Reset() {
@@ -136,7 +136,7 @@ type GetByIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	InventoryDetail *InventoryDetail `protobuf:"bytes,1,opt,name=inventoryDetail,proto3" json:"inventoryDetail,omitempty"`
+	InventoryDetail *InventoryDetail `protobuf:"bytes,1,opt,name=inventoryDetail,proto3" json:"inventoryDetail"`
 }
 
 func (x *GetByIDReply) Reset() {

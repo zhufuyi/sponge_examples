@@ -36,16 +36,16 @@ func userRouter(
 		userV1.WithUserHTTPResponse(),
 		userV1.WithUserLogger(logger.Get()),
 		userV1.WithUserErrorToHTTPCode(
-			// Set some error codes to standard http return codes,
-			// by default there is already ecode.InternalServerError and ecode.ServiceUnavailable
-			// example:
-			// 	ecode.Forbidden, ecode.LimitExceed,
+		// Set some error codes to standard http return codes,
+		// by default there is already ecode.InternalServerError and ecode.ServiceUnavailable
+		// example:
+		// 	ecode.Forbidden, ecode.LimitExceed,
 		),
 	)
 }
 
-// you can set the middleware of a route group, or set the middleware of a single route, 
-// or you can mix them, pay attention to the duplication of middleware when mixing them, 
+// you can set the middleware of a route group, or set the middleware of a single route,
+// or you can mix them, pay attention to the duplication of middleware when mixing them,
 // it is recommended to set the middleware of a single route in preference
 func userMiddlewares(c *middlewareConfig) {
 	// set up group route middleware, group path is left prefix rules,

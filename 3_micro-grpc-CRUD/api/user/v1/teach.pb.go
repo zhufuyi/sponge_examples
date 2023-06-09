@@ -29,11 +29,11 @@ type CreateTeachRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TeacherId   int64  `protobuf:"varint,1,opt,name=teacherId,proto3" json:"teacherId,omitempty"`    // 老师id
-	TeacherName string `protobuf:"bytes,2,opt,name=teacherName,proto3" json:"teacherName,omitempty"` // 老师名称
-	CourseId    int64  `protobuf:"varint,3,opt,name=courseId,proto3" json:"courseId,omitempty"`      // 课程id
-	CourseName  string `protobuf:"bytes,4,opt,name=courseName,proto3" json:"courseName,omitempty"`   // 课程名称
-	Score       string `protobuf:"bytes,5,opt,name=score,proto3" json:"score,omitempty"`             // 学生评价教学质量，5个等级：A,B,C,D,E
+	TeacherId   int64  `protobuf:"varint,1,opt,name=teacherId,proto3" json:"teacherId"`    // 老师id
+	TeacherName string `protobuf:"bytes,2,opt,name=teacherName,proto3" json:"teacherName"` // 老师名称
+	CourseId    int64  `protobuf:"varint,3,opt,name=courseId,proto3" json:"courseId"`      // 课程id
+	CourseName  string `protobuf:"bytes,4,opt,name=courseName,proto3" json:"courseName"`   // 课程名称
+	Score       string `protobuf:"bytes,5,opt,name=score,proto3" json:"score"`             // 学生评价教学质量，5个等级：A,B,C,D,E
 }
 
 func (x *CreateTeachRequest) Reset() {
@@ -108,7 +108,7 @@ type CreateTeachReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (x *CreateTeachReply) Reset() {
@@ -155,7 +155,7 @@ type DeleteTeachByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *DeleteTeachByIDRequest) Reset() {
@@ -240,7 +240,7 @@ type DeleteTeachByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *DeleteTeachByIDsRequest) Reset() {
@@ -325,12 +325,12 @@ type UpdateTeachByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
-	TeacherId   int64  `protobuf:"varint,2,opt,name=teacherId,proto3" json:"teacherId,omitempty"`    // 老师id
-	TeacherName string `protobuf:"bytes,3,opt,name=teacherName,proto3" json:"teacherName,omitempty"` // 老师名称
-	CourseId    int64  `protobuf:"varint,4,opt,name=courseId,proto3" json:"courseId,omitempty"`      // 课程id
-	CourseName  string `protobuf:"bytes,5,opt,name=courseName,proto3" json:"courseName,omitempty"`   // 课程名称
-	Score       string `protobuf:"bytes,6,opt,name=score,proto3" json:"score,omitempty"`             // 学生评价教学质量，5个等级：A,B,C,D,E
+	Id          uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
+	TeacherId   int64  `protobuf:"varint,2,opt,name=teacherId,proto3" json:"teacherId"`    // 老师id
+	TeacherName string `protobuf:"bytes,3,opt,name=teacherName,proto3" json:"teacherName"` // 老师名称
+	CourseId    int64  `protobuf:"varint,4,opt,name=courseId,proto3" json:"courseId"`      // 课程id
+	CourseName  string `protobuf:"bytes,5,opt,name=courseName,proto3" json:"courseName"`   // 课程名称
+	Score       string `protobuf:"bytes,6,opt,name=score,proto3" json:"score"`             // 学生评价教学质量，5个等级：A,B,C,D,E
 }
 
 func (x *UpdateTeachByIDRequest) Reset() {
@@ -450,14 +450,14 @@ type Teach struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt   int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt   int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	TeacherId   int64  `protobuf:"varint,4,opt,name=teacherId,proto3" json:"teacherId,omitempty"`    // 老师id
-	TeacherName string `protobuf:"bytes,5,opt,name=teacherName,proto3" json:"teacherName,omitempty"` // 老师名称
-	CourseId    int64  `protobuf:"varint,6,opt,name=courseId,proto3" json:"courseId,omitempty"`      // 课程id
-	CourseName  string `protobuf:"bytes,7,opt,name=courseName,proto3" json:"courseName,omitempty"`   // 课程名称
-	Score       string `protobuf:"bytes,8,opt,name=score,proto3" json:"score,omitempty"`             // 学生评价教学质量，5个等级：A,B,C,D,E
+	Id          uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	CreatedAt   int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt"`
+	UpdatedAt   int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt"`
+	TeacherId   int64  `protobuf:"varint,4,opt,name=teacherId,proto3" json:"teacherId"`    // 老师id
+	TeacherName string `protobuf:"bytes,5,opt,name=teacherName,proto3" json:"teacherName"` // 老师名称
+	CourseId    int64  `protobuf:"varint,6,opt,name=courseId,proto3" json:"courseId"`      // 课程id
+	CourseName  string `protobuf:"bytes,7,opt,name=courseName,proto3" json:"courseName"`   // 课程名称
+	Score       string `protobuf:"bytes,8,opt,name=score,proto3" json:"score"`             // 学生评价教学质量，5个等级：A,B,C,D,E
 }
 
 func (x *Teach) Reset() {
@@ -553,7 +553,7 @@ type GetTeachByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *GetTeachByIDRequest) Reset() {
@@ -600,7 +600,7 @@ type GetTeachByIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Teach *Teach `protobuf:"bytes,1,opt,name=teach,proto3" json:"teach,omitempty"`
+	Teach *Teach `protobuf:"bytes,1,opt,name=teach,proto3" json:"teach"`
 }
 
 func (x *GetTeachByIDReply) Reset() {
@@ -647,7 +647,7 @@ type ListTeachByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *ListTeachByIDsRequest) Reset() {
@@ -694,7 +694,7 @@ type ListTeachByIDsReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Teachs []*Teach `protobuf:"bytes,1,rep,name=teachs,proto3" json:"teachs,omitempty"`
+	Teachs []*Teach `protobuf:"bytes,1,rep,name=teachs,proto3" json:"teachs"`
 }
 
 func (x *ListTeachByIDsReply) Reset() {
@@ -741,7 +741,7 @@ type ListTeachRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
 func (x *ListTeachRequest) Reset() {
@@ -788,8 +788,8 @@ type ListTeachReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Total  int64    `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Teachs []*Teach `protobuf:"bytes,2,rep,name=teachs,proto3" json:"teachs,omitempty"`
+	Total  int64    `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Teachs []*Teach `protobuf:"bytes,2,rep,name=teachs,proto3" json:"teachs"`
 }
 
 func (x *ListTeachReply) Reset() {

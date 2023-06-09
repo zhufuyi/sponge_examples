@@ -32,7 +32,7 @@ type GetDetailsByProductIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ProductID uint64 `protobuf:"varint,1,opt,name=productID,proto3" json:"productID,omitempty" form:"productID"`
+	ProductID uint64 `protobuf:"varint,1,opt,name=productID,proto3" json:"productID" form:"productID"`
 }
 
 func (x *GetDetailsByProductIDRequest) Reset() {
@@ -79,9 +79,9 @@ type GetDetailsByProductIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ProductDetail   *v1.ProductDetail    `protobuf:"bytes,1,opt,name=productDetail,proto3" json:"productDetail,omitempty"`
-	InventoryDetail *v11.InventoryDetail `protobuf:"bytes,2,opt,name=inventoryDetail,proto3" json:"inventoryDetail,omitempty"`
-	CommentDetails  []*v12.CommentDetail `protobuf:"bytes,3,rep,name=commentDetails,proto3" json:"commentDetails,omitempty"`
+	ProductDetail   *v1.ProductDetail    `protobuf:"bytes,1,opt,name=productDetail,proto3" json:"productDetail"`
+	InventoryDetail *v11.InventoryDetail `protobuf:"bytes,2,opt,name=inventoryDetail,proto3" json:"inventoryDetail"`
+	CommentDetails  []*v12.CommentDetail `protobuf:"bytes,3,rep,name=commentDetails,proto3" json:"commentDetails"`
 }
 
 func (x *GetDetailsByProductIDReply) Reset() {

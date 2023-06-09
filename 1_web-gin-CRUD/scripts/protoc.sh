@@ -109,7 +109,7 @@ function generateBySpecifiedProto(){
 
   checkResult $?
 
-  sponge web swagger --file=docs/apis.swagger.json
+  sponge web swagger --file=docs/apis.swagger.json > /dev/null
   checkResult $?
 
   echo ""
@@ -137,6 +137,10 @@ generateBySpecifiedProto
 
 # delete unused packages in pb.go
 handlePbGoFiles $protoBasePath
+
+# delete json tag omitempty
+sponge del-omitempty --dir=$protoBasePath --suffix-name=pb.go > /dev/null
+checkResult $?
 
 go mod tidy
 checkResult $?

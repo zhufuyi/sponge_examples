@@ -28,8 +28,8 @@ type RegisterRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"`
 }
 
 func (x *RegisterRequest) Reset() {
@@ -83,7 +83,7 @@ type RegisterReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (x *RegisterReply) Reset() {
@@ -130,8 +130,8 @@ type LoginRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"`
 }
 
 func (x *LoginRequest) Reset() {
@@ -185,8 +185,8 @@ type LoginReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id    uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Id    uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token"`
 }
 
 func (x *LoginReply) Reset() {
@@ -240,8 +240,8 @@ type LogoutRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id    uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Id    uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token"`
 }
 
 func (x *LogoutRequest) Reset() {

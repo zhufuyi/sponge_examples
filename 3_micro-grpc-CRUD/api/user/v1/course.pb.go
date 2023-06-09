@@ -29,13 +29,13 @@ type CreateCourseRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code     string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`         // 课程代号
-	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`         // 课程名称
-	Credit   int32  `protobuf:"varint,3,opt,name=credit,proto3" json:"credit,omitempty"`    // 学分
-	College  string `protobuf:"bytes,4,opt,name=college,proto3" json:"college,omitempty"`   // 学院
-	Semester string `protobuf:"bytes,5,opt,name=semester,proto3" json:"semester,omitempty"` // 学期
-	Time     string `protobuf:"bytes,6,opt,name=time,proto3" json:"time,omitempty"`         // 上课时间
-	Place    string `protobuf:"bytes,7,opt,name=place,proto3" json:"place,omitempty"`       // 上课地点
+	Code     string `protobuf:"bytes,1,opt,name=code,proto3" json:"code"`         // 课程代号
+	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`         // 课程名称
+	Credit   int32  `protobuf:"varint,3,opt,name=credit,proto3" json:"credit"`    // 学分
+	College  string `protobuf:"bytes,4,opt,name=college,proto3" json:"college"`   // 学院
+	Semester string `protobuf:"bytes,5,opt,name=semester,proto3" json:"semester"` // 学期
+	Time     string `protobuf:"bytes,6,opt,name=time,proto3" json:"time"`         // 上课时间
+	Place    string `protobuf:"bytes,7,opt,name=place,proto3" json:"place"`       // 上课地点
 }
 
 func (x *CreateCourseRequest) Reset() {
@@ -124,7 +124,7 @@ type CreateCourseReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (x *CreateCourseReply) Reset() {
@@ -171,7 +171,7 @@ type DeleteCourseByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *DeleteCourseByIDRequest) Reset() {
@@ -256,7 +256,7 @@ type DeleteCourseByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *DeleteCourseByIDsRequest) Reset() {
@@ -341,14 +341,14 @@ type UpdateCourseByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
-	Code     string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`         // 课程代号
-	Name     string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`         // 课程名称
-	Credit   int32  `protobuf:"varint,4,opt,name=credit,proto3" json:"credit,omitempty"`    // 学分
-	College  string `protobuf:"bytes,5,opt,name=college,proto3" json:"college,omitempty"`   // 学院
-	Semester string `protobuf:"bytes,6,opt,name=semester,proto3" json:"semester,omitempty"` // 学期
-	Time     string `protobuf:"bytes,7,opt,name=time,proto3" json:"time,omitempty"`         // 上课时间
-	Place    string `protobuf:"bytes,8,opt,name=place,proto3" json:"place,omitempty"`       // 上课地点
+	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
+	Code     string `protobuf:"bytes,2,opt,name=code,proto3" json:"code"`         // 课程代号
+	Name     string `protobuf:"bytes,3,opt,name=name,proto3" json:"name"`         // 课程名称
+	Credit   int32  `protobuf:"varint,4,opt,name=credit,proto3" json:"credit"`    // 学分
+	College  string `protobuf:"bytes,5,opt,name=college,proto3" json:"college"`   // 学院
+	Semester string `protobuf:"bytes,6,opt,name=semester,proto3" json:"semester"` // 学期
+	Time     string `protobuf:"bytes,7,opt,name=time,proto3" json:"time"`         // 上课时间
+	Place    string `protobuf:"bytes,8,opt,name=place,proto3" json:"place"`       // 上课地点
 }
 
 func (x *UpdateCourseByIDRequest) Reset() {
@@ -482,16 +482,16 @@ type Course struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Code      string `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`         // 课程代号
-	Name      string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`         // 课程名称
-	Credit    int32  `protobuf:"varint,6,opt,name=credit,proto3" json:"credit,omitempty"`    // 学分
-	College   string `protobuf:"bytes,7,opt,name=college,proto3" json:"college,omitempty"`   // 学院
-	Semester  string `protobuf:"bytes,8,opt,name=semester,proto3" json:"semester,omitempty"` // 学期
-	Time      string `protobuf:"bytes,9,opt,name=time,proto3" json:"time,omitempty"`         // 上课时间
-	Place     string `protobuf:"bytes,10,opt,name=place,proto3" json:"place,omitempty"`      // 上课地点
+	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	CreatedAt int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt"`
+	UpdatedAt int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt"`
+	Code      string `protobuf:"bytes,4,opt,name=code,proto3" json:"code"`         // 课程代号
+	Name      string `protobuf:"bytes,5,opt,name=name,proto3" json:"name"`         // 课程名称
+	Credit    int32  `protobuf:"varint,6,opt,name=credit,proto3" json:"credit"`    // 学分
+	College   string `protobuf:"bytes,7,opt,name=college,proto3" json:"college"`   // 学院
+	Semester  string `protobuf:"bytes,8,opt,name=semester,proto3" json:"semester"` // 学期
+	Time      string `protobuf:"bytes,9,opt,name=time,proto3" json:"time"`         // 上课时间
+	Place     string `protobuf:"bytes,10,opt,name=place,proto3" json:"place"`      // 上课地点
 }
 
 func (x *Course) Reset() {
@@ -601,7 +601,7 @@ type GetCourseByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *GetCourseByIDRequest) Reset() {
@@ -648,7 +648,7 @@ type GetCourseByIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Course *Course `protobuf:"bytes,1,opt,name=course,proto3" json:"course,omitempty"`
+	Course *Course `protobuf:"bytes,1,opt,name=course,proto3" json:"course"`
 }
 
 func (x *GetCourseByIDReply) Reset() {
@@ -695,7 +695,7 @@ type ListCourseByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *ListCourseByIDsRequest) Reset() {
@@ -742,7 +742,7 @@ type ListCourseByIDsReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Courses []*Course `protobuf:"bytes,1,rep,name=courses,proto3" json:"courses,omitempty"`
+	Courses []*Course `protobuf:"bytes,1,rep,name=courses,proto3" json:"courses"`
 }
 
 func (x *ListCourseByIDsReply) Reset() {
@@ -789,7 +789,7 @@ type ListCourseRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
 func (x *ListCourseRequest) Reset() {
@@ -836,8 +836,8 @@ type ListCourseReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Total   int64     `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Courses []*Course `protobuf:"bytes,2,rep,name=courses,proto3" json:"courses,omitempty"`
+	Total   int64     `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Courses []*Course `protobuf:"bytes,2,rep,name=courses,proto3" json:"courses"`
 }
 
 func (x *ListCourseReply) Reset() {

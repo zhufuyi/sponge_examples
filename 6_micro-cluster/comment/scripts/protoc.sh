@@ -68,14 +68,14 @@ function generateByAllProto(){
     $allProtoFiles
 
   checkResult $?
-  
+
   # generate files *_grpc_pb.go
   protoc --proto_path=. --proto_path=./third_party \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     $allProtoFiles
 
   checkResult $?
-  
+
 
   # generate the file *_pb.validate.go
   protoc --proto_path=. --proto_path=./third_party \
@@ -98,7 +98,7 @@ function generateBySpecifiedProto(){
   listProtoFiles ${protoBasePath}/comment
   cd ..
   specifiedProtoFiles=$allProtoFiles
-  
+
   moduleName=$(cat docs/gen.info | head -1 | cut -d , -f 1)
   serverName=$(cat docs/gen.info | head -1 | cut -d , -f 2)
   # Generate 2 files, a logic code template file *.go (default save path in internal/service), a return error code template file *_rpc.go (default save path in internal/ecode)
@@ -108,7 +108,7 @@ function generateBySpecifiedProto(){
     $specifiedProtoFiles
 
   checkResult $?
-  
+
 }
 
 # generate pb.go by all proto files
@@ -119,6 +119,10 @@ generateBySpecifiedProto
 
 # delete unused packages in pb.go
 handlePbGoFiles $protoBasePath
+
+# delete json tag omitempty
+sponge del-omitempty --dir=$protoBasePath --suffix-name=pb.go > /dev/null
+checkResult $?
 
 go mod tidy
 checkResult $?

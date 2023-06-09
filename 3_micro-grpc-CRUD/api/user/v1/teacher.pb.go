@@ -29,18 +29,18 @@ type CreateTeacherRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name       string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`             // 用户名
-	Password   string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`     // 密码
-	Email      string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`           // 邮件
-	Phone      string `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`           // 手机号码
-	Avatar     string `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`         // 头像
-	Gender     int32  `protobuf:"varint,6,opt,name=gender,proto3" json:"gender,omitempty"`        // 性别，1:男，2:女，其他值:未知
-	Age        int32  `protobuf:"varint,7,opt,name=age,proto3" json:"age,omitempty"`              // 年龄
-	Birthday   string `protobuf:"bytes,8,opt,name=birthday,proto3" json:"birthday,omitempty"`     // 出生日期
-	SchoolName string `protobuf:"bytes,9,opt,name=schoolName,proto3" json:"schoolName,omitempty"` // 学校名称
-	College    string `protobuf:"bytes,10,opt,name=college,proto3" json:"college,omitempty"`      // 学院
-	Title      string `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`          // 职称
-	Profile    string `protobuf:"bytes,12,opt,name=profile,proto3" json:"profile,omitempty"`      // 个人简介
+	Name       string `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`             // 用户名
+	Password   string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"`     // 密码
+	Email      string `protobuf:"bytes,3,opt,name=email,proto3" json:"email"`           // 邮件
+	Phone      string `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone"`           // 手机号码
+	Avatar     string `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar"`         // 头像
+	Gender     int32  `protobuf:"varint,6,opt,name=gender,proto3" json:"gender"`        // 性别，1:男，2:女，其他值:未知
+	Age        int32  `protobuf:"varint,7,opt,name=age,proto3" json:"age"`              // 年龄
+	Birthday   string `protobuf:"bytes,8,opt,name=birthday,proto3" json:"birthday"`     // 出生日期
+	SchoolName string `protobuf:"bytes,9,opt,name=schoolName,proto3" json:"schoolName"` // 学校名称
+	College    string `protobuf:"bytes,10,opt,name=college,proto3" json:"college"`      // 学院
+	Title      string `protobuf:"bytes,11,opt,name=title,proto3" json:"title"`          // 职称
+	Profile    string `protobuf:"bytes,12,opt,name=profile,proto3" json:"profile"`      // 个人简介
 }
 
 func (x *CreateTeacherRequest) Reset() {
@@ -164,7 +164,7 @@ type CreateTeacherReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (x *CreateTeacherReply) Reset() {
@@ -211,7 +211,7 @@ type DeleteTeacherByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *DeleteTeacherByIDRequest) Reset() {
@@ -296,7 +296,7 @@ type DeleteTeacherByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *DeleteTeacherByIDsRequest) Reset() {
@@ -381,19 +381,19 @@ type UpdateTeacherByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
-	Name       string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`              // 用户名
-	Password   string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`      // 密码
-	Email      string `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`            // 邮件
-	Phone      string `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`            // 手机号码
-	Avatar     string `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`          // 头像
-	Gender     int32  `protobuf:"varint,7,opt,name=gender,proto3" json:"gender,omitempty"`         // 性别，1:男，2:女，其他值:未知
-	Age        int32  `protobuf:"varint,8,opt,name=age,proto3" json:"age,omitempty"`               // 年龄
-	Birthday   string `protobuf:"bytes,9,opt,name=birthday,proto3" json:"birthday,omitempty"`      // 出生日期
-	SchoolName string `protobuf:"bytes,10,opt,name=schoolName,proto3" json:"schoolName,omitempty"` // 学校名称
-	College    string `protobuf:"bytes,11,opt,name=college,proto3" json:"college,omitempty"`       // 学院
-	Title      string `protobuf:"bytes,12,opt,name=title,proto3" json:"title,omitempty"`           // 职称
-	Profile    string `protobuf:"bytes,13,opt,name=profile,proto3" json:"profile,omitempty"`       // 个人简介
+	Id         uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
+	Name       string `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`              // 用户名
+	Password   string `protobuf:"bytes,3,opt,name=password,proto3" json:"password"`      // 密码
+	Email      string `protobuf:"bytes,4,opt,name=email,proto3" json:"email"`            // 邮件
+	Phone      string `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone"`            // 手机号码
+	Avatar     string `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar"`          // 头像
+	Gender     int32  `protobuf:"varint,7,opt,name=gender,proto3" json:"gender"`         // 性别，1:男，2:女，其他值:未知
+	Age        int32  `protobuf:"varint,8,opt,name=age,proto3" json:"age"`               // 年龄
+	Birthday   string `protobuf:"bytes,9,opt,name=birthday,proto3" json:"birthday"`      // 出生日期
+	SchoolName string `protobuf:"bytes,10,opt,name=schoolName,proto3" json:"schoolName"` // 学校名称
+	College    string `protobuf:"bytes,11,opt,name=college,proto3" json:"college"`       // 学院
+	Title      string `protobuf:"bytes,12,opt,name=title,proto3" json:"title"`           // 职称
+	Profile    string `protobuf:"bytes,13,opt,name=profile,proto3" json:"profile"`       // 个人简介
 }
 
 func (x *UpdateTeacherByIDRequest) Reset() {
@@ -562,21 +562,21 @@ type Teacher struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt  int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt  int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Name       string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`              // 用户名
-	Password   string `protobuf:"bytes,5,opt,name=password,proto3" json:"password,omitempty"`      // 密码
-	Email      string `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`            // 邮件
-	Phone      string `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`            // 手机号码
-	Avatar     string `protobuf:"bytes,8,opt,name=avatar,proto3" json:"avatar,omitempty"`          // 头像
-	Gender     int32  `protobuf:"varint,9,opt,name=gender,proto3" json:"gender,omitempty"`         // 性别，1:男，2:女，其他值:未知
-	Age        int32  `protobuf:"varint,10,opt,name=age,proto3" json:"age,omitempty"`              // 年龄
-	Birthday   string `protobuf:"bytes,11,opt,name=birthday,proto3" json:"birthday,omitempty"`     // 出生日期
-	SchoolName string `protobuf:"bytes,12,opt,name=schoolName,proto3" json:"schoolName,omitempty"` // 学校名称
-	College    string `protobuf:"bytes,13,opt,name=college,proto3" json:"college,omitempty"`       // 学院
-	Title      string `protobuf:"bytes,14,opt,name=title,proto3" json:"title,omitempty"`           // 职称
-	Profile    string `protobuf:"bytes,15,opt,name=profile,proto3" json:"profile,omitempty"`       // 个人简介
+	Id         uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	CreatedAt  int64  `protobuf:"varint,2,opt,name=createdAt,proto3" json:"createdAt"`
+	UpdatedAt  int64  `protobuf:"varint,3,opt,name=updatedAt,proto3" json:"updatedAt"`
+	Name       string `protobuf:"bytes,4,opt,name=name,proto3" json:"name"`              // 用户名
+	Password   string `protobuf:"bytes,5,opt,name=password,proto3" json:"password"`      // 密码
+	Email      string `protobuf:"bytes,6,opt,name=email,proto3" json:"email"`            // 邮件
+	Phone      string `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone"`            // 手机号码
+	Avatar     string `protobuf:"bytes,8,opt,name=avatar,proto3" json:"avatar"`          // 头像
+	Gender     int32  `protobuf:"varint,9,opt,name=gender,proto3" json:"gender"`         // 性别，1:男，2:女，其他值:未知
+	Age        int32  `protobuf:"varint,10,opt,name=age,proto3" json:"age"`              // 年龄
+	Birthday   string `protobuf:"bytes,11,opt,name=birthday,proto3" json:"birthday"`     // 出生日期
+	SchoolName string `protobuf:"bytes,12,opt,name=schoolName,proto3" json:"schoolName"` // 学校名称
+	College    string `protobuf:"bytes,13,opt,name=college,proto3" json:"college"`       // 学院
+	Title      string `protobuf:"bytes,14,opt,name=title,proto3" json:"title"`           // 职称
+	Profile    string `protobuf:"bytes,15,opt,name=profile,proto3" json:"profile"`       // 个人简介
 }
 
 func (x *Teacher) Reset() {
@@ -721,7 +721,7 @@ type GetTeacherByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" uri:"id"`
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" uri:"id"`
 }
 
 func (x *GetTeacherByIDRequest) Reset() {
@@ -768,7 +768,7 @@ type GetTeacherByIDReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Teacher *Teacher `protobuf:"bytes,1,opt,name=teacher,proto3" json:"teacher,omitempty"`
+	Teacher *Teacher `protobuf:"bytes,1,opt,name=teacher,proto3" json:"teacher"`
 }
 
 func (x *GetTeacherByIDReply) Reset() {
@@ -815,7 +815,7 @@ type ListTeacherByIDsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids []uint64 `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 }
 
 func (x *ListTeacherByIDsRequest) Reset() {
@@ -862,7 +862,7 @@ type ListTeacherByIDsReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Teachers []*Teacher `protobuf:"bytes,1,rep,name=teachers,proto3" json:"teachers,omitempty"`
+	Teachers []*Teacher `protobuf:"bytes,1,rep,name=teachers,proto3" json:"teachers"`
 }
 
 func (x *ListTeacherByIDsReply) Reset() {
@@ -909,7 +909,7 @@ type ListTeacherRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	Params *types.Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
 func (x *ListTeacherRequest) Reset() {
@@ -956,8 +956,8 @@ type ListTeacherReply struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Total    int64      `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Teachers []*Teacher `protobuf:"bytes,2,rep,name=teachers,proto3" json:"teachers,omitempty"`
+	Total    int64      `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Teachers []*Teacher `protobuf:"bytes,2,rep,name=teachers,proto3" json:"teachers"`
 }
 
 func (x *ListTeacherReply) Reset() {

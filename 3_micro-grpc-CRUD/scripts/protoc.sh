@@ -68,14 +68,14 @@ function generateByAllProto(){
     $allProtoFiles
 
   checkResult $?
-  
+
   # generate files *_grpc_pb.go
   protoc --proto_path=. --proto_path=./third_party \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     $allProtoFiles
 
   checkResult $?
-  
+
 
   # generate the file *_pb.validate.go
   protoc --proto_path=. --proto_path=./third_party \
@@ -99,7 +99,7 @@ function generateBySpecifiedProto(){
   cd ..
   specifiedProtoFiles=$allProtoFiles
     # If you need the proto file to generate additional code, fill in here
-  
+
 }
 
 # generate pb.go by all proto files
@@ -110,6 +110,10 @@ generateBySpecifiedProto
 
 # delete unused packages in pb.go
 handlePbGoFiles $protoBasePath
+
+# delete json tag omitempty
+sponge del-omitempty --dir=$protoBasePath --suffix-name=pb.go > /dev/null
+checkResult $?
 
 go mod tidy
 checkResult $?
