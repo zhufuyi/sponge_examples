@@ -6,7 +6,7 @@
 
 Prepare a proto file before creating a web service. The proto file must contain **route description information** and **swagger description information**.
 
-Enter the UI interface of sponsor, click 【protobuf】-->【Web Type】-->【Create Web Project】in the left menu bar, and fill in some parameters to generate the web service project code.
+Enter the UI interface of sponge, click 【protobuf】-->【Web Type】-->【Create Web Project】in the left menu bar, and fill in some parameters to generate the web service project code.
 
 The web framework uses [gin](https://github.com/gin-gonic/gin). It also includes swagger documents, common service governance function codes, and build and deployment scripts. You can choose which database to use.
 

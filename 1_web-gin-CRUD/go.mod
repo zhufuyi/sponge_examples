@@ -11,7 +11,7 @@ require (
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.2
 	github.com/swaggo/swag v1.8.12
-	github.com/zhufuyi/sponge v1.4.2
+	github.com/zhufuyi/sponge v1.4.3
 	golang.org/x/sync v0.1.0
 	gorm.io/gorm v1.23.8
 )
