@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: community-gw-svc
+  namespace: community
+spec:
+  selector:
+    app: community-gw
+  type: ClusterIP
+  ports:
+    - name: community-gw-svc-http-port
+      port: 8080
+      targetPort: 8080
+

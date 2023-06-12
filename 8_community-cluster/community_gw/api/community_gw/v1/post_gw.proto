@@ -1,0 +1,316 @@
+syntax = "proto3";
+
+package api.community_gw.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "community_gw/api/community_gw/v1;v1";
+
+// Default settings for generating swagger documents
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	host: "localhost:8080"
+	base_path: ""
+	info: {
+		title: "comment api docs";
+		version: "2.0";
+	}
+	schemes: HTTP;
+	schemes: HTTPS;
+	consumes: "application/json";
+	produces: "application/json";
+	security_definitions: {
+		security: {
+			key: "BearerAuth";
+			value: {
+				type: TYPE_API_KEY;
+				in: IN_HEADER;
+				name: "Authorization";
+				description: "Input a \"Bearer your-jwt-token\" to Value";
+			}
+		}
+	}
+};
+
+service PostService {
+	// 创建帖子
+	rpc Create (CreatePostRequest) returns (CreatePostReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "创建帖子",
+			description: "创建帖子",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 更新帖子内容
+	rpc UpdateContent (UpdatePostContentRequest) returns (UpdatePostContentReply) {
+		option (google.api.http) = {
+			put: "/api/v1/post/update"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "更新帖子内容",
+			description: "更新帖子内容",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 删除帖子
+	rpc Delete (DeletePostRequest) returns (DeletePostReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/delete"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "删除帖子",
+			description: "删除帖子",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 根据id获取帖子详情
+	rpc GetByID (GetPostByIDRequest) returns (GetPostByIDReply) {
+		option (google.api.http) = {
+			get: "/api/v1/post/{id}"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "获取帖子信息",
+			description: "获取帖子信息",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 用户发布过的帖子列表
+	rpc ListByUserID (ListPostByUserIDRequest) returns (ListPostByUserIDReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/user/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "用户发布过的帖子列表",
+			description: "用户发布过的帖子列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 最新的帖子列表
+	rpc ListLatest (ListPostLatestRequest) returns (ListPostLatestReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/latest/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "最新的帖子列表",
+			description: "最新的帖子列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 热门的帖子列表
+	rpc ListHot (ListPostHotRequest) returns (ListPostHotReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/hot/list"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "热门的帖子列表",
+			description: "热门的帖子列表",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+
+	// 观看数量+1
+	rpc IncrViewCount (IncrPostViewCountRequest) returns (IncrPostViewCountReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/view"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "观看数量+1",
+			description: "观看数量+1",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+	// 分享数量+1
+	rpc IncrShareCount (IncrPostShareCountRequest) returns (IncrPostShareCountReply) {
+		option (google.api.http) = {
+			post: "/api/v1/post/share"
+			body: "*"
+		};
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			summary: "分享数量+1",
+			description: "分享数量+1",
+			security: {
+				security_requirement: {
+					key: "BearerAuth";
+					value: {}
+				}
+			}
+		};
+	}
+}
+
+message PostInfo {
+	uint64 id = 1;
+	int32 postType = 2;
+	uint64 userId = 3;
+	string title = 4;
+	string content = 5;
+	int64 viewCount = 6;
+	int64 likeCount = 7;
+	int64 commentCount = 8;
+	int64 collectCount = 9;
+	int64 shareCount = 10;
+	int32 delFlag = 11;
+	int32 visible = 12;
+	float longitude = 13;
+	float latitude = 14;
+	float position = 15;
+	int64 createdAt = 16;
+	int64 updatedAt = 17;
+}
+
+message CreatePostRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	string title = 2 [(validate.rules).string.min_len  = 1];
+	string text = 3;
+	string picKeys = 4;
+	string videoKey = 5;
+	int32 videoDuration = 6;
+	string coverKey = 7;
+	int32 coverWidth = 8;
+	int32 coverHeight = 9;
+	float longitude = 10;
+	float latitude = 11;
+	string position = 12;
+}
+message CreatePostReply {
+	PostInfo post = 1;
+}
+
+message UpdatePostContentRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	string title = 2 [(validate.rules).string.min_len  = 1];
+	string text = 3;
+	string picKeys = 4;
+	string videoKey = 5;
+	int32 videoDuration = 6;
+	string coverKey = 7;
+	int32 coverWidth = 8;
+	int32 coverHeight = 9;
+	float longitude = 10;
+	float latitude = 11;
+	string position = 12;
+}
+
+message UpdatePostContentReply {}
+
+message DeletePostRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 delFlag = 3 [(validate.rules).int32  = {gte:1, lte: 2}];
+}
+
+message DeletePostReply {
+}
+
+message GetPostByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetPostByIDReply {
+	PostInfo post = 1;
+}
+
+message ListPostByIDsRequest {
+	repeated uint64 ids = 1 [(validate.rules).repeated = {min_items: 1, max_items: 100}];
+}
+
+message ListPostByIDsReply {
+	repeated PostInfo posts = 1;
+}
+
+message ListPostByUserIDRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostByUserIDReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message ListPostLatestRequest {
+	int32 page = 1 [(validate.rules).int32.gte  = 0];
+	int32 limit = 2 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostLatestReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message ListPostHotRequest {
+	int32 page = 1 [(validate.rules).int32.gte  = 0];
+	int32 limit = 2 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostHotReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message IncrPostViewCountRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message IncrPostViewCountReply {}
+
+message IncrPostShareCountRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message IncrPostShareCountReply {}

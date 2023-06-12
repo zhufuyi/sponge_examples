@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package api.creation.v1;
+
+//import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "creation/api/creation/v1;v1";
+
+service CollectService {
+	// 收藏
+	rpc Create (CreateCollectRequest) returns (CreateCollectReply) {}
+	// 删除收藏
+	rpc Delete (DeleteCollectRequest) returns (DeleteCollectReply) {}
+	// 获取收藏列表
+	rpc List (ListCollectRequest) returns (ListCollectReply) {}
+}
+
+message CollectInfo {
+	uint64 id = 1;
+	uint64 userId = 2;
+	uint64 postId = 3;
+	int64 createdAt = 4;
+	int64 updatedAt = 5;
+}
+
+message CreateCollectRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 postId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message CreateCollectReply {}
+
+message DeleteCollectRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 postId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message DeleteCollectReply {}
+
+message ListCollectRequest {
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 page = 3 [(validate.rules).int32.gte  = 0];
+	int32 limit = 4 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCollectReply {
+	repeated CollectInfo collects = 1;
+	int64 total = 2;
+}

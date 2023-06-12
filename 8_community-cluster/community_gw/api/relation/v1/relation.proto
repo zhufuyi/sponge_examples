@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package api.relation.v1;
+
+//import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "community_gw/api/relation/v1;v1";
+
+// 好友关系服务
+service RelationService {
+	// 关注
+	rpc Follow (FollowRequest) returns (FollowReply) {}
+	// 取消关注
+	rpc Unfollow (UnfollowRequest) returns (UnfollowReply) {}
+	// 关注列表
+	rpc ListFollowing (ListFollowingRequest) returns (ListFollowingReply) {}
+	// 粉丝列表
+	rpc ListFollower (ListFollowerRequest) returns (ListFollowerReply) {}
+	// 批量获取关注关系，a和b,c,d的关注状态
+	rpc BatchGetRelation (BatchGetRelationRequest) returns (BatchGetRelationReply) {}
+}
+
+message FollowRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 followedUid = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message FollowReply {}
+
+message UnfollowRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 followedUid = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message UnfollowReply {}
+
+message ListFollowingRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32.gte  = 1];
+}
+
+message ListFollowingReply {
+	repeated uint64 followedUids = 1;
+	int64 total = 2;
+}
+
+message ListFollowerRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32.gte  = 1];
+}
+
+message ListFollowerReply {
+	repeated uint64 followerUids = 1;
+	int64 total = 2;
+}
+
+message BatchGetRelationRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	repeated uint64 uids = 2 [(validate.rules).repeated.min_items = 1];
+}
+
+message BatchGetRelationReply {
+	map<uint64, int32> result = 1;
+}

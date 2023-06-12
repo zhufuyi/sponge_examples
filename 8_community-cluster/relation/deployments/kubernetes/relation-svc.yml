@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: relation-svc
+  namespace: community
+spec:
+  selector:
+    app: relation
+  type: ClusterIP
+  ports:
+    - name: relation-svc-http-port
+      port: 8080
+      targetPort: 8080
+

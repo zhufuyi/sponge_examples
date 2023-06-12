@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package api.creation.v1;
+
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "creation/api/creation/v1;v1";
+
+service PostService {
+	// 创建帖子
+	rpc Create (CreatePostRequest) returns (CreatePostReply) {}
+	// 更新帖子内容
+	rpc UpdateContent (UpdatePostContentRequest) returns (UpdatePostContentReply) {}
+	// 删除帖子
+	rpc Delete (DeletePostRequest) returns (DeletePostReply) {}
+	// 根据id获取帖子详情
+	rpc GetByID (GetPostByIDRequest) returns (GetPostByIDReply) {}
+	// 根据批量id获取帖子列表
+	rpc ListByIDs (ListPostByIDsRequest) returns (ListPostByIDsReply) {}
+	// 我发布过的帖子列表
+	rpc ListByUserID (ListPostByUserIDRequest) returns (ListPostByUserIDReply) {}
+	// 最新的帖子列表
+	rpc ListLatest (ListPostLatestRequest) returns (ListPostLatestReply) {}
+	// 热门的帖子列表
+	rpc ListHot (ListPostHotRequest) returns (ListPostHotReply) {}
+
+	// 增加观看数量
+	rpc IncrViewCount (IncrPostViewCountRequest) returns (IncrPostViewCountReply) {}
+	// 增加分享数量
+	rpc IncrShareCount (IncrPostShareCountRequest) returns (IncrPostShareCountReply) {}
+}
+
+message PostInfo {
+	uint64 id = 1;
+	int32 postType = 2;
+	uint64 userId = 3;
+	string title = 4;
+	string content = 5;
+	int64 viewCount = 6;
+	int64 likeCount = 7;
+	int64 commentCount = 8;
+	int64 collectCount = 9;
+	int64 shareCount = 10;
+	int32 delFlag = 11;
+	int32 visible = 12;
+	float longitude = 13;
+	float latitude = 14;
+	float position = 15;
+	int64 createdAt = 16;
+	int64 updatedAt = 17;
+}
+
+message CreatePostRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	string title = 2 [(validate.rules).string.min_len  = 1];
+	string text = 3;
+	string picKeys = 4;
+	string videoKey = 5;
+	int32 videoDuration = 6;
+	string coverKey = 7;
+	int32 coverWidth = 8;
+	int32 coverHeight = 9;
+	float longitude = 10;
+	float latitude = 11;
+	string position = 12;
+}
+message CreatePostReply {
+	PostInfo post = 1;
+}
+
+message UpdatePostContentRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	string title = 2 [(validate.rules).string.min_len  = 1];
+	string text = 3;
+	string picKeys = 4;
+	string videoKey = 5;
+	int32 videoDuration = 6;
+	string coverKey = 7;
+	int32 coverWidth = 8;
+	int32 coverHeight = 9;
+	float longitude = 10;
+	float latitude = 11;
+	string position = 12;
+}
+
+message UpdatePostContentReply {}
+
+message DeletePostRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 delFlag = 3 [(validate.rules).int32  = {gte:1, lte: 2}];
+}
+
+message DeletePostReply {
+}
+
+message GetPostByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetPostByIDReply {
+	PostInfo post = 1;
+}
+
+message ListPostByIDsRequest {
+	repeated uint64 ids = 1 [(validate.rules).repeated = {min_items: 1, max_items: 100}];
+}
+
+message ListPostByIDsReply {
+	repeated PostInfo posts = 1;
+}
+
+message ListPostByUserIDRequest {
+	uint64 userId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostByUserIDReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message ListPostLatestRequest {
+	int32 page = 1 [(validate.rules).int32.gte  = 0];
+	int32 limit = 2 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostLatestReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message ListPostHotRequest {
+	int32 page = 1 [(validate.rules).int32.gte  = 0];
+	int32 limit = 2 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListPostHotReply {
+	repeated PostInfo posts = 1;
+	int64 total = 2;
+}
+
+message IncrPostViewCountRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message IncrPostViewCountReply {}
+
+message IncrPostShareCountRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+}
+
+message IncrPostShareCountReply {}

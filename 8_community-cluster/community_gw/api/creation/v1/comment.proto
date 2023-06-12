@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package api.creation.v1;
+
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "community_gw/api/creation/v1;v1";
+
+service CommentService {
+	// 创建评论
+	rpc Create (CreateCommentRequest) returns (CreateCommentReply) {}
+	// 删除评论
+	rpc DeleteByID (DeleteCommentByIDRequest) returns (DeleteCommentByIDReply) {}
+	// 更新评论
+	rpc UpdateByID (UpdateCommentByIDRequest) returns (UpdateCommentByIDReply) {}
+	// 回复评论
+	rpc Reply (ReplyCommentRequest) returns (ReplyCommentReply) {}
+	// 根据id获取评论
+	rpc GetByID (GetCommentByIDRequest) returns (GetCommentByIDReply) {}
+	// 根据批量id获取评论列表
+	rpc ListByIDs(ListCommentByIDsRequest) returns (ListCommentByIDsReply) {}
+	// 最新评论列表
+	rpc ListLatest (ListCommentLatestRequest) returns (ListCommentLatestReply) {}
+	// 热门评论列表
+	rpc ListHot (ListCommentHotRequest) returns (ListCommentHotReply) {}
+	// 评论回复列表
+	rpc ListReply (ListCommentReplyRequest) returns (ListCommentReplyReply) {}
+}
+
+message CommentInfo {
+	uint64 id = 1;
+	uint64 postId = 2;
+	uint64 userId = 3;
+	string content = 4;
+	uint64 parentId = 5;
+	int32 replyCount = 6;
+	int32 likeCount = 7;
+	int64 score = 8;
+	int32 delFlag = 9;
+	int64 createdAt = 10;
+	int64 updatedAt = 11;
+	string deviceType = 12;
+	string ip = 13;
+}
+
+message CreateCommentRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	string content = 3 [(validate.rules).string.min_len  = 1];
+	string deviceType = 4;
+	string ip = 5;
+}
+
+message CreateCommentReply {
+	CommentInfo comment = 1;
+}
+
+message DeleteCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	int32 delFlag = 3 [(validate.rules).int32  = {gte:0, lte: 2}];
+}
+
+message DeleteCommentByIDReply {}
+
+message UpdateCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+	string content = 2 [(validate.rules).string.min_len  = 1];
+}
+
+message UpdateCommentByIDReply {}
+
+message ReplyCommentRequest {
+	uint64 commentId = 1 [(validate.rules).uint64.gte  = 1];
+	uint64 userId = 2 [(validate.rules).uint64.gte  = 1];
+	string content = 3 [(validate.rules).string.min_len  = 1];
+	string deviceType = 4;
+	string ip = 5;
+}
+
+message ReplyCommentReply {
+	CommentInfo comment = 1;
+}
+
+message GetCommentByIDRequest {
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetCommentByIDReply {
+	CommentInfo comment = 1;
+}
+
+message ListCommentByIDsRequest {
+	repeated uint64 ids = 1 [(validate.rules).repeated = {min_items: 1, max_items: 100}];
+}
+
+message ListCommentByIDsReply {
+	repeated CommentInfo comments = 1;
+}
+
+message ListCommentHotRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentHotReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}
+
+message ListCommentLatestRequest {
+	uint64 postId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentLatestReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}
+
+message ListCommentReplyRequest {
+	uint64 commentId = 1 [(validate.rules).uint64.gte  = 1];
+	int32 page = 2 [(validate.rules).int32.gte  = 0];
+	int32 limit = 3 [(validate.rules).int32  = {gt:0, lte: 100}];
+}
+
+message ListCommentReplyReply {
+	repeated CommentInfo comments = 1;
+	int64 total = 2;
+}
