@@ -143,4 +143,4 @@ checkResult $?
 go mod tidy
 checkResult $?
 
-echo "exec protoc command successfully."
+echo "execute protoc command successfully."

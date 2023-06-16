@@ -6,9 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/zhufuyi/sponge/pkg/gin/middleware"
-	"github.com/zhufuyi/sponge/pkg/mysql/query"
 	"strings"
 	"time"
 
@@ -21,11 +18,14 @@ import (
 
 	"github.com/zhufuyi/pkg/email"
 	"github.com/zhufuyi/pkg/gocrypto"
+	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/jwt"
 	"github.com/zhufuyi/sponge/pkg/krand"
 	"github.com/zhufuyi/sponge/pkg/logger"
+	"github.com/zhufuyi/sponge/pkg/mysql/query"
 	"github.com/zhufuyi/sponge/pkg/utils"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
