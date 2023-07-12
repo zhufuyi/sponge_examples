@@ -1,10 +1,14 @@
-### community-single
+[**community-single 中文**](https://juejin.cn/post/7254123931246788664)
+
+<br>
+
+### Community-single Introduction
 
 Community-single is a minimalist version of a community backend service that mainly includes user registration, login, follow-up and other functions, as well as the creation of content (text, images, videos), publishing, commenting, liking, and collecting. These functions are common in various community platforms, video platforms, live broadcast platforms and can be used as a reference for learning.
 
 The community-single project was originally designed as a single web service. The entire service was assisted by the code generation tool [sponge](https://github.com/zhufuyi/sponge). During the process of generating web service code with sponge, the business logic and non-business logic code were separated. The non-business logic code here refers to the web service framework code, In addition to the web service framework code, everything else belongs to business logic code.
 
-The web service egg model analysis diagram is shown below:
+Consider a complete web service code as an egg. The eggshell represents the web service framework code. The egg white and yolk represent the business logic code. The yolk is the core of the business logic (the code that needs to be written manually), such as defining MySQL tables, defining API interfaces, and writing specific logic codes. The egg white is the bridge that connects the core business logic code with the web framework code (automatically generated without manual coding), such as registration routing code generated based on proto files, handler method function code, parameter verification code, error codes, Swagger documents, etc. The web service egg model analysis diagram is shown in the figure below:
 
 ![web-http-pb-anatomy](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_web-http-pb-anatomy.png)
 
@@ -101,3 +105,242 @@ Visit `http://localhost:8080/apis/swagger/index.htm` in your browser to enter th
 From the picture, you can see that some API interfaces have a lock mark on the right side, indicating that the request header will carry authorization information Authorization. Whether the server receives a request for authentication is determined by the server. If the server needs to authenticate, it can be set in each `internal/routers/xxx_handler.pb.go` file, that is, canceling the commented code for authentication and enabling the authentication middleware for the API interface.
 
 <br>
+<br>
+
+### Service governance
+
+The generated web service code contains rich service governance plugins. Some service governance plugins are closed by default and can be turned on as needed. They are uniformly set in the configuration file `configs/community.yml`.
+
+In addition to the service governance plugins provided by web services, you can also use your own service governance plugins. It is recommended to introduce your own service governance plugins in `internal/routers/routers.go`.
+
+<br>
+
+#### Log
+
+The log plugin is enabled by default and outputs to the terminal by default. The default output log format is console. You can set the output format to json and set logs to be saved to a specified file. Set log file cutting and retention time.
+
+Set in field `logger` in configuration file:
+
+```yaml
+# logger settings
+logger:
+  level: "info"             # Output log level debug, info, warn, error, default is debug
+  format: "console"     # Output format, console or json, default is console
+  isSave: false           # false: output to terminal, true: output to file, default is false
+  logFileConfig:          # effective when isSave=true
+    filename: "out.log"            # File name, default value out.log
+    maxSize: 20                     # Maximum file size (MB), default value 10MB
+    maxBackups: 50               # Maximum number of old files retained, default value 100
+    maxAge: 15                     # Maximum number of days old files are retained, default value 30 days
+    isCompression: true          # Whether to compress/archive old files, default value false
+```
+
+<br>
+
+#### Rate limiter
+
+The rate limiter plugin is closed by default and adaptive rate limiter does not require setting other parameters.
+
+Set in field `enableLimit` in configuration file:
+
+```yaml
+  enableLimit: false    # Whether to enable rate limiter (adaptive), true: enable, false: close
+```
+
+<br>
+
+#### Circuit breaker
+
+The circuit breaker plugin is closed by default and adaptive circuit breaker supports custom request return error codes (default 500 and 503) for circuit breaking. Set in `internal/routers/routers.go`.
+
+Set in field `enableCircuitBreaker` in configuration file:
+
+```yaml
+  enableCircuitBreaker: false    # Whether to enable circuit breaker (adaptive), true: enable, false: close
+```
+
+<br>
+
+#### Link tracking
+
+The link tracking plugin is closed by default and link tracking depends on jaeger service.
+
+Set in field `enableTrace` in configuration file:
+
+```yaml
+  enableTrace: false    # Whether to enable tracking, true: enable, false: close. If it is true, jaeger configuration must be set.
+  tracingSamplingRate: 1.0      # Link tracking sampling rate range from 0~1.0 floating point number. 0 means no sampling and 1.0 means sampling all links.
+
+
+# jaeger settings
+jaeger:
+  agentHost: "192.168.3.37"
+  agentPort: 6831
+```
+
+View link tracking information on jaeger interface [document description](https://go-sponge.com/service-governance?id=trace).
+
+<br>
+
+#### Service registration and discovery
+
+The service registration and discovery plugin is closed by default and supports three types of consul etcd nacos.
+
+Set in field `registryDiscoveryType` in configuration file:
+
+```yaml
+  registryDiscoveryType: ""    # Registration and discovery type: consul, etcd, nacos. If it is empty, it means that service registration and discovery are closed.
+
+
+# Set parameters according to the value of field registryDiscoveryType. For example, if you use consul as service discovery, you only need to set consul.
+# consul settings
+consul:
+  addr: "192.168.3.37:8500"
+
+# etcd settings
+etcd:
+  addrs: ["192.168.3.37:2379"]
+
+# nacos settings
+nacosRd:
+  ipAddr: "192.168.3.37"
+  port: 8848
+  namespaceID: "3454d2b5-2455-4d0e-bf6d-e033b086bb4c" # namespace id
+```
+
+<br>
+
+#### Metric collection
+
+The metric collection function is enabled by default and provides data for prometheus to collect. The default route is `/metrics`.
+
+Set in field `enableMetrics` in configuration file:
+
+```yaml
+  enableMetrics: true    # Whether to enable metric collection, true: enable, false: close
+```
+
+Use prometheus and grafana to collect metrics and monitor services [document description](https://go-sponge.com/service-governance?id=monitoring).
+
+<br>
+
+#### Performance Analysis
+
+The performance analysis plugin is turned off by default, and the default route for collecting profiles is `/debug/pprof`. In addition to supporting the default profile analysis provided by the Go language itself, it also supports IO analysis, with the route being `/debug/pprof/profile-io`.
+
+The `enableHTTPProfile` field is set in the configuration file:
+
+```yaml
+  enableHTTPProfile: false    # Whether to enable performance analysis, true: enabled, false: disabled
+```
+
+The way to collect profiles through routes for performance analysis is usually used during development or testing. If it is turned on online, there will be a little bit of performance loss because the program records profile-related information regularly in the background. The web service generated by sponge has made some improvements. Normally, it stops collecting profiles. When the user actively triggers a system signal, it starts and stops collecting profiles. The collected profiles are saved to `/tmp/serviceName_profile` directory. The default collection is 60 seconds. After 60 seconds, it automatically stops collecting profiles. If you only want to collect for 30 seconds, send the first signal to start collecting, and then send the second signal after about 30 seconds to stop collecting profiles, similar to a switch.
+
+These are the steps to collect profiles:
+
+```yaml
+# View service pid by name
+ps aux | grep service name
+
+# Send signal to service
+kill -trap pid value
+```
+
+Note: Only supports Linux and Darwin systems.
+
+<br>
+
+#### Resource Statistics
+
+The resource statistics plugin is turned on by default and outputs statistics to the log once per minute by default. Resource statistics include both system and service-related data for CPU and memory. Resource statistics include automatic profile collection functionality. When the average CPU or memory usage of this service is calculated for 3 consecutive times, and the average CPU or memory usage exceeds 80% of system resources, profile collection is automatically triggered. The default collection time is 60 seconds. The collected profile is saved to `/tmp/service name_profile directory`, thus achieving adaptive profile collection, which is an improvement over manually sending system signals to collect profiles.
+
+The `enableHTTPProfile` field is set in the configuration file:
+
+```yaml
+  enableStat: true    # Whether to enable resource statistics, true: enabled, false: disabled
+```
+
+<br>
+
+#### Configuration Center
+
+Currently supports Nacos as a configuration center, with configuration center file `configs/community_cc.yml` and configuration content as follows:
+
+```yaml
+# nacos settings
+nacos:
+  ipAddr: "192.168.3.37"    # server address
+  port: 8848                      # listening port
+  scheme: "http"               # http or https
+  contextPath: "/nacos"     # path
+  namespaceID: "3454d2b5-2455-4d0e-bf6d-e033b086bb4c" # namespace id
+  group: "dev"                    # group name: dev, prod, test
+  dataID: "community.yml"  # config file id
+  format: "yaml"                 # configuration file type: json,yaml,toml
+```
+
+And the service's configuration file `configs/community.yml` is copied to Nacos' interface for configuration. To use Nacos as a configuration center, start the service command with the specified configuration center file as follows:
+
+```bash
+./community -c configs/community_cc.yml -enable-cc
+```
+
+[Documentation](https://go-sponge.com/service-governance?id=configuration-centre) on using Nacos as a configuration center.
+
+<br>
+<br>
+
+### Continuous Integration and Deployment
+
+The web service generated by sponge includes compilation and deployment scripts. Compilation supports binary compilation and docker image building. Deployment supports binary deployment, docker deployment, and k8s deployment in three ways. These functions are all integrated into the `Makefile` file and can be easily executed using make commands.
+
+In addition to using make commands for compilation and deployment, Jenkins also supports automated deployment tools. The default Jenkins settings are in the `Jenkinsfile` file and support automated deployment to k8s. If binary or docker deployment is required, `Jenkinsfile` needs to be modified.
+
+[Documentation](https://go-sponge.com/cicd) on using Jenkins for continuous integration and deployment.
+
+<br>
+<br>
+
+### Service Stress Testing
+
+Some tools used when stress testing services:
+
+- http stress testing tools [wrk](https://github.com/wg/wrk) or [go-stress-testing](https://github.com/link1st/go-stress-testing).
+- Service opens metric collection function, uses prometheus to collect service metrics and system metrics for monitoring.
+- The service's own adaptive profile collection function.
+
+<br>
+
+Stress testing indicators:
+
+- **Concurrency**: Gradually increase the number of concurrent users to find the maximum concurrency of the service and determine the maximum number of users the service can support.
+- **Response time**: Pay attention to the average response time and response time distribution of the service when the number of concurrent users increases. Ensure that even under high concurrency, the response time is within an acceptable range.
+- **Error rate**: Observe the probability of errors or exceptions occurring in the service as concurrency increases. Use stress testing tools for long-term concurrent testing and count the number and type of errors at each concurrency level.
+- **Throughput**: Find the maximum throughput of the service and determine the maximum request volume that the service can support under high concurrency. This requires continuously increasing concurrency until the throughput saturation point is found.
+- **Resource utilization**: Pay attention to the utilization rate of resources such as CPU, memory, disk I/O, network, etc. when concurrency increases, and find the resource bottleneck of the service.
+- **Bottleneck detection**: By observing the performance indicators and resource utilization rate of the service under high concurrency, find hardware or software bottlenecks in the system and service for optimization.
+- **Stability**: Long-term high-concurrency operation can detect potential problems in services such as memory leaks and connection leaks to ensure stable operation of services. This requires long-term concurrent stress testing to observe service operation indicators.
+
+Stress testing services is mainly to evaluate their performance, determine their maximum concurrency and throughput, discover current bottlenecks, and detect service stability for optimization or capacity planning.
+
+<br>
+<br>
+
+### Summary
+
+This is a practical project using sponge from development to deployment. The specific process is as follows:
+
+1. Define mysql table
+2. Define api interface in proto file
+3. Generate web framework code based on proto file
+4. Generate business logic related code based on proto file
+5. Generate dao code based on mysql table
+6. Write specific logic code in specified template file
+7. Test and verify api interface in swagger
+8. Enable service governance function as needed
+9. Continuous integration and deployment
+10. Service stress testing
+
+It seems that there are many processes, but only 1, 2, 6 are three core business processes that require manual coding. The code or scripts involved in other processes are generated by sponge. Using sponge to separate non-business logic code from business logic code allows developers to focus on core business logic code when developing projects while also making project code standardized and uniform so that different programmers can quickly get started. Combined with programming assistance tools such as Copilot or Codeium to write code, project development becomes more efficient and easy.
+
+community-single is a monolithic web service. As the demand increases and the functionality becomes more and more complex, code maintenance and development become difficult. It can be split into multiple microservices. The process of splitting a web monolithic service into microservices only changes the eggshell (web framework changed to gRPC framework) and albumen (http handler-related code changed to rpc service-related code), while the yolk (core business logic code) remains unchanged. The core business logic code can be seamlessly ported to microservice code.
