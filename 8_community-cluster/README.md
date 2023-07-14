@@ -278,7 +278,7 @@ make run
 
 Visit `http://localhost:8080/apis/swagger/index.htm` in your browser to enter the swagger interface, as shown below:
 
-![community-gw-swagger](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/community-gw-swagger.png)
+![community-gw-swagger](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/community-single-swagger.png)
 
 From the figure, it can be seen that some api interfaces have a lock mark on the right, indicating that the request header will carry authentication information Authorization. Whether the server receives a request for authentication is determined by the server. If the server needs to authenticate, it can be set in `community_gw/internal/routers` directory suffix file `_service.pb.go`, that is, uncommenting authentication code to make api interface authentication middleware effective.
 
