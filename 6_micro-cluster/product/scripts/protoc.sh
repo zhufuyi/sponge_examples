@@ -4,6 +4,9 @@
 protoBasePath="api"
 allProtoFiles=""
 
+specifiedProtoFilePath=$1
+specifiedProtoFilePaths=""
+
 function checkResult() {
     result=$1
     if [ ${result} -ne 0 ]; then
@@ -11,13 +14,41 @@ function checkResult() {
     fi
 }
 
+# get specified proto files, if empty, return 0 else return 1
+function getSpecifiedProtoFiles() {
+  if [ "$specifiedProtoFilePath"x = x ];then
+    return 0
+  fi
+
+  specifiedProtoFilePaths=${specifiedProtoFilePath//,/ }
+
+  for v in $specifiedProtoFilePaths; do
+    if [ ! -f "$v" ];then
+      echo "Error: not found specified proto file $v"
+	    echo "example: make proto FILES=api/user/v1/user.proto,api/types/types.proto"
+      checkResult 1
+    fi
+  done
+
+  return 1
+}
+
 # add the import of useless packages from the generated *.pb.go code here
 function deleteUnusedPkg() {
   file=$1
-  sed -i "s#_ \"github.com/envoyproxy/protoc-gen-validate/validate\"##g" ${file}
-  sed -i "s#_ \"github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options\"##g" ${file}
-  sed -i "s#_ \"github.com/srikrsna/protoc-gen-gotag/tagger\"##g" ${file}
-  sed -i "s#_ \"google.golang.org/genproto/googleapis/api/annotations\"##g" ${file}
+  osType=$(uname -s)
+  if [ "${osType}"x = "Darwin"x ];then
+    sed -i '' 's#_ \"github.com/envoyproxy/protoc-gen-validate/validate\"##g' ${file}
+    sed -i '' 's#_ \"github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options\"##g' ${file}
+    sed -i '' 's#_ \"github.com/srikrsna/protoc-gen-gotag/tagger\"##g' ${file}
+    sed -i '' 's#_ \"google.golang.org/genproto/googleapis/api/annotations\"##g' ${file}
+  else
+    sed -i "s#_ \"github.com/envoyproxy/protoc-gen-validate/validate\"##g" ${file}
+    sed -i "s#_ \"github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options\"##g" ${file}
+    sed -i "s#_ \"github.com/srikrsna/protoc-gen-gotag/tagger\"##g" ${file}
+    sed -i "s#_ \"google.golang.org/genproto/googleapis/api/annotations\"##g" ${file}
+  fi
+  checkResult $?
 }
 
 function listProtoFiles(){
@@ -55,12 +86,19 @@ function handlePbGoFiles(){
 }
 
 function generateByAllProto(){
-  # get all proto file paths
-  listProtoFiles $protoBasePath
+  getSpecifiedProtoFiles
+  if [ $? -eq 0 ]; then
+    listProtoFiles $protoBasePath
+  else
+    allProtoFiles=$specifiedProtoFilePaths
+  fi
+
   if [ "$allProtoFiles"x = x ];then
-    echo "Error: not found protobuf file in path $protoBasePath"
+    echo "Error: not found proto file in path $protoBasePath"
     exit 1
   fi
+  echo "generate *pb.go by proto files: $allProtoFiles"
+  echo ""
 
   # generate files *_pb.go
   protoc --proto_path=. --proto_path=./third_party \
@@ -68,14 +106,14 @@ function generateByAllProto(){
     $allProtoFiles
 
   checkResult $?
-
+  
   # generate files *_grpc_pb.go
   protoc --proto_path=. --proto_path=./third_party \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     $allProtoFiles
 
   checkResult $?
-
+  
 
   # generate the file *_pb.validate.go
   protoc --proto_path=. --proto_path=./third_party \
@@ -97,8 +135,25 @@ function generateBySpecifiedProto(){
   allProtoFiles=""
   listProtoFiles ${protoBasePath}/product
   cd ..
-  specifiedProtoFiles=$allProtoFiles
+  specifiedProtoFiles=""
+  getSpecifiedProtoFiles
+  if [ $? -eq 0 ]; then
+    specifiedProtoFiles=$allProtoFiles
+  else
+	  for v1 in $specifiedProtoFilePaths; do
+      for v2 in $allProtoFiles; do
+        if [ "$v1"x = "$v2"x ];then
+          specifiedProtoFiles="$specifiedProtoFiles $v1"
+        fi
+      done
+	  done
+  fi
 
+  if [ "$specifiedProtoFiles"x = x ];then
+    return
+  fi
+  echo "generate template code by proto files: $specifiedProtoFiles"
+  
   moduleName=$(cat docs/gen.info | head -1 | cut -d , -f 1)
   serverName=$(cat docs/gen.info | head -1 | cut -d , -f 2)
   # Generate 2 files, a logic code template file *.go (default save path in internal/service), a return error code template file *_rpc.go (default save path in internal/ecode)
@@ -109,6 +164,17 @@ function generateBySpecifiedProto(){
 
   checkResult $?
 
+  sponge merge rpc-pb
+  checkResult $?
+
+  colorCyan='\e[1;36m'
+  highBright='\e[1m'
+  markEnd='\e[0m'
+
+  echo ""
+  echo -e "${highBright}Tip:${markEnd} execute the command ${colorCyan}make run${markEnd} and then test rpc method is in the file ${colorCyan}internal/service/xxx_client_test.go${markEnd}."
+  echo ""
+  
 }
 
 # generate pb.go by all proto files
@@ -121,10 +187,14 @@ generateBySpecifiedProto
 handlePbGoFiles $protoBasePath
 
 # delete json tag omitempty
-sponge del-omitempty --dir=$protoBasePath --suffix-name=pb.go > /dev/null
-checkResult $?
+sponge patch del-omitempty --dir=$protoBasePath --suffix-name=pb.go > /dev/null
+
+# modify duplicate numbers and error codes
+sponge patch modify-dup-num --dir=internal/ecode
+sponge patch modify-dup-err-code --dir=internal/ecode
 
 go mod tidy
 checkResult $?
 
-echo "execute protoc command successfully."
+echo "generated code successfully."
+echo ""

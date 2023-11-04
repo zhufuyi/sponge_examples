@@ -1,3 +1,4 @@
+// Package model is the initial database driver and define the data structures corresponding to the tables.
 package model
 
 import (
@@ -7,6 +8,7 @@ import (
 	"user/internal/config"
 
 	"github.com/zhufuyi/sponge/pkg/goredis"
+	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/mysql"
 
 	"github.com/go-redis/redis/v8"
@@ -35,18 +37,30 @@ var (
 // InitMysql connect mysql
 func InitMysql() {
 	opts := []mysql.Option{
-		mysql.WithSlowThreshold(time.Duration(config.Get().Mysql.SlowThreshold) * time.Millisecond),
 		mysql.WithMaxIdleConns(config.Get().Mysql.MaxIdleConns),
 		mysql.WithMaxOpenConns(config.Get().Mysql.MaxOpenConns),
 		mysql.WithConnMaxLifetime(time.Duration(config.Get().Mysql.ConnMaxLifetime) * time.Minute),
 	}
 	if config.Get().Mysql.EnableLog {
-		opts = append(opts, mysql.WithLog())
+		opts = append(opts,
+			mysql.WithLogging(logger.Get()),
+			mysql.WithLogRequestIDKey("request_id"),
+		)
 	}
 
 	if config.Get().App.EnableTrace {
 		opts = append(opts, mysql.WithEnableTrace())
 	}
+
+	// setting mysql slave and master dsn addresses,
+	// if there is no read/write separation, you can comment out the following piece of code
+	opts = append(opts, mysql.WithRWSeparation(
+		config.Get().Mysql.SlavesDsn,
+		config.Get().Mysql.MastersDsn...,
+	))
+
+	// add custom gorm plugin
+	//opts = append(opts, mysql.WithGormPlugin(yourPlugin))
 
 	var err error
 	db, err = mysql.Init(config.Get().Mysql.Dsn, opts...)

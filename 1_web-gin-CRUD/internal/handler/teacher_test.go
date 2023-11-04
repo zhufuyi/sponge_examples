@@ -41,49 +41,56 @@ func newTeacherHandler() *gotest.Handler {
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
 	h.IHandler = &teacherHandler{iDao: d.IDao.(dao.TeacherDao)}
+	iHandler := h.IHandler.(TeacherHandler)
 
 	testFns := []gotest.RouterInfo{
 		{
 			FuncName:    "Create",
 			Method:      http.MethodPost,
 			Path:        "/teacher",
-			HandlerFunc: h.IHandler.(TeacherHandler).Create,
+			HandlerFunc: iHandler.Create,
 		},
 		{
 			FuncName:    "DeleteByID",
 			Method:      http.MethodDelete,
 			Path:        "/teacher/:id",
-			HandlerFunc: h.IHandler.(TeacherHandler).DeleteByID,
+			HandlerFunc: iHandler.DeleteByID,
 		},
 		{
 			FuncName:    "DeleteByIDs",
 			Method:      http.MethodPost,
 			Path:        "/teacher/delete/ids",
-			HandlerFunc: h.IHandler.(TeacherHandler).DeleteByIDs,
+			HandlerFunc: iHandler.DeleteByIDs,
 		},
 		{
 			FuncName:    "UpdateByID",
 			Method:      http.MethodPut,
 			Path:        "/teacher/:id",
-			HandlerFunc: h.IHandler.(TeacherHandler).UpdateByID,
+			HandlerFunc: iHandler.UpdateByID,
 		},
 		{
 			FuncName:    "GetByID",
 			Method:      http.MethodGet,
 			Path:        "/teacher/:id",
-			HandlerFunc: h.IHandler.(TeacherHandler).GetByID,
+			HandlerFunc: iHandler.GetByID,
+		},
+		{
+			FuncName:    "GetByCondition",
+			Method:      http.MethodPost,
+			Path:        "/teacher/condition",
+			HandlerFunc: iHandler.GetByCondition,
 		},
 		{
 			FuncName:    "ListByIDs",
 			Method:      http.MethodPost,
 			Path:        "/teacher/list/ids",
-			HandlerFunc: h.IHandler.(TeacherHandler).ListByIDs,
+			HandlerFunc: iHandler.ListByIDs,
 		},
 		{
 			FuncName:    "List",
 			Method:      http.MethodPost,
 			Path:        "/teacher/list",
-			HandlerFunc: h.IHandler.(TeacherHandler).List,
+			HandlerFunc: iHandler.List,
 		},
 	}
 
@@ -234,6 +241,52 @@ func Test_teacherHandler_GetByID(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func Test_teacherHandler_GetByCondition(t *testing.T) {
+	h := newTeacherHandler()
+	defer h.Close()
+	testData := h.TestData.(*model.Teacher)
+
+	rows := sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).
+		AddRow(testData.ID, testData.CreatedAt, testData.UpdatedAt)
+
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
+
+	result := &gohttp.StdResult{}
+	err := gohttp.Post(result, h.GetRequestURL("GetByCondition"), &types.GetTeacherByConditionRequest{
+		query.Conditions{
+			Columns: []query.Column{
+				{
+					Name:  "id",
+					Value: testData.ID,
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+
+	// zero error test
+	err = gohttp.Post(result, h.GetRequestURL("GetByCondition"), nil)
+	assert.NoError(t, err)
+
+	// get error test
+	err = gohttp.Post(result, h.GetRequestURL("GetByCondition"), &types.GetTeacherByConditionRequest{
+		query.Conditions{
+			Columns: []query.Column{
+				{
+					Name:  "id",
+					Value: 2,
+				},
+			},
+		},
+	})
+	assert.Error(t, err)
+}
+
 func Test_teacherHandler_ListByIDs(t *testing.T) {
 	h := newTeacherHandler()
 	defer h.Close()
@@ -245,7 +298,7 @@ func Test_teacherHandler_ListByIDs(t *testing.T) {
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
 
 	result := &gohttp.StdResult{}
-	err := gohttp.Post(result, h.GetRequestURL("ListByIDs"), &types.GetTeachersByIDsRequest{IDs: []uint64{testData.ID}})
+	err := gohttp.Post(result, h.GetRequestURL("ListByIDs"), &types.ListTeachersByIDsRequest{IDs: []uint64{testData.ID}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -254,11 +307,10 @@ func Test_teacherHandler_ListByIDs(t *testing.T) {
 	}
 
 	// zero id error test
-	err = gohttp.Post(result, h.GetRequestURL("ListByIDs"), nil)
-	assert.NoError(t, err)
+	_ = gohttp.Post(result, h.GetRequestURL("ListByIDs"), nil)
 
 	// get error test
-	err = gohttp.Post(result, h.GetRequestURL("ListByIDs"), &types.GetTeachersByIDsRequest{IDs: []uint64{111}})
+	err = gohttp.Post(result, h.GetRequestURL("ListByIDs"), &types.ListTeachersByIDsRequest{IDs: []uint64{111}})
 	assert.Error(t, err)
 }
 
@@ -273,7 +325,7 @@ func Test_teacherHandler_List(t *testing.T) {
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
 
 	result := &gohttp.StdResult{}
-	err := gohttp.Post(result, h.GetRequestURL("List"), &types.GetTeachersRequest{query.Params{
+	err := gohttp.Post(result, h.GetRequestURL("List"), &types.ListTeachersRequest{query.Params{
 		Page: 0,
 		Size: 10,
 		Sort: "ignore count", // ignore test count
@@ -289,7 +341,7 @@ func Test_teacherHandler_List(t *testing.T) {
 	err = gohttp.Post(result, h.GetRequestURL("List"), nil)
 
 	// get error test
-	err = gohttp.Post(result, h.GetRequestURL("List"), &types.GetTeachersRequest{query.Params{
+	err = gohttp.Post(result, h.GetRequestURL("List"), &types.ListTeachersRequest{query.Params{
 		Page: 0,
 		Size: 10,
 	}})

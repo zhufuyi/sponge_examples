@@ -18,302 +18,354 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// TeacherServiceClient is the client API for TeacherService service.
+// TeacherClient is the client API for Teacher service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TeacherServiceClient interface {
+type TeacherClient interface {
+	// create teacher
 	Create(ctx context.Context, in *CreateTeacherRequest, opts ...grpc.CallOption) (*CreateTeacherReply, error)
+	// delete teacher by id
 	DeleteByID(ctx context.Context, in *DeleteTeacherByIDRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDReply, error)
+	// delete teacher by batch id
 	DeleteByIDs(ctx context.Context, in *DeleteTeacherByIDsRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDsReply, error)
+	// update teacher by id
 	UpdateByID(ctx context.Context, in *UpdateTeacherByIDRequest, opts ...grpc.CallOption) (*UpdateTeacherByIDReply, error)
+	// get teacher by id
 	GetByID(ctx context.Context, in *GetTeacherByIDRequest, opts ...grpc.CallOption) (*GetTeacherByIDReply, error)
+	// get teacher by condition
+	GetByCondition(ctx context.Context, in *GetTeacherByConditionRequest, opts ...grpc.CallOption) (*GetTeacherByConditionReply, error)
+	// list of teacher by batch id
 	ListByIDs(ctx context.Context, in *ListTeacherByIDsRequest, opts ...grpc.CallOption) (*ListTeacherByIDsReply, error)
+	// list of teacher by query parameters
 	List(ctx context.Context, in *ListTeacherRequest, opts ...grpc.CallOption) (*ListTeacherReply, error)
 }
 
-type teacherServiceClient struct {
+type teacherClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTeacherServiceClient(cc grpc.ClientConnInterface) TeacherServiceClient {
-	return &teacherServiceClient{cc}
+func NewTeacherClient(cc grpc.ClientConnInterface) TeacherClient {
+	return &teacherClient{cc}
 }
 
-func (c *teacherServiceClient) Create(ctx context.Context, in *CreateTeacherRequest, opts ...grpc.CallOption) (*CreateTeacherReply, error) {
+func (c *teacherClient) Create(ctx context.Context, in *CreateTeacherRequest, opts ...grpc.CallOption) (*CreateTeacherReply, error) {
 	out := new(CreateTeacherReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) DeleteByID(ctx context.Context, in *DeleteTeacherByIDRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDReply, error) {
+func (c *teacherClient) DeleteByID(ctx context.Context, in *DeleteTeacherByIDRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDReply, error) {
 	out := new(DeleteTeacherByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/DeleteByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/DeleteByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) DeleteByIDs(ctx context.Context, in *DeleteTeacherByIDsRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDsReply, error) {
+func (c *teacherClient) DeleteByIDs(ctx context.Context, in *DeleteTeacherByIDsRequest, opts ...grpc.CallOption) (*DeleteTeacherByIDsReply, error) {
 	out := new(DeleteTeacherByIDsReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/DeleteByIDs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/DeleteByIDs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) UpdateByID(ctx context.Context, in *UpdateTeacherByIDRequest, opts ...grpc.CallOption) (*UpdateTeacherByIDReply, error) {
+func (c *teacherClient) UpdateByID(ctx context.Context, in *UpdateTeacherByIDRequest, opts ...grpc.CallOption) (*UpdateTeacherByIDReply, error) {
 	out := new(UpdateTeacherByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/UpdateByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/UpdateByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) GetByID(ctx context.Context, in *GetTeacherByIDRequest, opts ...grpc.CallOption) (*GetTeacherByIDReply, error) {
+func (c *teacherClient) GetByID(ctx context.Context, in *GetTeacherByIDRequest, opts ...grpc.CallOption) (*GetTeacherByIDReply, error) {
 	out := new(GetTeacherByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/GetByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/GetByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) ListByIDs(ctx context.Context, in *ListTeacherByIDsRequest, opts ...grpc.CallOption) (*ListTeacherByIDsReply, error) {
+func (c *teacherClient) GetByCondition(ctx context.Context, in *GetTeacherByConditionRequest, opts ...grpc.CallOption) (*GetTeacherByConditionReply, error) {
+	out := new(GetTeacherByConditionReply)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/GetByCondition", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teacherClient) ListByIDs(ctx context.Context, in *ListTeacherByIDsRequest, opts ...grpc.CallOption) (*ListTeacherByIDsReply, error) {
 	out := new(ListTeacherByIDsReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/ListByIDs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/ListByIDs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teacherServiceClient) List(ctx context.Context, in *ListTeacherRequest, opts ...grpc.CallOption) (*ListTeacherReply, error) {
+func (c *teacherClient) List(ctx context.Context, in *ListTeacherRequest, opts ...grpc.CallOption) (*ListTeacherReply, error) {
 	out := new(ListTeacherReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teacherService/List", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teacher/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TeacherServiceServer is the server API for TeacherService service.
-// All implementations must embed UnimplementedTeacherServiceServer
+// TeacherServer is the server API for Teacher service.
+// All implementations must embed UnimplementedTeacherServer
 // for forward compatibility
-type TeacherServiceServer interface {
+type TeacherServer interface {
+	// create teacher
 	Create(context.Context, *CreateTeacherRequest) (*CreateTeacherReply, error)
+	// delete teacher by id
 	DeleteByID(context.Context, *DeleteTeacherByIDRequest) (*DeleteTeacherByIDReply, error)
+	// delete teacher by batch id
 	DeleteByIDs(context.Context, *DeleteTeacherByIDsRequest) (*DeleteTeacherByIDsReply, error)
+	// update teacher by id
 	UpdateByID(context.Context, *UpdateTeacherByIDRequest) (*UpdateTeacherByIDReply, error)
+	// get teacher by id
 	GetByID(context.Context, *GetTeacherByIDRequest) (*GetTeacherByIDReply, error)
+	// get teacher by condition
+	GetByCondition(context.Context, *GetTeacherByConditionRequest) (*GetTeacherByConditionReply, error)
+	// list of teacher by batch id
 	ListByIDs(context.Context, *ListTeacherByIDsRequest) (*ListTeacherByIDsReply, error)
+	// list of teacher by query parameters
 	List(context.Context, *ListTeacherRequest) (*ListTeacherReply, error)
-	mustEmbedUnimplementedTeacherServiceServer()
+	mustEmbedUnimplementedTeacherServer()
 }
 
-// UnimplementedTeacherServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedTeacherServiceServer struct {
+// UnimplementedTeacherServer must be embedded to have forward compatible implementations.
+type UnimplementedTeacherServer struct {
 }
 
-func (UnimplementedTeacherServiceServer) Create(context.Context, *CreateTeacherRequest) (*CreateTeacherReply, error) {
+func (UnimplementedTeacherServer) Create(context.Context, *CreateTeacherRequest) (*CreateTeacherReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedTeacherServiceServer) DeleteByID(context.Context, *DeleteTeacherByIDRequest) (*DeleteTeacherByIDReply, error) {
+func (UnimplementedTeacherServer) DeleteByID(context.Context, *DeleteTeacherByIDRequest) (*DeleteTeacherByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByID not implemented")
 }
-func (UnimplementedTeacherServiceServer) DeleteByIDs(context.Context, *DeleteTeacherByIDsRequest) (*DeleteTeacherByIDsReply, error) {
+func (UnimplementedTeacherServer) DeleteByIDs(context.Context, *DeleteTeacherByIDsRequest) (*DeleteTeacherByIDsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByIDs not implemented")
 }
-func (UnimplementedTeacherServiceServer) UpdateByID(context.Context, *UpdateTeacherByIDRequest) (*UpdateTeacherByIDReply, error) {
+func (UnimplementedTeacherServer) UpdateByID(context.Context, *UpdateTeacherByIDRequest) (*UpdateTeacherByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateByID not implemented")
 }
-func (UnimplementedTeacherServiceServer) GetByID(context.Context, *GetTeacherByIDRequest) (*GetTeacherByIDReply, error) {
+func (UnimplementedTeacherServer) GetByID(context.Context, *GetTeacherByIDRequest) (*GetTeacherByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByID not implemented")
 }
-func (UnimplementedTeacherServiceServer) ListByIDs(context.Context, *ListTeacherByIDsRequest) (*ListTeacherByIDsReply, error) {
+func (UnimplementedTeacherServer) GetByCondition(context.Context, *GetTeacherByConditionRequest) (*GetTeacherByConditionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByCondition not implemented")
+}
+func (UnimplementedTeacherServer) ListByIDs(context.Context, *ListTeacherByIDsRequest) (*ListTeacherByIDsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListByIDs not implemented")
 }
-func (UnimplementedTeacherServiceServer) List(context.Context, *ListTeacherRequest) (*ListTeacherReply, error) {
+func (UnimplementedTeacherServer) List(context.Context, *ListTeacherRequest) (*ListTeacherReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedTeacherServiceServer) mustEmbedUnimplementedTeacherServiceServer() {}
+func (UnimplementedTeacherServer) mustEmbedUnimplementedTeacherServer() {}
 
-// UnsafeTeacherServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TeacherServiceServer will
+// UnsafeTeacherServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TeacherServer will
 // result in compilation errors.
-type UnsafeTeacherServiceServer interface {
-	mustEmbedUnimplementedTeacherServiceServer()
+type UnsafeTeacherServer interface {
+	mustEmbedUnimplementedTeacherServer()
 }
 
-func RegisterTeacherServiceServer(s grpc.ServiceRegistrar, srv TeacherServiceServer) {
-	s.RegisterService(&TeacherService_ServiceDesc, srv)
+func RegisterTeacherServer(s grpc.ServiceRegistrar, srv TeacherServer) {
+	s.RegisterService(&Teacher_ServiceDesc, srv)
 }
 
-func _TeacherService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTeacherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).Create(ctx, in)
+		return srv.(TeacherServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/Create",
+		FullMethod: "/api.user.v1.teacher/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).Create(ctx, req.(*CreateTeacherRequest))
+		return srv.(TeacherServer).Create(ctx, req.(*CreateTeacherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_DeleteByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_DeleteByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTeacherByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).DeleteByID(ctx, in)
+		return srv.(TeacherServer).DeleteByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/DeleteByID",
+		FullMethod: "/api.user.v1.teacher/DeleteByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).DeleteByID(ctx, req.(*DeleteTeacherByIDRequest))
+		return srv.(TeacherServer).DeleteByID(ctx, req.(*DeleteTeacherByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_DeleteByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_DeleteByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTeacherByIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).DeleteByIDs(ctx, in)
+		return srv.(TeacherServer).DeleteByIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/DeleteByIDs",
+		FullMethod: "/api.user.v1.teacher/DeleteByIDs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).DeleteByIDs(ctx, req.(*DeleteTeacherByIDsRequest))
+		return srv.(TeacherServer).DeleteByIDs(ctx, req.(*DeleteTeacherByIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_UpdateByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_UpdateByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTeacherByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).UpdateByID(ctx, in)
+		return srv.(TeacherServer).UpdateByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/UpdateByID",
+		FullMethod: "/api.user.v1.teacher/UpdateByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).UpdateByID(ctx, req.(*UpdateTeacherByIDRequest))
+		return srv.(TeacherServer).UpdateByID(ctx, req.(*UpdateTeacherByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_GetByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_GetByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTeacherByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).GetByID(ctx, in)
+		return srv.(TeacherServer).GetByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/GetByID",
+		FullMethod: "/api.user.v1.teacher/GetByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).GetByID(ctx, req.(*GetTeacherByIDRequest))
+		return srv.(TeacherServer).GetByID(ctx, req.(*GetTeacherByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_ListByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_GetByCondition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTeacherByConditionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TeacherServer).GetByCondition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.user.v1.teacher/GetByCondition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TeacherServer).GetByCondition(ctx, req.(*GetTeacherByConditionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Teacher_ListByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTeacherByIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).ListByIDs(ctx, in)
+		return srv.(TeacherServer).ListByIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/ListByIDs",
+		FullMethod: "/api.user.v1.teacher/ListByIDs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).ListByIDs(ctx, req.(*ListTeacherByIDsRequest))
+		return srv.(TeacherServer).ListByIDs(ctx, req.(*ListTeacherByIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeacherService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teacher_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTeacherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeacherServiceServer).List(ctx, in)
+		return srv.(TeacherServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teacherService/List",
+		FullMethod: "/api.user.v1.teacher/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeacherServiceServer).List(ctx, req.(*ListTeacherRequest))
+		return srv.(TeacherServer).List(ctx, req.(*ListTeacherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TeacherService_ServiceDesc is the grpc.ServiceDesc for TeacherService service.
+// Teacher_ServiceDesc is the grpc.ServiceDesc for Teacher service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TeacherService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.user.v1.teacherService",
-	HandlerType: (*TeacherServiceServer)(nil),
+var Teacher_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.user.v1.teacher",
+	HandlerType: (*TeacherServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Create",
-			Handler:    _TeacherService_Create_Handler,
+			Handler:    _Teacher_Create_Handler,
 		},
 		{
 			MethodName: "DeleteByID",
-			Handler:    _TeacherService_DeleteByID_Handler,
+			Handler:    _Teacher_DeleteByID_Handler,
 		},
 		{
 			MethodName: "DeleteByIDs",
-			Handler:    _TeacherService_DeleteByIDs_Handler,
+			Handler:    _Teacher_DeleteByIDs_Handler,
 		},
 		{
 			MethodName: "UpdateByID",
-			Handler:    _TeacherService_UpdateByID_Handler,
+			Handler:    _Teacher_UpdateByID_Handler,
 		},
 		{
 			MethodName: "GetByID",
-			Handler:    _TeacherService_GetByID_Handler,
+			Handler:    _Teacher_GetByID_Handler,
+		},
+		{
+			MethodName: "GetByCondition",
+			Handler:    _Teacher_GetByCondition_Handler,
 		},
 		{
 			MethodName: "ListByIDs",
-			Handler:    _TeacherService_ListByIDs_Handler,
+			Handler:    _Teacher_ListByIDs_Handler,
 		},
 		{
 			MethodName: "List",
-			Handler:    _TeacherService_List_Handler,
+			Handler:    _Teacher_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

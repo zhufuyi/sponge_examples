@@ -18,302 +18,354 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// TeachServiceClient is the client API for TeachService service.
+// TeachClient is the client API for Teach service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TeachServiceClient interface {
+type TeachClient interface {
+	// create teach
 	Create(ctx context.Context, in *CreateTeachRequest, opts ...grpc.CallOption) (*CreateTeachReply, error)
+	// delete teach by id
 	DeleteByID(ctx context.Context, in *DeleteTeachByIDRequest, opts ...grpc.CallOption) (*DeleteTeachByIDReply, error)
+	// delete teach by batch id
 	DeleteByIDs(ctx context.Context, in *DeleteTeachByIDsRequest, opts ...grpc.CallOption) (*DeleteTeachByIDsReply, error)
+	// update teach by id
 	UpdateByID(ctx context.Context, in *UpdateTeachByIDRequest, opts ...grpc.CallOption) (*UpdateTeachByIDReply, error)
+	// get teach by id
 	GetByID(ctx context.Context, in *GetTeachByIDRequest, opts ...grpc.CallOption) (*GetTeachByIDReply, error)
+	// get teach by condition
+	GetByCondition(ctx context.Context, in *GetTeachByConditionRequest, opts ...grpc.CallOption) (*GetTeachByConditionReply, error)
+	// list of teach by batch id
 	ListByIDs(ctx context.Context, in *ListTeachByIDsRequest, opts ...grpc.CallOption) (*ListTeachByIDsReply, error)
+	// list of teach by query parameters
 	List(ctx context.Context, in *ListTeachRequest, opts ...grpc.CallOption) (*ListTeachReply, error)
 }
 
-type teachServiceClient struct {
+type teachClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTeachServiceClient(cc grpc.ClientConnInterface) TeachServiceClient {
-	return &teachServiceClient{cc}
+func NewTeachClient(cc grpc.ClientConnInterface) TeachClient {
+	return &teachClient{cc}
 }
 
-func (c *teachServiceClient) Create(ctx context.Context, in *CreateTeachRequest, opts ...grpc.CallOption) (*CreateTeachReply, error) {
+func (c *teachClient) Create(ctx context.Context, in *CreateTeachRequest, opts ...grpc.CallOption) (*CreateTeachReply, error) {
 	out := new(CreateTeachReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) DeleteByID(ctx context.Context, in *DeleteTeachByIDRequest, opts ...grpc.CallOption) (*DeleteTeachByIDReply, error) {
+func (c *teachClient) DeleteByID(ctx context.Context, in *DeleteTeachByIDRequest, opts ...grpc.CallOption) (*DeleteTeachByIDReply, error) {
 	out := new(DeleteTeachByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/DeleteByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/DeleteByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) DeleteByIDs(ctx context.Context, in *DeleteTeachByIDsRequest, opts ...grpc.CallOption) (*DeleteTeachByIDsReply, error) {
+func (c *teachClient) DeleteByIDs(ctx context.Context, in *DeleteTeachByIDsRequest, opts ...grpc.CallOption) (*DeleteTeachByIDsReply, error) {
 	out := new(DeleteTeachByIDsReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/DeleteByIDs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/DeleteByIDs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) UpdateByID(ctx context.Context, in *UpdateTeachByIDRequest, opts ...grpc.CallOption) (*UpdateTeachByIDReply, error) {
+func (c *teachClient) UpdateByID(ctx context.Context, in *UpdateTeachByIDRequest, opts ...grpc.CallOption) (*UpdateTeachByIDReply, error) {
 	out := new(UpdateTeachByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/UpdateByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/UpdateByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) GetByID(ctx context.Context, in *GetTeachByIDRequest, opts ...grpc.CallOption) (*GetTeachByIDReply, error) {
+func (c *teachClient) GetByID(ctx context.Context, in *GetTeachByIDRequest, opts ...grpc.CallOption) (*GetTeachByIDReply, error) {
 	out := new(GetTeachByIDReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/GetByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/GetByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) ListByIDs(ctx context.Context, in *ListTeachByIDsRequest, opts ...grpc.CallOption) (*ListTeachByIDsReply, error) {
+func (c *teachClient) GetByCondition(ctx context.Context, in *GetTeachByConditionRequest, opts ...grpc.CallOption) (*GetTeachByConditionReply, error) {
+	out := new(GetTeachByConditionReply)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/GetByCondition", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teachClient) ListByIDs(ctx context.Context, in *ListTeachByIDsRequest, opts ...grpc.CallOption) (*ListTeachByIDsReply, error) {
 	out := new(ListTeachByIDsReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/ListByIDs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/ListByIDs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teachServiceClient) List(ctx context.Context, in *ListTeachRequest, opts ...grpc.CallOption) (*ListTeachReply, error) {
+func (c *teachClient) List(ctx context.Context, in *ListTeachRequest, opts ...grpc.CallOption) (*ListTeachReply, error) {
 	out := new(ListTeachReply)
-	err := c.cc.Invoke(ctx, "/api.user.v1.teachService/List", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.user.v1.teach/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TeachServiceServer is the server API for TeachService service.
-// All implementations must embed UnimplementedTeachServiceServer
+// TeachServer is the server API for Teach service.
+// All implementations must embed UnimplementedTeachServer
 // for forward compatibility
-type TeachServiceServer interface {
+type TeachServer interface {
+	// create teach
 	Create(context.Context, *CreateTeachRequest) (*CreateTeachReply, error)
+	// delete teach by id
 	DeleteByID(context.Context, *DeleteTeachByIDRequest) (*DeleteTeachByIDReply, error)
+	// delete teach by batch id
 	DeleteByIDs(context.Context, *DeleteTeachByIDsRequest) (*DeleteTeachByIDsReply, error)
+	// update teach by id
 	UpdateByID(context.Context, *UpdateTeachByIDRequest) (*UpdateTeachByIDReply, error)
+	// get teach by id
 	GetByID(context.Context, *GetTeachByIDRequest) (*GetTeachByIDReply, error)
+	// get teach by condition
+	GetByCondition(context.Context, *GetTeachByConditionRequest) (*GetTeachByConditionReply, error)
+	// list of teach by batch id
 	ListByIDs(context.Context, *ListTeachByIDsRequest) (*ListTeachByIDsReply, error)
+	// list of teach by query parameters
 	List(context.Context, *ListTeachRequest) (*ListTeachReply, error)
-	mustEmbedUnimplementedTeachServiceServer()
+	mustEmbedUnimplementedTeachServer()
 }
 
-// UnimplementedTeachServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedTeachServiceServer struct {
+// UnimplementedTeachServer must be embedded to have forward compatible implementations.
+type UnimplementedTeachServer struct {
 }
 
-func (UnimplementedTeachServiceServer) Create(context.Context, *CreateTeachRequest) (*CreateTeachReply, error) {
+func (UnimplementedTeachServer) Create(context.Context, *CreateTeachRequest) (*CreateTeachReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedTeachServiceServer) DeleteByID(context.Context, *DeleteTeachByIDRequest) (*DeleteTeachByIDReply, error) {
+func (UnimplementedTeachServer) DeleteByID(context.Context, *DeleteTeachByIDRequest) (*DeleteTeachByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByID not implemented")
 }
-func (UnimplementedTeachServiceServer) DeleteByIDs(context.Context, *DeleteTeachByIDsRequest) (*DeleteTeachByIDsReply, error) {
+func (UnimplementedTeachServer) DeleteByIDs(context.Context, *DeleteTeachByIDsRequest) (*DeleteTeachByIDsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByIDs not implemented")
 }
-func (UnimplementedTeachServiceServer) UpdateByID(context.Context, *UpdateTeachByIDRequest) (*UpdateTeachByIDReply, error) {
+func (UnimplementedTeachServer) UpdateByID(context.Context, *UpdateTeachByIDRequest) (*UpdateTeachByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateByID not implemented")
 }
-func (UnimplementedTeachServiceServer) GetByID(context.Context, *GetTeachByIDRequest) (*GetTeachByIDReply, error) {
+func (UnimplementedTeachServer) GetByID(context.Context, *GetTeachByIDRequest) (*GetTeachByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByID not implemented")
 }
-func (UnimplementedTeachServiceServer) ListByIDs(context.Context, *ListTeachByIDsRequest) (*ListTeachByIDsReply, error) {
+func (UnimplementedTeachServer) GetByCondition(context.Context, *GetTeachByConditionRequest) (*GetTeachByConditionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByCondition not implemented")
+}
+func (UnimplementedTeachServer) ListByIDs(context.Context, *ListTeachByIDsRequest) (*ListTeachByIDsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListByIDs not implemented")
 }
-func (UnimplementedTeachServiceServer) List(context.Context, *ListTeachRequest) (*ListTeachReply, error) {
+func (UnimplementedTeachServer) List(context.Context, *ListTeachRequest) (*ListTeachReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedTeachServiceServer) mustEmbedUnimplementedTeachServiceServer() {}
+func (UnimplementedTeachServer) mustEmbedUnimplementedTeachServer() {}
 
-// UnsafeTeachServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TeachServiceServer will
+// UnsafeTeachServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TeachServer will
 // result in compilation errors.
-type UnsafeTeachServiceServer interface {
-	mustEmbedUnimplementedTeachServiceServer()
+type UnsafeTeachServer interface {
+	mustEmbedUnimplementedTeachServer()
 }
 
-func RegisterTeachServiceServer(s grpc.ServiceRegistrar, srv TeachServiceServer) {
-	s.RegisterService(&TeachService_ServiceDesc, srv)
+func RegisterTeachServer(s grpc.ServiceRegistrar, srv TeachServer) {
+	s.RegisterService(&Teach_ServiceDesc, srv)
 }
 
-func _TeachService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTeachRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).Create(ctx, in)
+		return srv.(TeachServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/Create",
+		FullMethod: "/api.user.v1.teach/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).Create(ctx, req.(*CreateTeachRequest))
+		return srv.(TeachServer).Create(ctx, req.(*CreateTeachRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_DeleteByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_DeleteByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTeachByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).DeleteByID(ctx, in)
+		return srv.(TeachServer).DeleteByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/DeleteByID",
+		FullMethod: "/api.user.v1.teach/DeleteByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).DeleteByID(ctx, req.(*DeleteTeachByIDRequest))
+		return srv.(TeachServer).DeleteByID(ctx, req.(*DeleteTeachByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_DeleteByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_DeleteByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTeachByIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).DeleteByIDs(ctx, in)
+		return srv.(TeachServer).DeleteByIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/DeleteByIDs",
+		FullMethod: "/api.user.v1.teach/DeleteByIDs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).DeleteByIDs(ctx, req.(*DeleteTeachByIDsRequest))
+		return srv.(TeachServer).DeleteByIDs(ctx, req.(*DeleteTeachByIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_UpdateByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_UpdateByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTeachByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).UpdateByID(ctx, in)
+		return srv.(TeachServer).UpdateByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/UpdateByID",
+		FullMethod: "/api.user.v1.teach/UpdateByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).UpdateByID(ctx, req.(*UpdateTeachByIDRequest))
+		return srv.(TeachServer).UpdateByID(ctx, req.(*UpdateTeachByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_GetByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_GetByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTeachByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).GetByID(ctx, in)
+		return srv.(TeachServer).GetByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/GetByID",
+		FullMethod: "/api.user.v1.teach/GetByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).GetByID(ctx, req.(*GetTeachByIDRequest))
+		return srv.(TeachServer).GetByID(ctx, req.(*GetTeachByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_ListByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_GetByCondition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTeachByConditionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TeachServer).GetByCondition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.user.v1.teach/GetByCondition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TeachServer).GetByCondition(ctx, req.(*GetTeachByConditionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Teach_ListByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTeachByIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).ListByIDs(ctx, in)
+		return srv.(TeachServer).ListByIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/ListByIDs",
+		FullMethod: "/api.user.v1.teach/ListByIDs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).ListByIDs(ctx, req.(*ListTeachByIDsRequest))
+		return srv.(TeachServer).ListByIDs(ctx, req.(*ListTeachByIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Teach_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTeachRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachServiceServer).List(ctx, in)
+		return srv.(TeachServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.user.v1.teachService/List",
+		FullMethod: "/api.user.v1.teach/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachServiceServer).List(ctx, req.(*ListTeachRequest))
+		return srv.(TeachServer).List(ctx, req.(*ListTeachRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TeachService_ServiceDesc is the grpc.ServiceDesc for TeachService service.
+// Teach_ServiceDesc is the grpc.ServiceDesc for Teach service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TeachService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.user.v1.teachService",
-	HandlerType: (*TeachServiceServer)(nil),
+var Teach_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.user.v1.teach",
+	HandlerType: (*TeachServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Create",
-			Handler:    _TeachService_Create_Handler,
+			Handler:    _Teach_Create_Handler,
 		},
 		{
 			MethodName: "DeleteByID",
-			Handler:    _TeachService_DeleteByID_Handler,
+			Handler:    _Teach_DeleteByID_Handler,
 		},
 		{
 			MethodName: "DeleteByIDs",
-			Handler:    _TeachService_DeleteByIDs_Handler,
+			Handler:    _Teach_DeleteByIDs_Handler,
 		},
 		{
 			MethodName: "UpdateByID",
-			Handler:    _TeachService_UpdateByID_Handler,
+			Handler:    _Teach_UpdateByID_Handler,
 		},
 		{
 			MethodName: "GetByID",
-			Handler:    _TeachService_GetByID_Handler,
+			Handler:    _Teach_GetByID_Handler,
+		},
+		{
+			MethodName: "GetByCondition",
+			Handler:    _Teach_GetByCondition_Handler,
 		},
 		{
 			MethodName: "ListByIDs",
-			Handler:    _TeachService_ListByIDs_Handler,
+			Handler:    _Teach_ListByIDs_Handler,
 		},
 		{
 			MethodName: "List",
-			Handler:    _TeachService_List_Handler,
+			Handler:    _Teach_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

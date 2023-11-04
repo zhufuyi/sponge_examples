@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: shop-gw
-          image: /eshop.shop-gw:latest
+          image: /eshop/shop-gw:latest
           # If using a local image, use Never, default is Always
           #imagePullPolicy: Never
           command: ["./shop_gw", "-c", "/app/configs/shop_gw.yml"]

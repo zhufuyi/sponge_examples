@@ -165,7 +165,7 @@ func (r *userRouter) Register_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Register(ctx, req)
@@ -191,7 +191,7 @@ func (r *userRouter) Login_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Login(ctx, req)
@@ -217,7 +217,7 @@ func (r *userRouter) Logout_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Logout(ctx, req)

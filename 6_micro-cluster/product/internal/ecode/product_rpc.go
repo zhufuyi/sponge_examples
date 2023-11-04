@@ -6,12 +6,14 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// product rpc service level error code
+// product business-level rpc error codes.
+// the _productNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_productNO       = 11 // number range 1~100, if there is the same number, trigger panic.
+	_productNO       = 12
 	_productName     = "product"
-	_productBaseCode = errcode.HCode(_productNO)
+	_productBaseCode = errcode.RCode(_productNO)
 
-	StatusGetByIDProduct = errcode.NewError(_productBaseCode+1, "failed to GetByID "+_productName)
-	// add +1 to the previous error code
+	StatusGetByIDProduct   = errcode.NewRPCStatus(_productBaseCode+1, "failed to GetByID "+_productName)
+	// error codes are globally unique, adding 1 to the previous error code
 )
+

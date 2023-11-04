@@ -161,7 +161,7 @@ func (r *shopGwRouter) GetDetailsByProductID_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.GetDetailsByProductID(ctx, req)

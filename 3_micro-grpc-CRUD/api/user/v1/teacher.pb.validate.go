@@ -1268,6 +1268,269 @@ var _ interface {
 	ErrorName() string
 } = GetTeacherByIDReplyValidationError{}
 
+// Validate checks the field values on GetTeacherByConditionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTeacherByConditionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTeacherByConditionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTeacherByConditionRequestMultiError, or nil if none found.
+func (m *GetTeacherByConditionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTeacherByConditionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetConditions()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetTeacherByConditionRequestValidationError{
+					field:  "Conditions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetTeacherByConditionRequestValidationError{
+					field:  "Conditions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetConditions()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetTeacherByConditionRequestValidationError{
+				field:  "Conditions",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetTeacherByConditionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTeacherByConditionRequestMultiError is an error wrapping multiple
+// validation errors returned by GetTeacherByConditionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetTeacherByConditionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTeacherByConditionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTeacherByConditionRequestMultiError) AllErrors() []error { return m }
+
+// GetTeacherByConditionRequestValidationError is the validation error returned
+// by GetTeacherByConditionRequest.Validate if the designated constraints
+// aren't met.
+type GetTeacherByConditionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTeacherByConditionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTeacherByConditionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTeacherByConditionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTeacherByConditionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTeacherByConditionRequestValidationError) ErrorName() string {
+	return "GetTeacherByConditionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTeacherByConditionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTeacherByConditionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTeacherByConditionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTeacherByConditionRequestValidationError{}
+
+// Validate checks the field values on GetTeacherByConditionReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTeacherByConditionReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTeacherByConditionReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTeacherByConditionReplyMultiError, or nil if none found.
+func (m *GetTeacherByConditionReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTeacherByConditionReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTeacher()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetTeacherByConditionReplyValidationError{
+					field:  "Teacher",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetTeacherByConditionReplyValidationError{
+					field:  "Teacher",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTeacher()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetTeacherByConditionReplyValidationError{
+				field:  "Teacher",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetTeacherByConditionReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTeacherByConditionReplyMultiError is an error wrapping multiple
+// validation errors returned by GetTeacherByConditionReply.ValidateAll() if
+// the designated constraints aren't met.
+type GetTeacherByConditionReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTeacherByConditionReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTeacherByConditionReplyMultiError) AllErrors() []error { return m }
+
+// GetTeacherByConditionReplyValidationError is the validation error returned
+// by GetTeacherByConditionReply.Validate if the designated constraints aren't met.
+type GetTeacherByConditionReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTeacherByConditionReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTeacherByConditionReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTeacherByConditionReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTeacherByConditionReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTeacherByConditionReplyValidationError) ErrorName() string {
+	return "GetTeacherByConditionReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTeacherByConditionReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTeacherByConditionReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTeacherByConditionReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTeacherByConditionReplyValidationError{}
+
 // Validate checks the field values on ListTeacherByIDsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

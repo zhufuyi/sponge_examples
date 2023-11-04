@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: user
-          image: /edusys.user:latest
+          image: /edusys/user:latest
           # If using a local image, use Never, default is Always
           #imagePullPolicy: Never
           command: ["./user", "-c", "/app/configs/user.yml"]

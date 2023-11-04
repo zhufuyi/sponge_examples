@@ -26,6 +26,7 @@ type CourseDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.Course) error
 	GetByID(ctx context.Context, id uint64) (*model.Course, error)
+	GetByCondition(ctx context.Context, condition *query.Conditions) (*model.Course, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Course, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Course, int64, error)
 
@@ -41,8 +42,12 @@ type courseDao struct {
 }
 
 // NewCourseDao creating the dao interface
-func NewCourseDao(db *gorm.DB, cache cache.CourseCache) CourseDao {
-	return &courseDao{db: db, cache: cache, sfg: new(singleflight.Group)}
+func NewCourseDao(db *gorm.DB, xCache cache.CourseCache) CourseDao {
+	return &courseDao{
+		db:    db,
+		cache: xCache,
+		sfg:   new(singleflight.Group),
+	}
 }
 
 // Create a record, insert the record and the id value is written back to the table
@@ -82,7 +87,7 @@ func (d *courseDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 
 // UpdateByID update a record by id
 func (d *courseDao) UpdateByID(ctx context.Context, table *model.Course) error {
-	err := d.updateByID(ctx, d.db, table)
+	err := d.updateDataByID(ctx, d.db, table)
 
 	// delete cache
 	_ = d.cache.Del(ctx, table.ID)
@@ -90,7 +95,7 @@ func (d *courseDao) UpdateByID(ctx context.Context, table *model.Course) error {
 	return err
 }
 
-func (d *courseDao) updateByID(ctx context.Context, db *gorm.DB, table *model.Course) error {
+func (d *courseDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.Course) error {
 	if table.ID < 1 {
 		return errors.New("id cannot be 0")
 	}
@@ -168,6 +173,42 @@ func (d *courseDao) GetByID(ctx context.Context, id uint64) (*model.Course, erro
 	return nil, err
 }
 
+// GetByCondition get a record by condition
+// query conditions:
+//
+//	name: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
+//	logic: logical type, defaults to and when value is null, only &(and), ||(or)
+//
+// example: find a male aged 20
+//
+//	condition = &query.Conditions{
+//	    Columns: []query.Column{
+//		{
+//			Name:    "age",
+//			Value:   20,
+//		},
+//		{
+//			Name:  "gender",
+//			Value: "male",
+//		},
+//	}
+func (d *courseDao) GetByCondition(ctx context.Context, c *query.Conditions) (*model.Course, error) {
+	queryStr, args, err := c.ConvertToGorm()
+	if err != nil {
+		return nil, err
+	}
+
+	table := &model.Course{}
+	err = d.db.WithContext(ctx).Where(queryStr, args...).First(table).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}
+
 // GetByIDs list of records by batch id
 func (d *courseDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Course, error) {
 	itemMap, err := d.cache.MultiGet(ctx, ids)
@@ -192,9 +233,8 @@ func (d *courseDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*mod
 			_, err = d.cache.Get(ctx, id)
 			if errors.Is(err, cacheBase.ErrPlaceholder) {
 				continue
-			} else {
-				realMissedIDs = append(realMissedIDs, id)
 			}
+			realMissedIDs = append(realMissedIDs, id)
 		}
 
 		if len(realMissedIDs) > 0 {
@@ -224,9 +264,7 @@ func (d *courseDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*mod
 }
 
 // GetByColumns get records by paging and column information,
-// Note: suitable for scenarios where the number of rows in the table is not very large,
-//
-//	performance is lower if the data table is large because of the use of offset.
+// Note: query performance degrades when table rows are very large because of the use of offset.
 //
 // params includes paging parameters and query parameters
 // paging parameters (required):
@@ -238,8 +276,8 @@ func (d *courseDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*mod
 // query parameters (not required):
 //
 //	name: column name
-//	exp: expressions, which default to = when the value is null, have =, ! =, >, >=, <, <=, like
-//	value: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
 //	logic: logical type, defaults to and when value is null, only &(and), ||(or)
 //
 // example: search for a male over 20 years of age
@@ -309,7 +347,7 @@ func (d *courseDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) erro
 
 // UpdateByTx update a record by id in the database using the provided transaction
 func (d *courseDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Course) error {
-	err := d.updateByID(ctx, tx, table)
+	err := d.updateDataByID(ctx, tx, table)
 
 	// delete cache
 	_ = d.cache.Del(ctx, table.ID)

@@ -13,11 +13,13 @@ func init() {
 }
 
 func teacherRouter(group *gin.RouterGroup, h handler.TeacherHandler) {
+	//group.Use(middleware.Auth()) // all of the following routes use jwt authentication
 	group.POST("/teacher", h.Create)
 	group.DELETE("/teacher/:id", h.DeleteByID)
 	group.POST("/teacher/delete/ids", h.DeleteByIDs)
 	group.PUT("/teacher/:id", h.UpdateByID)
 	group.GET("/teacher/:id", h.GetByID)
+	group.POST("/teacher/condition", h.GetByCondition)
 	group.POST("/teacher/list/ids", h.ListByIDs)
 	group.POST("/teacher/list", h.List)
 }

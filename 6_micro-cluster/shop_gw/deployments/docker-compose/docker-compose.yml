@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   shop-gw:
-    image: eshop.shop-gw:latest
+    image: eshop/shop-gw:latest
     container_name: shop-gw
     restart: always
     command: ["./shop_gw", "-c", "/app/configs/shop_gw.yml"]

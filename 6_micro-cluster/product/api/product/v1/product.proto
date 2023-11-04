@@ -4,7 +4,7 @@ package api.product.v1;
 
 import "validate/validate.proto";
 
-option go_package = "shopgw/api/product/v1;v1";
+option go_package = "product/api/product/v1;v1";
 
 service Product {
   // get product by id

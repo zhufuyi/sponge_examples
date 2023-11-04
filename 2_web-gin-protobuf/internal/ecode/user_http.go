@@ -6,14 +6,15 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// user http service level error code
+// user business-level http error codes.
+// the userNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	userNO       = 1 // number range 1~100, if there is the same number, trigger panic.
+	userNO       = 36
 	userName     = "user"
 	userBaseCode = errcode.HCode(userNO)
 
 	ErrRegisterUser = errcode.NewError(userBaseCode+1, "failed to Register "+userName)
 	ErrLoginUser    = errcode.NewError(userBaseCode+2, "failed to Login "+userName)
 	ErrLogoutUser   = errcode.NewError(userBaseCode+3, "failed to Logout "+userName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

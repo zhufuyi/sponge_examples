@@ -3,24 +3,7 @@ SHELL := /bin/bash
 PROJECT_NAME := "comment"
 PKG := "$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/ | grep -v /api/)
-#GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
-
-.PHONY: install
-# installation of dependent tools
-install:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/envoyproxy/protoc-gen-validate@latest
-	go install github.com/srikrsna/protoc-gen-gotag@latest
-	go install comment/cmd/protoc-gen-go-gin@latest
-	go install comment/cmd/protoc-gen-go-rpc-tmpl@latest
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
-	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	go install github.com/swaggo/swag/cmd/swag@latest
-	go install github.com/ofabry/go-callvis@latest
-	go install golang.org/x/pkgsite/cmd/pkgsite@latest
 
 
 .PHONY: mod
@@ -60,12 +43,6 @@ cover:
 	go tool cover -html=cover.out
 
 
-.PHONY: docs
-# generate swagger docs, the host address can be changed via parameters, e.g. make docs HOST=192.168.3.37
-docs: mod fmt
-	@bash scripts/swag-docs.sh $(HOST)
-
-
 .PHONY: graph
 # generate interactive visual function dependency graphs
 graph:
@@ -75,10 +52,16 @@ graph:
 	@rm -f main.go comment.gv
 
 
+.PHONY: docs
+# generate swagger docs, only for ⓵ Web services created based on sql, the host address can be changed via parameters, e.g. make docs HOST=192.168.3.37
+docs: mod fmt
+	@bash scripts/swag-docs.sh $(HOST)
+
+
 .PHONY: proto
-# generate *.pb.go codes from *.proto files
+# generate *.go and template code by proto files, if you do not refer to the proto file, the default is all the proto files in the api directory. you can specify the proto file, multiple files are separated by commas, e.g. make proto FILES=api/user/v1/user.proto. only for ⓶ Microservices created based on sql, ⓷ Web services created based on protobuf, ⓸ Microservices created based on protobuf, ⓹ RPC gateway service created based on protobuf
 proto: mod fmt
-	@bash scripts/protoc.sh
+	@bash scripts/protoc.sh $(FILES)
 
 
 .PHONY: proto-doc
@@ -91,9 +74,7 @@ proto-doc:
 # build comment for linux amd64 binary
 build:
 	@echo "building 'comment', linux binary file will output to 'cmd/comment'"
-	@cd cmd/comment && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOPROXY=https://goproxy.cn,direct go build
-
-
+	@cd cmd/comment && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 
 
 
@@ -109,10 +90,28 @@ run-nohup:
 	@bash scripts/run-nohup.sh $(CMD)
 
 
-.PHONY: docker-image
+.PHONY: binary-package
+# packaged binary files
+binary-package: build
+	@bash scripts/binary-package.sh
+
+
+.PHONY: deploy-binary
+# deploy binary to remote linux server, e.g. make deploy-binary USER=root PWD=123456 IP=192.168.1.10
+deploy-binary: binary-package
+	@expect scripts/deploy-binary.sh $(USER) $(PWD) $(IP)
+
+
+.PHONY: image-build-local
 # build image for local docker, tag=latest, use binary files to build
-docker-image: build
+image-build-local: build
 	@bash scripts/image-build-local.sh
+
+
+.PHONY: deploy-docker
+# deploy service to local docker, if you want to update the service, run the make deploy-docker command again.
+deploy-docker: image-build-local
+	@bash scripts/deploy-docker.sh
 
 
 .PHONY: image-build
@@ -127,12 +126,6 @@ image-build2:
 	@bash scripts/image-build2.sh $(REPO_HOST) $(TAG)
 
 
-.PHONY: image-build-rpc-test
-# build rpc test image for remote repositories, e.g. make image-build-rpc-test REPO_HOST=addr TAG=latest
-image-build-rpc-test:
-	@bash scripts/image-rpc-test.sh $(REPO_HOST) $(TAG)
-
-
 .PHONY: image-push
 # push docker image to remote repositories, e.g. make image-push REPO_HOST=addr TAG=latest
 image-push:
@@ -145,22 +138,28 @@ deploy-k8s:
 	@bash scripts/deploy-k8s.sh
 
 
-.PHONY: deploy-docker
-# deploy service to local docker, you must first run 'make docker-image' to generate a docker image, if you want to stop the server, pass the parameter stop, e.g. make deploy-docker CMD=stop
-deploy-docker:
-	@bash scripts/deploy-docker.sh $(CMD)
+.PHONY: image-build-rpc-test
+# build rpc test image for remote repositories, e.g. make image-build-rpc-test REPO_HOST=addr TAG=latest
+image-build-rpc-test:
+	@bash scripts/image-rpc-test.sh $(REPO_HOST) $(TAG)
 
 
-.PHONY: binary-package
-# packaged binary files
-binary-package: build
-	@bash scripts/binary-package.sh
+.PHONY: patch
+# patch some dependent code, such as types.proto, mysql initialization code. e.g. make patch TYPE=types-pb , make patch TYPE=mysql-init
+patch:
+	@bash scripts/patch.sh $(TYPE)
 
 
-.PHONY: deploy-binary
-# deploy binary, e.g. make deploy-binary USER=root PWD=123456 IP=192.168.1.10
-deploy-binary: binary-package
-	@expect scripts/deploy-binary.sh $(USER) $(PWD) $(IP)
+.PHONY: copy-proto
+# copy proto file from the rpc server directory, multiple directories separated by commas. e.g. make copy-proto SERVER=yourServerDir
+copy-proto:
+	@sponge patch copy-proto --server-dir=$(SERVER)
+
+
+.PHONY: update-config
+# update internal/config code base on yaml file
+update-config:
+	@sponge config --server-dir=.
 
 
 .PHONY: clean
@@ -169,10 +168,10 @@ clean:
 	@rm -vrf cmd/comment/comment
 	@rm -vrf cover.out
 	@rm -vrf main.go comment.gv
-	@rm -vrf internal/ecode/*go.gen.*
-	@rm -vrf internal/routers/*go.gen.*
-	@rm -vrf internal/handler/*go.gen.*
-	@rm -vrf internal/service/*go.gen.*
+	@rm -vrf internal/ecode/*.go.gen*
+	@rm -vrf internal/routers/*.go.gen*
+	@rm -vrf internal/handler/*.go.gen*
+	@rm -vrf internal/service/*.go.gen*
 	@rm -rf comment-binary.tar.gz
 	@echo "clean finished"
 
@@ -184,7 +183,7 @@ help:
 	@echo ' make [target]'
 	@echo ''
 	@echo 'Targets:'
-	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
+	@awk '/^[a-zA-Z\-_0-9]+:/ { \
 	helpMessage = match(lastLine, /^# (.*)/); \
 		if (helpMessage) { \
 			helpCommand = substr($$1, 0, index($$1, ":")-1); \

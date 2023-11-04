@@ -1238,6 +1238,269 @@ var _ interface {
 	ErrorName() string
 } = GetCourseByIDReplyValidationError{}
 
+// Validate checks the field values on GetCourseByConditionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCourseByConditionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCourseByConditionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCourseByConditionRequestMultiError, or nil if none found.
+func (m *GetCourseByConditionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCourseByConditionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetConditions()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCourseByConditionRequestValidationError{
+					field:  "Conditions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCourseByConditionRequestValidationError{
+					field:  "Conditions",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetConditions()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCourseByConditionRequestValidationError{
+				field:  "Conditions",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCourseByConditionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCourseByConditionRequestMultiError is an error wrapping multiple
+// validation errors returned by GetCourseByConditionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetCourseByConditionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCourseByConditionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCourseByConditionRequestMultiError) AllErrors() []error { return m }
+
+// GetCourseByConditionRequestValidationError is the validation error returned
+// by GetCourseByConditionRequest.Validate if the designated constraints
+// aren't met.
+type GetCourseByConditionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCourseByConditionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCourseByConditionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCourseByConditionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCourseByConditionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCourseByConditionRequestValidationError) ErrorName() string {
+	return "GetCourseByConditionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCourseByConditionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCourseByConditionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCourseByConditionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCourseByConditionRequestValidationError{}
+
+// Validate checks the field values on GetCourseByConditionReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCourseByConditionReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCourseByConditionReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCourseByConditionReplyMultiError, or nil if none found.
+func (m *GetCourseByConditionReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCourseByConditionReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCourse()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCourseByConditionReplyValidationError{
+					field:  "Course",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCourseByConditionReplyValidationError{
+					field:  "Course",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCourse()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCourseByConditionReplyValidationError{
+				field:  "Course",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCourseByConditionReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCourseByConditionReplyMultiError is an error wrapping multiple validation
+// errors returned by GetCourseByConditionReply.ValidateAll() if the
+// designated constraints aren't met.
+type GetCourseByConditionReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCourseByConditionReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCourseByConditionReplyMultiError) AllErrors() []error { return m }
+
+// GetCourseByConditionReplyValidationError is the validation error returned by
+// GetCourseByConditionReply.Validate if the designated constraints aren't met.
+type GetCourseByConditionReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCourseByConditionReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCourseByConditionReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCourseByConditionReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCourseByConditionReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCourseByConditionReplyValidationError) ErrorName() string {
+	return "GetCourseByConditionReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCourseByConditionReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCourseByConditionReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCourseByConditionReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCourseByConditionReplyValidationError{}
+
 // Validate checks the field values on ListCourseByIDsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

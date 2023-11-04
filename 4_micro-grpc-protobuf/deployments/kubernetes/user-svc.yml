@@ -8,7 +8,10 @@ spec:
     app: user
   type: ClusterIP
   ports:
-    - name: user-svc-http-port
-      port: 8080
-      targetPort: 8080
+    - name: user-svc-grpc-port
+      port: 8282
+      targetPort: 8282
+    - name: user-svc-grpc-metrics-port
+      port: 8283
+      targetPort: 8283
 

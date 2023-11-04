@@ -4,7 +4,7 @@ package api.comment.v1;
 
 import "validate/validate.proto";
 
-option go_package = "shopgw/api/comment/v1;v1";
+option go_package = "comment/api/comment/v1;v1";
 
 service Comment {
   // list of comments by product id

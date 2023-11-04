@@ -6,7 +6,7 @@ import (
 
 // Teach 老师课程
 type Teach struct {
-	mysql.Model `gorm:"embedded"`
+	mysql.Model `gorm:"embedded"` // embed id and time
 
 	TeacherID   int64  `gorm:"column:teacher_id;type:bigint(20);NOT NULL" json:"teacherId"`      // 老师id
 	TeacherName string `gorm:"column:teacher_name;type:varchar(50);NOT NULL" json:"teacherName"` // 老师名称

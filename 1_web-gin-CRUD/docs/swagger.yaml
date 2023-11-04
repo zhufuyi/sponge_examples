@@ -3,7 +3,7 @@ definitions:
     properties:
       exp:
         description: expressions, which default to = when the value is null, have
-          =, ! =, >, >=, <, <=, like
+          =, !=, >, >=, <, <=, like
         type: string
       logic:
         description: logical type, defaults to and when value is null, only &(and),
@@ -14,6 +14,45 @@ definitions:
         type: string
       value:
         description: column value
+    type: object
+  types.Conditions:
+    properties:
+      columns:
+        description: columns info
+        items:
+          $ref: '#/definitions/types.Column'
+        type: array
+    type: object
+  types.CourseObjDetail:
+    properties:
+      code:
+        description: 课程代号
+        type: string
+      college:
+        description: 学院
+        type: string
+      createdAt:
+        type: string
+      credit:
+        description: 学分
+        type: integer
+      id:
+        description: convert to string id
+        type: string
+      name:
+        description: 课程名称
+        type: string
+      place:
+        description: 上课地点
+        type: string
+      semester:
+        description: 学期
+        type: string
+      time:
+        description: 上课时间
+        type: string
+      updatedAt:
+        type: string
     type: object
   types.CreateCourseRequest:
     properties:
@@ -39,6 +78,22 @@ definitions:
         description: 上课时间
         type: string
     type: object
+  types.CreateCourseRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.CreateTeachRequest:
     properties:
       courseId:
@@ -55,6 +110,22 @@ definitions:
         type: integer
       teacherName:
         description: 老师名称
+        type: string
+    type: object
+  types.CreateTeachRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
         type: string
     type: object
   types.CreateTeacherRequest:
@@ -96,6 +167,33 @@ definitions:
         description: 职称
         type: string
     type: object
+  types.CreateTeacherRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteCourseByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.DeleteCoursesByIDsRequest:
     properties:
       ids:
@@ -104,6 +202,39 @@ definitions:
           type: integer
         minItems: 1
         type: array
+    type: object
+  types.DeleteCoursesByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteTeachByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteTeacherByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
     type: object
   types.DeleteTeachersByIDsRequest:
     properties:
@@ -114,6 +245,17 @@ definitions:
         minItems: 1
         type: array
     type: object
+  types.DeleteTeachersByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.DeleteTeachsByIDsRequest:
     properties:
       ids:
@@ -123,7 +265,108 @@ definitions:
         minItems: 1
         type: array
     type: object
-  types.GetCoursesByIDsRequest:
+  types.DeleteTeachsByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetCourseByConditionRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          course:
+            $ref: '#/definitions/types.CourseObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetCourseByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          course:
+            $ref: '#/definitions/types.CourseObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetTeachByConditionRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teach:
+            $ref: '#/definitions/types.TeachObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetTeachByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teach:
+            $ref: '#/definitions/types.TeachObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetTeacherByConditionRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teacher:
+            $ref: '#/definitions/types.TeacherObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetTeacherByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teacher:
+            $ref: '#/definitions/types.TeacherObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListCoursesByIDsRequest:
     properties:
       ids:
         description: id list
@@ -132,7 +375,41 @@ definitions:
         minItems: 1
         type: array
     type: object
-  types.GetTeachersByIDsRequest:
+  types.ListCoursesByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          courses:
+            items:
+              $ref: '#/definitions/types.CourseObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListCoursesRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          courses:
+            items:
+              $ref: '#/definitions/types.CourseObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListTeachersByIDsRequest:
     properties:
       ids:
         description: id list
@@ -141,7 +418,41 @@ definitions:
         minItems: 1
         type: array
     type: object
-  types.GetTeachsByIDsRequest:
+  types.ListTeachersByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teachers:
+            items:
+              $ref: '#/definitions/types.TeacherObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListTeachersRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teachers:
+            items:
+              $ref: '#/definitions/types.TeacherObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListTeachsByIDsRequest:
     properties:
       ids:
         description: id list
@@ -149,6 +460,40 @@ definitions:
           type: integer
         minItems: 1
         type: array
+    type: object
+  types.ListTeachsByIDsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teachs:
+            items:
+              $ref: '#/definitions/types.TeachObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListTeachsRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          teachs:
+            items:
+              $ref: '#/definitions/types.TeachObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
     type: object
   types.Params:
     properties:
@@ -159,7 +504,6 @@ definitions:
         type: array
       page:
         description: page number, starting from page 0
-        minimum: 0
         type: integer
       size:
         description: lines per page
@@ -168,15 +512,75 @@ definitions:
         description: sorted fields, multi-column sorting separated by commas
         type: string
     type: object
-  types.Result:
+  types.TeachObjDetail:
     properties:
-      code:
-        description: return code
+      courseId:
+        description: 课程id
         type: integer
-      data:
-        description: return data
-      msg:
-        description: return information description
+      courseName:
+        description: 课程名称
+        type: string
+      createdAt:
+        type: string
+      id:
+        description: convert to string id
+        type: string
+      score:
+        description: 学生评价教学质量，5个等级：A,B,C,D,E
+        type: string
+      teacherId:
+        description: 老师id
+        type: integer
+      teacherName:
+        description: 老师名称
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.TeacherObjDetail:
+    properties:
+      age:
+        description: 年龄
+        type: integer
+      avatar:
+        description: 头像
+        type: string
+      birthday:
+        description: 出生日期
+        type: string
+      college:
+        description: 学院
+        type: string
+      createdAt:
+        type: string
+      email:
+        description: 邮件
+        type: string
+      gender:
+        description: 性别，1:男，2:女，其他值:未知
+        type: integer
+      id:
+        description: convert to string id
+        type: string
+      name:
+        description: 用户名
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 手机号码
+        type: string
+      profile:
+        description: 个人简介
+        type: string
+      schoolName:
+        description: 学校名称
+        type: string
+      title:
+        description: 职称
+        type: string
+      updatedAt:
         type: string
     type: object
   types.UpdateCourseByIDRequest:
@@ -206,6 +610,17 @@ definitions:
         description: 上课时间
         type: string
     type: object
+  types.UpdateCourseByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.UpdateTeachByIDRequest:
     properties:
       courseId:
@@ -225,6 +640,17 @@ definitions:
         type: integer
       teacherName:
         description: 老师名称
+        type: string
+    type: object
+  types.UpdateTeachByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
         type: string
     type: object
   types.UpdateTeacherByIDRequest:
@@ -269,12 +695,23 @@ definitions:
         description: 职称
         type: string
     type: object
+  types.UpdateTeacherByIDRespond:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: http server api docs
   title: user api docs
-  version: v0.0.0
+  version: "2.0"
 paths:
   /api/v1/course:
     post:
@@ -294,7 +731,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.CreateCourseRespond'
       summary: create course
       tags:
       - course
@@ -315,7 +752,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteCourseByIDRespond'
       summary: delete course
       tags:
       - course
@@ -335,7 +772,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.GetCourseByIDRespond'
       summary: get course detail
       tags:
       - course
@@ -361,8 +798,30 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.UpdateCourseByIDRespond'
       summary: update course
+      tags:
+      - course
+  /api/v1/course/condition:
+    post:
+      consumes:
+      - application/json
+      description: get course by condition
+      parameters:
+      - description: query condition
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.Conditions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetCourseByConditionRespond'
+      summary: get course by condition
       tags:
       - course
   /api/v1/course/delete/ids:
@@ -383,7 +842,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteCoursesByIDsRespond'
       summary: delete courses
       tags:
       - course
@@ -405,7 +864,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListCoursesRespond'
       summary: list of courses by query parameters
       tags:
       - course
@@ -420,14 +879,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.GetCoursesByIDsRequest'
+          $ref: '#/definitions/types.ListCoursesByIDsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListCoursesByIDsRespond'
       summary: list of courses by batch id
       tags:
       - course
@@ -449,7 +908,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.CreateTeachRespond'
       summary: create teach
       tags:
       - teach
@@ -470,7 +929,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteTeachByIDRespond'
       summary: delete teach
       tags:
       - teach
@@ -490,7 +949,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.GetTeachByIDRespond'
       summary: get teach detail
       tags:
       - teach
@@ -516,8 +975,30 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.UpdateTeachByIDRespond'
       summary: update teach
+      tags:
+      - teach
+  /api/v1/teach/condition:
+    post:
+      consumes:
+      - application/json
+      description: get teach by condition
+      parameters:
+      - description: query condition
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.Conditions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetTeachByConditionRespond'
+      summary: get teach by condition
       tags:
       - teach
   /api/v1/teach/delete/ids:
@@ -538,7 +1019,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteTeachsByIDsRespond'
       summary: delete teachs
       tags:
       - teach
@@ -560,7 +1041,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListTeachsRespond'
       summary: list of teachs by query parameters
       tags:
       - teach
@@ -575,14 +1056,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.GetTeachsByIDsRequest'
+          $ref: '#/definitions/types.ListTeachsByIDsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListTeachsByIDsRespond'
       summary: list of teachs by batch id
       tags:
       - teach
@@ -604,7 +1085,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.CreateTeacherRespond'
       summary: create teacher
       tags:
       - teacher
@@ -625,7 +1106,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteTeacherByIDRespond'
       summary: delete teacher
       tags:
       - teacher
@@ -645,7 +1126,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.GetTeacherByIDRespond'
       summary: get teacher detail
       tags:
       - teacher
@@ -671,8 +1152,30 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.UpdateTeacherByIDRespond'
       summary: update teacher
+      tags:
+      - teacher
+  /api/v1/teacher/condition:
+    post:
+      consumes:
+      - application/json
+      description: get teacher by condition
+      parameters:
+      - description: query condition
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.Conditions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetTeacherByConditionRespond'
+      summary: get teacher by condition
       tags:
       - teacher
   /api/v1/teacher/delete/ids:
@@ -693,7 +1196,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.DeleteTeachersByIDsRespond'
       summary: delete teachers
       tags:
       - teacher
@@ -715,7 +1218,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListTeachersRespond'
       summary: list of teachers by query parameters
       tags:
       - teacher
@@ -730,14 +1233,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.GetTeachersByIDsRequest'
+          $ref: '#/definitions/types.ListTeachersByIDsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/types.ListTeachersByIDsRespond'
       summary: list of teachers by batch id
       tags:
       - teacher

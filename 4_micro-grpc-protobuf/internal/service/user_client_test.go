@@ -32,8 +32,8 @@ func Test_service_user_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.RegisterRequest{
-					Email: "", 
-					Password: "", 
+					Email:    "foo@bar.com",
+					Password: "123456",
 				}
 				return cli.Register(ctx, req)
 			},
@@ -44,8 +44,8 @@ func Test_service_user_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.LoginRequest{
-					Email: "", 
-					Password: "", 
+					Email:    "foo@bar.com",
+					Password: "123456",
 				}
 				return cli.Login(ctx, req)
 			},
@@ -56,8 +56,8 @@ func Test_service_user_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.LogoutRequest{
-					Id: 0, 
-					Token: "", 
+					Id:    111,
+					Token: "eydiewnafiaekdfaf......",
 				}
 				return cli.Logout(ctx, req)
 			},
@@ -68,8 +68,8 @@ func Test_service_user_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.ChangePasswordRequest{
-					Id: 0, 
-					Password: "", 
+					Id:       111,
+					Password: "foobar",
 				}
 				return cli.ChangePassword(ctx, req)
 			},
@@ -90,7 +90,7 @@ func Test_service_user_methods(t *testing.T) {
 	}
 }
 
-// Perform a stress test on user's method and 
+// Perform a stress test on user's method and
 // copy the press test report to your browser when you are finished.
 func Test_service_user_benchmark(t *testing.T) {
 	err := config.Init(configs.Path("user.yml"))
@@ -116,8 +116,8 @@ func Test_service_user_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.RegisterRequest{
-					Email: "", 
-					Password: "", 
+					Email:    "",
+					Password: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Register", message, total, importPaths...)
@@ -133,8 +133,8 @@ func Test_service_user_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.LoginRequest{
-					Email: "", 
-					Password: "", 
+					Email:    "",
+					Password: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Login", message, total, importPaths...)
@@ -150,8 +150,8 @@ func Test_service_user_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.LogoutRequest{
-					Id: 0, 
-					Token: "", 
+					Id:    0,
+					Token: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Logout", message, total, importPaths...)
@@ -167,8 +167,8 @@ func Test_service_user_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.ChangePasswordRequest{
-					Id: 0, 
-					Password: "", 
+					Id:       0,
+					Password: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "ChangePassword", message, total, importPaths...)

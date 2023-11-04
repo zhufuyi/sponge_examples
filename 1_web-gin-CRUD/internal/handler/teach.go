@@ -28,6 +28,7 @@ type TeachHandler interface {
 	DeleteByIDs(c *gin.Context)
 	UpdateByID(c *gin.Context)
 	GetByID(c *gin.Context)
+	GetByCondition(c *gin.Context)
 	ListByIDs(c *gin.Context)
 	List(c *gin.Context)
 }
@@ -53,7 +54,7 @@ func NewTeachHandler() TeachHandler {
 // @accept json
 // @Produce json
 // @Param data body types.CreateTeachRequest true "teach information"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.CreateTeachRespond{}
 // @Router /api/v1/teach [post]
 func (h *teachHandler) Create(c *gin.Context) {
 	form := &types.CreateTeachRequest{}
@@ -71,7 +72,8 @@ func (h *teachHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err = h.iDao.Create(c.Request.Context(), teach)
+	ctx := middleware.WrapCtx(c)
+	err = h.iDao.Create(ctx, teach)
 	if err != nil {
 		logger.Error("Create error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
@@ -88,15 +90,17 @@ func (h *teachHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.DeleteTeachByIDRespond{}
 // @Router /api/v1/teach/{id} [delete]
 func (h *teachHandler) DeleteByID(c *gin.Context) {
 	_, id, isAbort := getTeachIDFromPath(c)
 	if isAbort {
+		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
-	err := h.iDao.DeleteByID(c.Request.Context(), id)
+	ctx := middleware.WrapCtx(c)
+	err := h.iDao.DeleteByID(ctx, id)
 	if err != nil {
 		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
@@ -113,7 +117,7 @@ func (h *teachHandler) DeleteByID(c *gin.Context) {
 // @Param data body types.DeleteTeachsByIDsRequest true "id array"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.DeleteTeachsByIDsRespond{}
 // @Router /api/v1/teach/delete/ids [post]
 func (h *teachHandler) DeleteByIDs(c *gin.Context) {
 	form := &types.DeleteTeachsByIDsRequest{}
@@ -124,7 +128,8 @@ func (h *teachHandler) DeleteByIDs(c *gin.Context) {
 		return
 	}
 
-	err = h.iDao.DeleteByIDs(c.Request.Context(), form.IDs)
+	ctx := middleware.WrapCtx(c)
+	err = h.iDao.DeleteByIDs(ctx, form.IDs)
 	if err != nil {
 		logger.Error("GetByIDs error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
@@ -142,11 +147,12 @@ func (h *teachHandler) DeleteByIDs(c *gin.Context) {
 // @Produce json
 // @Param id path string true "id"
 // @Param data body types.UpdateTeachByIDRequest true "teach information"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.UpdateTeachByIDRespond{}
 // @Router /api/v1/teach/{id} [put]
 func (h *teachHandler) UpdateByID(c *gin.Context) {
 	_, id, isAbort := getTeachIDFromPath(c)
 	if isAbort {
+		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
@@ -162,11 +168,12 @@ func (h *teachHandler) UpdateByID(c *gin.Context) {
 	teach := &model.Teach{}
 	err = copier.Copy(teach, form)
 	if err != nil {
-		response.Error(c, ecode.ErrUpdateTeach)
+		response.Error(c, ecode.ErrUpdateByIDTeach)
 		return
 	}
 
-	err = h.iDao.UpdateByID(c.Request.Context(), teach)
+	ctx := middleware.WrapCtx(c)
+	err = h.iDao.UpdateByID(ctx, teach)
 	if err != nil {
 		logger.Error("UpdateByID error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
@@ -183,15 +190,17 @@ func (h *teachHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.GetTeachByIDRespond{}
 // @Router /api/v1/teach/{id} [get]
 func (h *teachHandler) GetByID(c *gin.Context) {
 	idStr, id, isAbort := getTeachIDFromPath(c)
 	if isAbort {
+		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
-	teach, err := h.iDao.GetByID(c.Request.Context(), id)
+	ctx := middleware.WrapCtx(c)
+	teach, err := h.iDao.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, query.ErrNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
@@ -203,13 +212,61 @@ func (h *teachHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	data := &types.GetTeachByIDRespond{}
+	data := &types.TeachObjDetail{}
 	err = copier.Copy(data, teach)
 	if err != nil {
-		response.Error(c, ecode.ErrGetTeach)
+		response.Error(c, ecode.ErrGetByIDTeach)
 		return
 	}
 	data.ID = idStr
+
+	response.Success(c, gin.H{"teach": data})
+}
+
+// GetByCondition get a record by condition
+// @Summary get teach by condition
+// @Description get teach by condition
+// @Tags teach
+// @Param data body types.Conditions true "query condition"
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.GetTeachByConditionRespond{}
+// @Router /api/v1/teach/condition [post]
+func (h *teachHandler) GetByCondition(c *gin.Context) {
+	form := &types.GetTeachByConditionRequest{}
+	err := c.ShouldBindJSON(form)
+	if err != nil {
+		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+	err = form.Conditions.CheckValid()
+	if err != nil {
+		logger.Warn("Parameters error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+
+	ctx := middleware.WrapCtx(c)
+	teach, err := h.iDao.GetByCondition(ctx, &form.Conditions)
+	if err != nil {
+		if errors.Is(err, query.ErrNotFound) {
+			logger.Warn("GetByCondition not found", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
+			response.Error(c, ecode.NotFound)
+		} else {
+			logger.Error("GetByCondition error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
+			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		}
+		return
+	}
+
+	data := &types.TeachObjDetail{}
+	err = copier.Copy(data, teach)
+	if err != nil {
+		response.Error(c, ecode.ErrGetByIDTeach)
+		return
+	}
+	data.ID = utils.Uint64ToStr(teach.ID)
 
 	response.Success(c, gin.H{"teach": data})
 }
@@ -218,29 +275,30 @@ func (h *teachHandler) GetByID(c *gin.Context) {
 // @Summary list of teachs by batch id
 // @Description list of teachs by batch id
 // @Tags teach
-// @Param data body types.GetTeachsByIDsRequest true "id array"
+// @Param data body types.ListTeachsByIDsRequest true "id array"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.ListTeachsByIDsRespond{}
 // @Router /api/v1/teach/list/ids [post]
 func (h *teachHandler) ListByIDs(c *gin.Context) {
-	form := &types.GetTeachsByIDsRequest{}
+	form := &types.ListTeachsByIDsRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
 		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.WithOutMsg("参数错误"), "详细错误信息")
+		response.Output(c, ecode.Unauthorized.WithOutMsg("错误简单描述").ToHTTPCode(), "详细错误信息")
 		return
 	}
 
-	teachMap, err := h.iDao.GetByIDs(c.Request.Context(), form.IDs)
+	ctx := middleware.WrapCtx(c)
+	teachMap, err := h.iDao.GetByIDs(ctx, form.IDs)
 	if err != nil {
 		logger.Error("GetByIDs error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
-
 		return
 	}
 
-	teachs := []*types.GetTeachByIDRespond{}
+	teachs := []*types.TeachObjDetail{}
 	for _, id := range form.IDs {
 		if v, ok := teachMap[id]; ok {
 			record, err := convertTeach(v)
@@ -264,10 +322,10 @@ func (h *teachHandler) ListByIDs(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param data body types.Params true "query parameters"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} types.ListTeachsRespond{}
 // @Router /api/v1/teach/list [post]
 func (h *teachHandler) List(c *gin.Context) {
-	form := &types.GetTeachsRequest{}
+	form := &types.ListTeachsRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
 		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
@@ -275,7 +333,8 @@ func (h *teachHandler) List(c *gin.Context) {
 		return
 	}
 
-	teachs, total, err := h.iDao.GetByColumns(c.Request.Context(), &form.Params)
+	ctx := middleware.WrapCtx(c)
+	teachs, total, err := h.iDao.GetByColumns(ctx, &form.Params)
 	if err != nil {
 		logger.Error("GetByColumns error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
@@ -299,15 +358,14 @@ func getTeachIDFromPath(c *gin.Context) (string, uint64, bool) {
 	id, err := utils.StrToUint64E(idStr)
 	if err != nil || id == 0 {
 		logger.Warn("StrToUint64E error: ", logger.String("idStr", idStr), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
 		return "", 0, true
 	}
 
 	return idStr, id, false
 }
 
-func convertTeach(teach *model.Teach) (*types.GetTeachByIDRespond, error) {
-	data := &types.GetTeachByIDRespond{}
+func convertTeach(teach *model.Teach) (*types.TeachObjDetail, error) {
+	data := &types.TeachObjDetail{}
 	err := copier.Copy(data, teach)
 	if err != nil {
 		return nil, err
@@ -316,8 +374,8 @@ func convertTeach(teach *model.Teach) (*types.GetTeachByIDRespond, error) {
 	return data, nil
 }
 
-func convertTeachs(fromValues []*model.Teach) ([]*types.GetTeachByIDRespond, error) {
-	toValues := []*types.GetTeachByIDRespond{}
+func convertTeachs(fromValues []*model.Teach) ([]*types.TeachObjDetail, error) {
+	toValues := []*types.TeachObjDetail{}
 	for _, v := range fromValues {
 		data, err := convertTeach(v)
 		if err != nil {

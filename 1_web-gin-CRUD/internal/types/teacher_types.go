@@ -1,3 +1,4 @@
+// Package types define the structure of request parameters and respond results in this package
 package types
 
 import (
@@ -8,8 +9,9 @@ import (
 
 var _ time.Time
 
-// CreateTeacherRequest create params
-// todo fill in the binding rules https://github.com/go-playground/validator
+// Tip: suggested filling in the binding rules https://github.com/go-playground/validator in request struct fields tag.
+
+// CreateTeacherRequest request params
 type CreateTeacherRequest struct {
 	Name       string `json:"name" binding:""`       // 用户名
 	Password   string `json:"password" binding:""`   // 密码
@@ -25,7 +27,7 @@ type CreateTeacherRequest struct {
 	Profile    string `json:"profile" binding:""`    // 个人简介
 }
 
-// UpdateTeacherByIDRequest update params
+// UpdateTeacherByIDRequest request params
 type UpdateTeacherByIDRequest struct {
 	ID uint64 `json:"id" binding:""` // uint64 id
 
@@ -43,8 +45,8 @@ type UpdateTeacherByIDRequest struct {
 	Profile    string `json:"profile" binding:""`    // 个人简介
 }
 
-// GetTeacherByIDRespond respond detail
-type GetTeacherByIDRespond struct {
+// TeacherObjDetail detail
+type TeacherObjDetail struct {
 	ID string `json:"id"` // convert to string id
 
 	CreatedAt  time.Time `json:"createdAt"`
@@ -63,22 +65,82 @@ type GetTeacherByIDRespond struct {
 	Profile    string    `json:"profile"`    // 个人简介
 }
 
-// DeleteTeachersByIDsRequest request form ids
+// CreateTeacherRespond only for api docs
+type CreateTeacherRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		ID uint64 `json:"id"` // id
+	} `json:"data"` // return data
+}
+
+// UpdateTeacherByIDRespond only for api docs
+type UpdateTeacherByIDRespond struct {
+	Result
+}
+
+// GetTeacherByIDRespond only for api docs
+type GetTeacherByIDRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Teacher TeacherObjDetail `json:"teacher"`
+	} `json:"data"` // return data
+}
+
+// DeleteTeacherByIDRespond only for api docs
+type DeleteTeacherByIDRespond struct {
+	Result
+}
+
+// DeleteTeachersByIDsRequest request params
 type DeleteTeachersByIDsRequest struct {
 	IDs []uint64 `json:"ids" binding:"min=1"` // id list
 }
 
-// GetTeachersByIDsRequest request form ids
-type GetTeachersByIDsRequest struct {
+// DeleteTeachersByIDsRespond only for api docs
+type DeleteTeachersByIDsRespond struct {
+	Result
+}
+
+// GetTeacherByConditionRequest request params
+type GetTeacherByConditionRequest struct {
+	query.Conditions
+}
+
+// GetTeacherByConditionRespond only for api docs
+type GetTeacherByConditionRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Teacher TeacherObjDetail `json:"teacher"`
+	} `json:"data"` // return data
+}
+
+// ListTeachersByIDsRequest request params
+type ListTeachersByIDsRequest struct {
 	IDs []uint64 `json:"ids" binding:"min=1"` // id list
 }
 
-// GetTeachersRequest request form params
-type GetTeachersRequest struct {
-	query.Params // query parameters
+// ListTeachersByIDsRespond only for api docs
+type ListTeachersByIDsRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Teachers []TeacherObjDetail `json:"teachers"`
+	} `json:"data"` // return data
 }
 
-// ListTeachersRespond list data
-type ListTeachersRespond []struct {
-	GetTeacherByIDRespond
+// ListTeachersRequest request params
+type ListTeachersRequest struct {
+	query.Params
+}
+
+// ListTeachersRespond only for api docs
+type ListTeachersRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Teachers []TeacherObjDetail `json:"teachers"`
+	} `json:"data"` // return data
 }

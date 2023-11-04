@@ -4,19 +4,12 @@ package service
 
 import (
 	"context"
-	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
-	"github.com/zhufuyi/sponge/pkg/logger"
-	"user/internal/ecode"
 
 	userV1 "user/api/user/v1"
+	"user/internal/ecode"
 
-	//"user/internal/cache"
-	//"user/internal/dao"
-	//"user/internal/ecode"
-	//"user/internal/model"
-
-	//"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
-	//"github.com/zhufuyi/sponge/pkg/logger"
+	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
+	"github.com/zhufuyi/sponge/pkg/logger"
 
 	"google.golang.org/grpc"
 )
@@ -47,7 +40,7 @@ func NewUserServer() userV1.UserServer {
 	}
 }
 
-// Register ......
+// Register 注册
 func (s *user) Register(ctx context.Context, req *userV1.RegisterRequest) (*userV1.RegisterReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -56,11 +49,14 @@ func (s *user) Register(ctx context.Context, req *userV1.RegisterRequest) (*user
 	}
 
 	// fill in the business logic code here
+	logger.Info("register successfully", interceptor.ServerCtxRequestIDField(ctx))
 
-	return &userV1.RegisterReply{Id: 1}, nil
+	return &userV1.RegisterReply{
+		Id: 111,
+	}, nil
 }
 
-// Login ......
+// Login 登录
 func (s *user) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.LoginReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -69,14 +65,15 @@ func (s *user) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.Log
 	}
 
 	// fill in the business logic code here
+	logger.Info("login successfully", interceptor.ServerCtxRequestIDField(ctx))
 
 	return &userV1.LoginReply{
-		Id:    1,
-		Token: "abcd......",
+		Id:    111,
+		Token: "eydiewnafiaekdfaf......",
 	}, nil
 }
 
-// Logout ......
+// Logout 登出
 func (s *user) Logout(ctx context.Context, req *userV1.LogoutRequest) (*userV1.LogoutReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -85,11 +82,12 @@ func (s *user) Logout(ctx context.Context, req *userV1.LogoutRequest) (*userV1.L
 	}
 
 	// fill in the business logic code here
+	logger.Info("logout successfully", interceptor.ServerCtxRequestIDField(ctx))
 
 	return &userV1.LogoutReply{}, nil
 }
 
-// ChangePassword ......
+// ChangePassword 修改密码
 func (s *user) ChangePassword(ctx context.Context, req *userV1.ChangePasswordRequest) (*userV1.ChangeRegisterReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -98,6 +96,7 @@ func (s *user) ChangePassword(ctx context.Context, req *userV1.ChangePasswordReq
 	}
 
 	// fill in the business logic code here
+	logger.Info("change password successfully", interceptor.ServerCtxRequestIDField(ctx))
 
 	return &userV1.ChangeRegisterReply{}, nil
 }

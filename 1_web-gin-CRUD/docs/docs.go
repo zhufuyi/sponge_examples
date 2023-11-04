@@ -44,7 +44,41 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.CreateCourseRespond"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/course/condition": {
+            "post": {
+                "description": "get course by condition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "get course by condition",
+                "parameters": [
+                    {
+                        "description": "query condition",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Conditions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetCourseByConditionRespond"
                         }
                     }
                 }
@@ -78,7 +112,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteCoursesByIDsRespond"
                         }
                     }
                 }
@@ -112,7 +146,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListCoursesRespond"
                         }
                     }
                 }
@@ -138,7 +172,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.GetCoursesByIDsRequest"
+                            "$ref": "#/definitions/types.ListCoursesByIDsRequest"
                         }
                     }
                 ],
@@ -146,7 +180,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListCoursesByIDsRespond"
                         }
                     }
                 }
@@ -178,7 +212,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.GetCourseByIDRespond"
                         }
                     }
                 }
@@ -217,7 +251,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.UpdateCourseByIDRespond"
                         }
                     }
                 }
@@ -247,7 +281,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteCourseByIDRespond"
                         }
                     }
                 }
@@ -281,7 +315,41 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.CreateTeachRespond"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teach/condition": {
+            "post": {
+                "description": "get teach by condition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teach"
+                ],
+                "summary": "get teach by condition",
+                "parameters": [
+                    {
+                        "description": "query condition",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Conditions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetTeachByConditionRespond"
                         }
                     }
                 }
@@ -315,7 +383,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteTeachsByIDsRespond"
                         }
                     }
                 }
@@ -349,7 +417,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListTeachsRespond"
                         }
                     }
                 }
@@ -375,7 +443,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.GetTeachsByIDsRequest"
+                            "$ref": "#/definitions/types.ListTeachsByIDsRequest"
                         }
                     }
                 ],
@@ -383,7 +451,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListTeachsByIDsRespond"
                         }
                     }
                 }
@@ -415,7 +483,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.GetTeachByIDRespond"
                         }
                     }
                 }
@@ -454,7 +522,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.UpdateTeachByIDRespond"
                         }
                     }
                 }
@@ -484,7 +552,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteTeachByIDRespond"
                         }
                     }
                 }
@@ -518,7 +586,41 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.CreateTeacherRespond"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teacher/condition": {
+            "post": {
+                "description": "get teacher by condition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teacher"
+                ],
+                "summary": "get teacher by condition",
+                "parameters": [
+                    {
+                        "description": "query condition",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Conditions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetTeacherByConditionRespond"
                         }
                     }
                 }
@@ -552,7 +654,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteTeachersByIDsRespond"
                         }
                     }
                 }
@@ -586,7 +688,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListTeachersRespond"
                         }
                     }
                 }
@@ -612,7 +714,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.GetTeachersByIDsRequest"
+                            "$ref": "#/definitions/types.ListTeachersByIDsRequest"
                         }
                     }
                 ],
@@ -620,7 +722,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.ListTeachersByIDsRespond"
                         }
                     }
                 }
@@ -652,7 +754,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.GetTeacherByIDRespond"
                         }
                     }
                 }
@@ -691,7 +793,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.UpdateTeacherByIDRespond"
                         }
                     }
                 }
@@ -721,7 +823,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/types.DeleteTeacherByIDRespond"
                         }
                     }
                 }
@@ -733,7 +835,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "exp": {
-                    "description": "expressions, which default to = when the value is null, have =, ! =, \u003e, \u003e=, \u003c, \u003c=, like",
+                    "description": "expressions, which default to = when the value is null, have =, !=, \u003e, \u003e=, \u003c, \u003c=, like",
                     "type": "string"
                 },
                 "logic": {
@@ -746,6 +848,61 @@ const docTemplate = `{
                 },
                 "value": {
                     "description": "column value"
+                }
+            }
+        },
+        "types.Conditions": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "description": "columns info",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Column"
+                    }
+                }
+            }
+        },
+        "types.CourseObjDetail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "课程代号",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "credit": {
+                    "description": "学分",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "convert to string id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "课程名称",
+                    "type": "string"
+                },
+                "place": {
+                    "description": "上课地点",
+                    "type": "string"
+                },
+                "semester": {
+                    "description": "学期",
+                    "type": "string"
+                },
+                "time": {
+                    "description": "上课时间",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -782,6 +939,29 @@ const docTemplate = `{
                 }
             }
         },
+        "types.CreateCourseRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.CreateTeachRequest": {
             "type": "object",
             "properties": {
@@ -803,6 +983,29 @@ const docTemplate = `{
                 },
                 "teacherName": {
                     "description": "老师名称",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateTeachRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
                     "type": "string"
                 }
             }
@@ -860,6 +1063,45 @@ const docTemplate = `{
                 }
             }
         },
+        "types.CreateTeacherRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteCourseByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.DeleteCoursesByIDsRequest": {
             "type": "object",
             "properties": {
@@ -870,6 +1112,54 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "types.DeleteCoursesByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteTeachByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteTeacherByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
                 }
             }
         },
@@ -886,6 +1176,22 @@ const docTemplate = `{
                 }
             }
         },
+        "types.DeleteTeachersByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.DeleteTeachsByIDsRequest": {
             "type": "object",
             "properties": {
@@ -899,7 +1205,155 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetCoursesByIDsRequest": {
+        "types.DeleteTeachsByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetCourseByConditionRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "course": {
+                            "$ref": "#/definitions/types.CourseObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetCourseByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "course": {
+                            "$ref": "#/definitions/types.CourseObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetTeachByConditionRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teach": {
+                            "$ref": "#/definitions/types.TeachObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetTeachByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teach": {
+                            "$ref": "#/definitions/types.TeachObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetTeacherByConditionRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teacher": {
+                            "$ref": "#/definitions/types.TeacherObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetTeacherByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teacher": {
+                            "$ref": "#/definitions/types.TeacherObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListCoursesByIDsRequest": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -912,7 +1366,57 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetTeachersByIDsRequest": {
+        "types.ListCoursesByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "courses": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.CourseObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListCoursesRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "courses": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.CourseObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListTeachersByIDsRequest": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -925,7 +1429,57 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetTeachsByIDsRequest": {
+        "types.ListTeachersByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teachers": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.TeacherObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListTeachersRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teachers": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.TeacherObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListTeachsByIDsRequest": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -935,6 +1489,56 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "types.ListTeachsByIDsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teachs": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.TeachObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListTeachsRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "teachs": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.TeachObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
                 }
             }
         },
@@ -950,8 +1554,7 @@ const docTemplate = `{
                 },
                 "page": {
                     "description": "page number, starting from page 0",
-                    "type": "integer",
-                    "minimum": 0
+                    "type": "integer"
                 },
                 "size": {
                     "description": "lines per page",
@@ -963,18 +1566,100 @@ const docTemplate = `{
                 }
             }
         },
-        "types.Result": {
+        "types.TeachObjDetail": {
             "type": "object",
             "properties": {
-                "code": {
-                    "description": "return code",
+                "courseId": {
+                    "description": "课程id",
                     "type": "integer"
                 },
-                "data": {
-                    "description": "return data"
+                "courseName": {
+                    "description": "课程名称",
+                    "type": "string"
                 },
-                "msg": {
-                    "description": "return information description",
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to string id",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "学生评价教学质量，5个等级：A,B,C,D,E",
+                    "type": "string"
+                },
+                "teacherId": {
+                    "description": "老师id",
+                    "type": "integer"
+                },
+                "teacherName": {
+                    "description": "老师名称",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.TeacherObjDetail": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "description": "年龄",
+                    "type": "integer"
+                },
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "birthday": {
+                    "description": "出生日期",
+                    "type": "string"
+                },
+                "college": {
+                    "description": "学院",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮件",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "性别，1:男，2:女，其他值:未知",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "convert to string id",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "profile": {
+                    "description": "个人简介",
+                    "type": "string"
+                },
+                "schoolName": {
+                    "description": "学校名称",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "职称",
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -1016,6 +1701,22 @@ const docTemplate = `{
                 }
             }
         },
+        "types.UpdateCourseByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.UpdateTeachByIDRequest": {
             "type": "object",
             "properties": {
@@ -1041,6 +1742,22 @@ const docTemplate = `{
                 },
                 "teacherName": {
                     "description": "老师名称",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateTeachByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
                     "type": "string"
                 }
             }
@@ -1101,6 +1818,22 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "types.UpdateTeacherByIDRespond": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -1115,7 +1848,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "v0.0.0",
+	Version:          "2.0",
 	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{"http", "https"},

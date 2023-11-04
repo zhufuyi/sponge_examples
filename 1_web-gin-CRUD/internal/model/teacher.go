@@ -6,7 +6,7 @@ import (
 
 // Teacher 老师
 type Teacher struct {
-	mysql.Model `gorm:"embedded"`
+	mysql.Model `gorm:"embedded"` // embed id and time
 
 	Name       string `gorm:"column:name;type:varchar(50);NOT NULL" json:"name"`              // 用户名
 	Password   string `gorm:"column:password;type:varchar(100);NOT NULL" json:"password"`     // 密码

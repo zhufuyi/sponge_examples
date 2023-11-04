@@ -1,3 +1,4 @@
+// Package types define the structure of request parameters and respond results in this package
 package types
 
 import (
@@ -8,8 +9,9 @@ import (
 
 var _ time.Time
 
-// CreateCourseRequest create params
-// todo fill in the binding rules https://github.com/go-playground/validator
+// Tip: suggested filling in the binding rules https://github.com/go-playground/validator in request struct fields tag.
+
+// CreateCourseRequest request params
 type CreateCourseRequest struct {
 	Code     string `json:"code" binding:""`     // 课程代号
 	Name     string `json:"name" binding:""`     // 课程名称
@@ -20,7 +22,7 @@ type CreateCourseRequest struct {
 	Place    string `json:"place" binding:""`    // 上课地点
 }
 
-// UpdateCourseByIDRequest update params
+// UpdateCourseByIDRequest request params
 type UpdateCourseByIDRequest struct {
 	ID uint64 `json:"id" binding:""` // uint64 id
 
@@ -33,8 +35,8 @@ type UpdateCourseByIDRequest struct {
 	Place    string `json:"place" binding:""`    // 上课地点
 }
 
-// GetCourseByIDRespond respond detail
-type GetCourseByIDRespond struct {
+// CourseObjDetail detail
+type CourseObjDetail struct {
 	ID string `json:"id"` // convert to string id
 
 	CreatedAt time.Time `json:"createdAt"`
@@ -48,22 +50,82 @@ type GetCourseByIDRespond struct {
 	Place     string    `json:"place"`    // 上课地点
 }
 
-// DeleteCoursesByIDsRequest request form ids
+// CreateCourseRespond only for api docs
+type CreateCourseRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		ID uint64 `json:"id"` // id
+	} `json:"data"` // return data
+}
+
+// UpdateCourseByIDRespond only for api docs
+type UpdateCourseByIDRespond struct {
+	Result
+}
+
+// GetCourseByIDRespond only for api docs
+type GetCourseByIDRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Course CourseObjDetail `json:"course"`
+	} `json:"data"` // return data
+}
+
+// DeleteCourseByIDRespond only for api docs
+type DeleteCourseByIDRespond struct {
+	Result
+}
+
+// DeleteCoursesByIDsRequest request params
 type DeleteCoursesByIDsRequest struct {
 	IDs []uint64 `json:"ids" binding:"min=1"` // id list
 }
 
-// GetCoursesByIDsRequest request form ids
-type GetCoursesByIDsRequest struct {
+// DeleteCoursesByIDsRespond only for api docs
+type DeleteCoursesByIDsRespond struct {
+	Result
+}
+
+// GetCourseByConditionRequest request params
+type GetCourseByConditionRequest struct {
+	query.Conditions
+}
+
+// GetCourseByConditionRespond only for api docs
+type GetCourseByConditionRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Course CourseObjDetail `json:"course"`
+	} `json:"data"` // return data
+}
+
+// ListCoursesByIDsRequest request params
+type ListCoursesByIDsRequest struct {
 	IDs []uint64 `json:"ids" binding:"min=1"` // id list
 }
 
-// GetCoursesRequest request form params
-type GetCoursesRequest struct {
-	query.Params // query parameters
+// ListCoursesByIDsRespond only for api docs
+type ListCoursesByIDsRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Courses []CourseObjDetail `json:"courses"`
+	} `json:"data"` // return data
 }
 
-// ListCoursesRespond list data
-type ListCoursesRespond []struct {
-	GetCourseByIDRespond
+// ListCoursesRequest request params
+type ListCoursesRequest struct {
+	query.Params
+}
+
+// ListCoursesRespond only for api docs
+type ListCoursesRespond struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Courses []CourseObjDetail `json:"courses"`
+	} `json:"data"` // return data
 }

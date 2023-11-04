@@ -6,12 +6,14 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// comment rpc service level error code
+// comment business-level rpc error codes.
+// the _commentNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_commentNO       = 78 // number range 1~100, if there is the same number, trigger panic.
+	_commentNO       = 94
 	_commentName     = "comment"
-	_commentBaseCode = errcode.HCode(_commentNO)
+	_commentBaseCode = errcode.RCode(_commentNO)
 
-	StatusListByProductIDComment = errcode.NewError(_commentBaseCode+1, "failed to ListByProductID "+_commentName)
-	// add +1 to the previous error code
+	StatusListByProductIDComment   = errcode.NewRPCStatus(_commentBaseCode+1, "failed to ListByProductID "+_commentName)
+	// error codes are globally unique, adding 1 to the previous error code
 )
+

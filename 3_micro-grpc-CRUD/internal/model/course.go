@@ -6,7 +6,7 @@ import (
 
 // Course 课程
 type Course struct {
-	mysql.Model `gorm:"embedded"`
+	mysql.Model `gorm:"embedded"` // embed id and time
 
 	Code     string `gorm:"column:code;type:varchar(10);NOT NULL" json:"code"`         // 课程代号
 	Name     string `gorm:"column:name;type:varchar(50);NOT NULL" json:"name"`         // 课程名称

@@ -19,24 +19,23 @@ import (
 	"google.golang.org/grpc"
 )
 
-// nolint
 func init() {
 	registerFns = append(registerFns, func(server *grpc.Server) {
-		userV1.RegisterCourseServiceServer(server, NewCourseServiceServer()) // register service to the rpc service
+		userV1.RegisterCourseServer(server, NewCourseServer()) // register service to the rpc service
 	})
 }
 
-var _ userV1.CourseServiceServer = (*courseService)(nil)
+var _ userV1.CourseServer = (*course)(nil)
 
-type courseService struct {
-	userV1.UnimplementedCourseServiceServer
+type course struct {
+	userV1.UnimplementedCourseServer
 
 	iDao dao.CourseDao
 }
 
-// NewCourseServiceServer create a new service
-func NewCourseServiceServer() userV1.CourseServiceServer {
-	return &courseService{
+// NewCourseServer create a new service
+func NewCourseServer() userV1.CourseServer {
+	return &course{
 		iDao: dao.NewCourseDao(
 			model.GetDB(),
 			cache.NewCourseCache(model.GetCacheType()),
@@ -45,39 +44,41 @@ func NewCourseServiceServer() userV1.CourseServiceServer {
 }
 
 // Create a record
-func (s *courseService) Create(ctx context.Context, req *userV1.CreateCourseRequest) (*userV1.CreateCourseReply, error) {
+func (s *course) Create(ctx context.Context, req *userV1.CreateCourseRequest) (*userV1.CreateCourseReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	course := &model.Course{}
-	err = copier.Copy(course, req)
+	record := &model.Course{}
+	err = copier.Copy(record, req)
 	if err != nil {
 		return nil, ecode.StatusCreateCourse.Err()
 	}
 
-	err = s.iDao.Create(ctx, course)
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	err = s.iDao.Create(ctx, record)
 	if err != nil {
-		logger.Error("s.iDao.Create error", logger.Err(err), logger.Any("course", course), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("Create error", logger.Err(err), logger.Any("course", record), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	return &userV1.CreateCourseReply{Id: course.ID}, nil
+	return &userV1.CreateCourseReply{Id: record.ID}, nil
 }
 
 // DeleteByID delete a record by id
-func (s *courseService) DeleteByID(ctx context.Context, req *userV1.DeleteCourseByIDRequest) (*userV1.DeleteCourseByIDReply, error) {
+func (s *course) DeleteByID(ctx context.Context, req *userV1.DeleteCourseByIDRequest) (*userV1.DeleteCourseByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
 	err = s.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
-		logger.Error("s.iDao.DeleteByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
@@ -85,16 +86,17 @@ func (s *courseService) DeleteByID(ctx context.Context, req *userV1.DeleteCourse
 }
 
 // DeleteByIDs delete records by batch id
-func (s *courseService) DeleteByIDs(ctx context.Context, req *userV1.DeleteCourseByIDsRequest) (*userV1.DeleteCourseByIDsReply, error) {
+func (s *course) DeleteByIDs(ctx context.Context, req *userV1.DeleteCourseByIDsRequest) (*userV1.DeleteCourseByIDsReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
 	err = s.iDao.DeleteByIDs(ctx, req.Ids)
 	if err != nil {
-		logger.Error("s.iDao.DeleteByID error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("DeleteByID error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
@@ -102,23 +104,24 @@ func (s *courseService) DeleteByIDs(ctx context.Context, req *userV1.DeleteCours
 }
 
 // UpdateByID update a record by id
-func (s *courseService) UpdateByID(ctx context.Context, req *userV1.UpdateCourseByIDRequest) (*userV1.UpdateCourseByIDReply, error) {
+func (s *course) UpdateByID(ctx context.Context, req *userV1.UpdateCourseByIDRequest) (*userV1.UpdateCourseByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	course := &model.Course{}
-	err = copier.Copy(course, req)
+	record := &model.Course{}
+	err = copier.Copy(record, req)
 	if err != nil {
-		return nil, ecode.StatusUpdateCourse.Err()
+		return nil, ecode.StatusUpdateByIDCourse.Err()
 	}
-	course.ID = req.Id
+	record.ID = req.Id
 
-	err = s.iDao.UpdateByID(ctx, course)
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	err = s.iDao.UpdateByID(ctx, record)
 	if err != nil {
-		logger.Error("s.iDao.UpdateByID error", logger.Err(err), logger.Any("course", course), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("UpdateByID error", logger.Err(err), logger.Any("course", record), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
@@ -126,43 +129,87 @@ func (s *courseService) UpdateByID(ctx context.Context, req *userV1.UpdateCourse
 }
 
 // GetByID get a record by id
-func (s *courseService) GetByID(ctx context.Context, req *userV1.GetCourseByIDRequest) (*userV1.GetCourseByIDReply, error) {
+func (s *course) GetByID(ctx context.Context, req *userV1.GetCourseByIDRequest) (*userV1.GetCourseByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
 	record, err := s.iDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, query.ErrNotFound) {
-			logger.Warn("s.iDao.GetByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
+			logger.Warn("GetByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
 			return nil, ecode.StatusNotFound.Err()
 		}
-		logger.Error("s.iDao.GetByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("GetByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
 	data, err := convertCourse(record)
 	if err != nil {
-		logger.Warn("convertCourse error", logger.Err(err), logger.Any("record", record), interceptor.ServerCtxRequestIDField(ctx))
-		return nil, ecode.StatusGetCourse.Err()
+		logger.Warn("convertCourse error", logger.Err(err), logger.Any("course", record), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusGetByIDCourse.Err()
 	}
 
 	return &userV1.GetCourseByIDReply{Course: data}, nil
 }
 
-// ListByIDs list of records by batch id
-func (s *courseService) ListByIDs(ctx context.Context, req *userV1.ListCourseByIDsRequest) (*userV1.ListCourseByIDsReply, error) {
+// GetByCondition get a record by id
+func (s *course) GetByCondition(ctx context.Context, req *userV1.GetCourseByConditionRequest) (*userV1.GetCourseByConditionReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	conditions := &query.Conditions{}
+	for _, v := range req.Conditions.GetColumns() {
+		column := query.Column{}
+		_ = copier.Copy(&column, v)
+		conditions.Columns = append(conditions.Columns, column)
+	}
+	err = conditions.CheckValid()
+	if err != nil {
+		logger.Warn("Parameters error", logger.Err(err), logger.Any("conditions", conditions), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInvalidParams.Err()
+	}
+
+	record, err := s.iDao.GetByCondition(ctx, conditions)
+	if err != nil {
+		if errors.Is(err, query.ErrNotFound) {
+			logger.Warn("GetByCondition error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
+			return nil, ecode.StatusNotFound.Err()
+		}
+		logger.Error("GetByCondition error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInternalServerError.ToRPCErr()
+	}
+
+	data, err := convertCourse(record)
+	if err != nil {
+		logger.Warn("convertCourse error", logger.Err(err), logger.Any("course", record), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusGetByConditionCourse.Err()
+	}
+
+	return &userV1.GetCourseByConditionReply{
+		Course: data,
+	}, nil
+}
+
+// ListByIDs list of records by batch id
+func (s *course) ListByIDs(ctx context.Context, req *userV1.ListCourseByIDsRequest) (*userV1.ListCourseByIDsReply, error) {
+	err := req.Validate()
+	if err != nil {
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInvalidParams.Err()
+	}
+
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
 	courseMap, err := s.iDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
-		logger.Error("s.iDao.GetByID error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
@@ -182,7 +229,7 @@ func (s *courseService) ListByIDs(ctx context.Context, req *userV1.ListCourseByI
 }
 
 // List of records by query parameters
-func (s *courseService) List(ctx context.Context, req *userV1.ListCourseRequest) (*userV1.ListCourseReply, error) {
+func (s *course) List(ctx context.Context, req *userV1.ListCourseRequest) (*userV1.ListCourseReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
@@ -196,24 +243,25 @@ func (s *courseService) List(ctx context.Context, req *userV1.ListCourseRequest)
 	}
 	params.Size = int(req.Params.Limit)
 
+	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
 	records, total, err := s.iDao.GetByColumns(ctx, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "query params error:") {
-			logger.Warn("s.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), interceptor.ServerCtxRequestIDField(ctx))
+			logger.Warn("GetByColumns error", logger.Err(err), logger.Any("params", params), interceptor.ServerCtxRequestIDField(ctx))
 			return nil, ecode.StatusInvalidParams.Err()
 		}
-		logger.Error("s.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("GetByColumns error", logger.Err(err), logger.Any("params", params), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
 	courses := []*userV1.Course{}
 	for _, record := range records {
-		course, err := convertCourse(record)
+		data, err := convertCourse(record)
 		if err != nil {
 			logger.Warn("convertCourse error", logger.Err(err), logger.Any("id", record.ID), interceptor.ServerCtxRequestIDField(ctx))
 			continue
 		}
-		courses = append(courses, course)
+		courses = append(courses, data)
 	}
 
 	return &userV1.ListCourseReply{

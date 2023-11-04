@@ -6,12 +6,14 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// inventory rpc service level error code
+// inventory business-level rpc error codes.
+// the _inventoryNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_inventoryNO       = 69 // number range 1~100, if there is the same number, trigger panic.
+	_inventoryNO       = 61
 	_inventoryName     = "inventory"
-	_inventoryBaseCode = errcode.HCode(_inventoryNO)
+	_inventoryBaseCode = errcode.RCode(_inventoryNO)
 
-	StatusGetByIDInventory = errcode.NewError(_inventoryBaseCode+1, "failed to GetByID "+_inventoryName)
-	// add +1 to the previous error code
+	StatusGetByIDInventory   = errcode.NewRPCStatus(_inventoryBaseCode+1, "failed to GetByID "+_inventoryName)
+	// error codes are globally unique, adding 1 to the previous error code
 )
+

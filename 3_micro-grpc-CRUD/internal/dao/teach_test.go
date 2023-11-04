@@ -141,7 +141,7 @@ func Test_teachDao_GetByID(t *testing.T) {
 		WithArgs(testData.ID).
 		WillReturnRows(rows)
 
-	_, err := d.IDao.(TeachDao).GetByID(d.Ctx, testData.ID) // notfound
+	_, err := d.IDao.(TeachDao).GetByID(d.Ctx, testData.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -162,6 +162,50 @@ func Test_teachDao_GetByID(t *testing.T) {
 		WithArgs(3, 4).
 		WillReturnRows(rows)
 	_, err = d.IDao.(TeachDao).GetByID(d.Ctx, 4)
+	assert.Error(t, err)
+}
+
+func Test_teachDao_GetByCondition(t *testing.T) {
+	d := newTeachDao()
+	defer d.Close()
+	testData := d.TestData.(*model.Teach)
+
+	rows := sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).
+		AddRow(testData.ID, testData.CreatedAt, testData.UpdatedAt)
+
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID).
+		WillReturnRows(rows)
+
+	_, err := d.IDao.(TeachDao).GetByCondition(d.Ctx, &query.Conditions{
+		Columns: []query.Column{
+			{
+				Name:  "id",
+				Value: testData.ID,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = d.SQLMock.ExpectationsWereMet()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// notfound error
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(2).
+		WillReturnRows(rows)
+	_, err = d.IDao.(TeachDao).GetByCondition(d.Ctx, &query.Conditions{
+		Columns: []query.Column{
+			{
+				Name:  "id",
+				Value: 2,
+			},
+		},
+	})
 	assert.Error(t, err)
 }
 

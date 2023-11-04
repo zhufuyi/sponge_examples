@@ -1,3 +1,4 @@
+// Package server is a package that holds the http or grpc service.
 package server
 
 import (
@@ -12,6 +13,7 @@ import (
 	"comment/internal/service"
 
 	"github.com/zhufuyi/sponge/pkg/app"
+	"github.com/zhufuyi/sponge/pkg/errcode"
 	"github.com/zhufuyi/sponge/pkg/grpc/gtls"
 	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
 	"github.com/zhufuyi/sponge/pkg/grpc/metrics"
@@ -122,7 +124,7 @@ func (s *grpcServer) secureServerOption() grpc.ServerOption {
 		if err != nil {
 			panic(err)
 		}
-		logger.Info("type of security: sever-side certification")
+		logger.Info("rpc security type: sever-side certification")
 		return grpc.Creds(credentials)
 
 	case "two-way": // both client and server side certification
@@ -134,11 +136,11 @@ func (s *grpcServer) secureServerOption() grpc.ServerOption {
 		if err != nil {
 			panic(err)
 		}
-		logger.Info("type of security: both client and server side certification")
+		logger.Info("rpc security type: both client-side and server-side certification")
 		return grpc.Creds(credentials)
 	}
 
-	logger.Info("type of security: insecure")
+	logger.Info("rpc security type: insecure")
 	return nil
 }
 
@@ -152,6 +154,7 @@ func (s *grpcServer) unaryServerOptions() grpc.ServerOption {
 	// logger interceptor
 	unaryServerInterceptors = append(unaryServerInterceptors, interceptor.UnaryServerLog(
 		logger.Get(),
+		interceptor.WithReplaceGRPCLogger(),
 	))
 
 	// token interceptor
@@ -165,6 +168,12 @@ func (s *grpcServer) unaryServerOptions() grpc.ServerOption {
 		}
 		unaryServerInterceptors = append(unaryServerInterceptors, interceptor.UnaryServerToken(checkToken))
 	}
+
+	// jwt token interceptor
+	//unaryServerInterceptors = append(unaryServerInterceptors, interceptor.UnaryServerJwtAuth(
+	//	// set ignore rpc methods(full path) for jwt token
+	//	interceptor.WithAuthIgnoreMethods("/api.user.v1.User/Register", "/api.user.v1.User/Login"),
+	//))
 
 	// metrics interceptor
 	if config.Get().App.EnableMetrics {
@@ -198,13 +207,32 @@ func (s *grpcServer) unaryServerOptions() grpc.ServerOption {
 func (s *grpcServer) streamServerOptions() grpc.ServerOption {
 	streamServerInterceptors := []grpc.StreamServerInterceptor{
 		interceptor.StreamServerRecovery(),
-		interceptor.StreamServerRequestID(),
+		//interceptor.StreamServerRequestID(),
 	}
 
 	// logger interceptor
 	streamServerInterceptors = append(streamServerInterceptors, interceptor.StreamServerLog(
 		logger.Get(),
+		interceptor.WithReplaceGRPCLogger(),
 	))
+
+	// token interceptor
+	if config.Get().Grpc.EnableToken {
+		checkToken := func(appID string, appKey string) error {
+			// todo the defaultTokenAppID and defaultTokenAppKey are usually retrieved from the cache or database
+			if appID != defaultTokenAppID || appKey != defaultTokenAppKey {
+				return status.Errorf(codes.Unauthenticated, "app id or app key checksum failure")
+			}
+			return nil
+		}
+		streamServerInterceptors = append(streamServerInterceptors, interceptor.StreamServerToken(checkToken))
+	}
+
+	// jwt token interceptor
+	//streamServerInterceptors = append(streamServerInterceptors, interceptor.StreamServerJwtAuth(
+	//	// set ignore rpc methods(full path) for jwt token
+	//	interceptor.WithAuthIgnoreMethods("/api.user.v1.User/Register", "/api.user.v1.User/Login"),
+	//))
 
 	// metrics interceptor
 	if config.Get().App.EnableMetrics {
@@ -265,6 +293,16 @@ func (s *grpcServer) registerProfMux() {
 	prof.Register(s.mux, prof.WithIOWaitTime())
 }
 
+func (s *grpcServer) addHTTPRouter() {
+	if s.mux == nil {
+		s.mux = http.NewServeMux()
+	}
+	s.mux.HandleFunc("/codes", errcode.ListGRPCErrCodes) // error codes router
+
+	cfgStr := config.Show()
+	s.mux.HandleFunc("/config", errcode.ShowConfig([]byte(cfgStr))) // config router
+}
+
 // NewGRPCServer creates a new grpc server
 func NewGRPCServer(addr string, opts ...GrpcOption) app.IServer {
 	var err error
@@ -275,6 +313,7 @@ func NewGRPCServer(addr string, opts ...GrpcOption) app.IServer {
 		iRegistry: o.iRegistry,
 		instance:  o.instance,
 	}
+	s.addHTTPRouter()
 	if config.Get().App.EnableHTTPProfile {
 		s.registerProfMux()
 	}

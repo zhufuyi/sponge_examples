@@ -1,3 +1,5 @@
+// Package routers is a package dedicated to registering routes, and supports both
+// manual route registration and automatic route registration.
 package routers
 
 import (
@@ -6,6 +8,7 @@ import (
 	"user/docs"
 	"user/internal/config"
 
+	"github.com/zhufuyi/sponge/pkg/errcode"
 	"github.com/zhufuyi/sponge/pkg/gin/handlerfunc"
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/gin/middleware/metrics"
@@ -48,7 +51,7 @@ func NewRouter() *gin.Engine {
 	jwt.Init(
 	//jwt.WithExpire(time.Hour*24),
 	//jwt.WithSigningKey("123456"),
-	//jwt.WithSigningMethod(jwt.SigningMethodHS384),
+	//jwt.WithSigningMethod(jwt.HS384),
 	)
 
 	// metrics middleware
@@ -84,6 +87,8 @@ func NewRouter() *gin.Engine {
 
 	r.GET("/health", handlerfunc.CheckHealth)
 	r.GET("/ping", handlerfunc.Ping)
+	r.GET("/codes", handlerfunc.ListCodes)
+	r.GET("/config", gin.WrapF(errcode.ShowConfig([]byte(config.Show()))))
 
 	// register swagger routes, generate code via swag init
 	docs.SwaggerInfo.BasePath = ""

@@ -6,8 +6,8 @@ import (
 
 	"shop_gw/docs"
 	"shop_gw/internal/config"
-	"shop_gw/internal/ecode"
 
+	"github.com/zhufuyi/sponge/pkg/errcode"
 	"github.com/zhufuyi/sponge/pkg/gin/handlerfunc"
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/gin/middleware/metrics"
@@ -51,7 +51,7 @@ func NewRouter() *gin.Engine { //nolint
 	jwt.Init(
 	//jwt.WithExpire(time.Hour*24),
 	//jwt.WithSigningKey("123456"),
-	//jwt.WithSigningMethod(jwt.SigningMethodHS384),
+	//jwt.WithSigningMethod(jwt.HS384),
 	)
 
 	// metrics middleware
@@ -71,8 +71,8 @@ func NewRouter() *gin.Engine { //nolint
 	if config.Get().App.EnableCircuitBreaker {
 		r.Use(middleware.CircuitBreaker(
 			// set http code for circuit breaker, default already includes 500 and 503
-			middleware.WithValidCode(ecode.InternalServerError.Code()),
-			middleware.WithValidCode(ecode.ServiceUnavailable.Code()),
+			middleware.WithValidCode(errcode.InternalServerError.Code()),
+			middleware.WithValidCode(errcode.ServiceUnavailable.Code()),
 		))
 	}
 
@@ -81,7 +81,7 @@ func NewRouter() *gin.Engine { //nolint
 		r.Use(middleware.Tracing(config.Get().App.Name))
 	}
 
-	// pprof performance analysis
+	// profile performance analysis
 	if config.Get().App.EnableHTTPProfile {
 		prof.Register(r, prof.WithIOWaitTime())
 	}
@@ -91,6 +91,8 @@ func NewRouter() *gin.Engine { //nolint
 
 	r.GET("/health", handlerfunc.CheckHealth)
 	r.GET("/ping", handlerfunc.Ping)
+	r.GET("/codes", handlerfunc.ListCodes)
+	r.GET("/config", gin.WrapF(errcode.ShowConfig([]byte(config.Show()))))
 
 	// access path /apis/swagger/index.html
 	swagger.CustomRouter(r, "apis", docs.ApiDocs)

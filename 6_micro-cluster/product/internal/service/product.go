@@ -4,19 +4,12 @@ package service
 
 import (
 	"context"
-	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
-	"github.com/zhufuyi/sponge/pkg/logger"
-	"product/internal/ecode"
 
 	productV1 "product/api/product/v1"
+	"product/internal/ecode"
 
-	//"product/internal/cache"
-	//"product/internal/dao"
-	//"product/internal/ecode"
-	//"product/internal/model"
-
-	//"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
-	//"github.com/zhufuyi/sponge/pkg/logger"
+	"github.com/zhufuyi/sponge/pkg/grpc/interceptor"
+	"github.com/zhufuyi/sponge/pkg/logger"
 
 	"google.golang.org/grpc"
 )
