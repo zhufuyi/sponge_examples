@@ -182,17 +182,11 @@ func (c *userServiceClient) UpdatePassword(ctx context.Context, req *community_g
 }
 
 // CheckLogin 判断用户是否登录
-func (c *userServiceClient) CheckLogin(ctx context.Context, req *community_gwV1.CheckLoginRequest) (*community_gwV1.CheckLoginReply, error) {
-	return nil, nil
-}
-
-// CheckLogin 判断用户是否登录
 func CheckLogin(ctx context.Context, id uint64) (string, error) {
 	reply, err := userV1.NewUserServiceClient(rpcclient.GetUserRPCConn()).CheckLogin(ctx, &userV1.CheckLoginRequest{
 		Id: id,
 	})
 	if err != nil {
-		logger.Warn("get token error", logger.Err(err), interceptor.CtxRequestIDField(ctx))
 		return "", err
 	}
 

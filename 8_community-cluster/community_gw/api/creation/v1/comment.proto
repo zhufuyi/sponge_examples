@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api.creation.v1;
 
-import "tagger/tagger.proto";
+//import "tagger/tagger.proto";
 import "validate/validate.proto";
 
 option go_package = "community_gw/api/creation/v1;v1";
@@ -84,7 +84,7 @@ message ReplyCommentReply {
 }
 
 message GetCommentByIDRequest {
-	uint64 id = 1 [(validate.rules).uint64.gte  = 1, (tagger.tags) = "uri:\"id\"" ];
+	uint64 id = 1 [(validate.rules).uint64.gte  = 1];
 }
 
 message GetCommentByIDReply {
