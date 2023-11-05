@@ -177,7 +177,7 @@ func (r *postServiceRouter) Create_6(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Create(ctx, req)
@@ -203,7 +203,7 @@ func (r *postServiceRouter) UpdateContent_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdateContent(ctx, req)
@@ -229,7 +229,7 @@ func (r *postServiceRouter) Delete_4(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Delete(ctx, req)
@@ -261,7 +261,7 @@ func (r *postServiceRouter) GetByID_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.GetByID(ctx, req)
@@ -287,7 +287,7 @@ func (r *postServiceRouter) ListByUserID_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListByUserID(ctx, req)
@@ -313,7 +313,7 @@ func (r *postServiceRouter) ListLatest_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListLatest(ctx, req)
@@ -339,7 +339,7 @@ func (r *postServiceRouter) ListHot_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListHot(ctx, req)
@@ -365,7 +365,7 @@ func (r *postServiceRouter) IncrViewCount_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.IncrViewCount(ctx, req)
@@ -391,7 +391,7 @@ func (r *postServiceRouter) IncrShareCount_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.IncrShareCount(ctx, req)

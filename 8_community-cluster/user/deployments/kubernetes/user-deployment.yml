@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: user
-          image: /community.user:latest
+          image: /community/user:latest
           # If using a local image, use Never, default is Always
           #imagePullPolicy: Never
           command: ["./user", "-c", "/app/configs/user.yml"]
@@ -33,21 +33,21 @@ spec:
               readOnly: true
 
           ports:
-            - name: http-port
-              containerPort: 8080
+            - name: grpc-port
+              containerPort: 8282
+            - name: metrics-port
+              containerPort: 8283
           readinessProbe:
-            httpGet:
-              port: http-port
-              path: /health
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8282"]
             initialDelaySeconds: 10
             timeoutSeconds: 2
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
           livenessProbe:
-            httpGet:
-              port: http-port
-              path: /health
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8282"]
 
             initialDelaySeconds: 10
             timeoutSeconds: 2

@@ -8,7 +8,10 @@ spec:
     app: creation
   type: ClusterIP
   ports:
-    - name: creation-svc-http-port
-      port: 8080
-      targetPort: 8080
+    - name: creation-svc-grpc-port
+      port: 8282
+      targetPort: 8282
+    - name: creation-svc-grpc-metrics-port
+      port: 8283
+      targetPort: 8283
 

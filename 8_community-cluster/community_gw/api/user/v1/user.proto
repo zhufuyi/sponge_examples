@@ -17,6 +17,8 @@ service UserService {
   rpc Login(LoginRequest) returns (LoginReply) {}
   // 登出
   rpc Logout(LogoutRequest) returns (LogoutReply) {}
+  // 检查登录状态
+  rpc CheckLogin(CheckLoginRequest) returns (CheckLoginReply) {}
 
   // 删除用户
   rpc DeleteByID(DeleteUserByIDRequest) returns (DeleteUserByIDReply) {}
@@ -69,6 +71,15 @@ message LogoutRequest {
 }
 
 message LogoutReply {
+}
+
+message CheckLoginRequest {
+  uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+}
+
+message CheckLoginReply {
+  bool isLogin = 1; // true:已登录, false:未登录
+  string tokenTails = 2; // token尾部10字节
 }
 
 message DeleteUserByIDRequest {

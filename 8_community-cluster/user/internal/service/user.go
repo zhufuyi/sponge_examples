@@ -92,6 +92,7 @@ func (s *userService) SendEmailVerifyCode(ctx context.Context, req *userV1.SendE
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 检查邮箱是否已经注册过
 	data, _ := s.iDao.GetByEmail(ctx, req.Email)
@@ -138,6 +139,7 @@ func (s *userService) Register(ctx context.Context, req *userV1.RegisterRequest)
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	if !isTestEmail(req.Email) {
 		// 检查验证码是否存在
@@ -191,6 +193,7 @@ func (s *userService) Login(ctx context.Context, req *userV1.LoginRequest) (*use
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 检查邮箱是否已经注册过
 	data, err := s.iDao.GetByEmail(ctx, req.Email)
@@ -206,13 +209,13 @@ func (s *userService) Login(ctx context.Context, req *userV1.LoginRequest) (*use
 	}
 
 	// 判断是否已经登录过
-	cacheToken, err := s.checkLogin(ctx, data.ID)
+	isLogin, err := s.checkLogin(ctx, data.ID)
 	if err != nil {
 		logger.Error("h.userTokenCache.Get error", logger.Err(err), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.Err()
 	}
-	if cacheToken != "" {
-		return nil, ecode.StatusAlreadyLoginUserService.Err(ecode.Any("token", cacheToken))
+	if isLogin {
+		return nil, ecode.StatusAlreadyLoginUserService.Err()
 	}
 
 	// 生成token
@@ -254,8 +257,9 @@ func (s *userService) Logout(ctx context.Context, req *userV1.LogoutRequest) (*u
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
-	claims, err := jwt.VerifyToken(req.Token)
+	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
 		logger.Warn("jwt.VerifyToken error", logger.Err(err), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusTokenUserService.Err()
@@ -267,18 +271,13 @@ func (s *userService) Logout(ctx context.Context, req *userV1.LogoutRequest) (*u
 	}
 
 	// 判断是否已经登录过
-	cacheToken, err := s.checkLogin(ctx, req.Id)
+	isLogin, err := s.checkLogin(ctx, req.Id)
 	if err != nil {
 		logger.Error("h.userTokenCache.Get error", logger.Err(err), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.Err()
 	}
-	if cacheToken == "" {
+	if !isLogin {
 		return nil, ecode.StatusNotLoginUserService.Err()
-	}
-
-	if cacheToken != req.Token {
-		logger.Warn("token error", interceptor.ServerCtxRequestIDField(ctx))
-		return nil, ecode.StatusAccessDenied.Err()
 	}
 
 	err = s.userTokenCache.Del(ctx, req.Id)
@@ -297,6 +296,7 @@ func (s *userService) DeleteByID(ctx context.Context, req *userV1.DeleteUserByID
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	err = s.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
@@ -316,6 +316,7 @@ func (s *userService) UpdateByID(ctx context.Context, req *userV1.UpdateUserByID
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	user := &model.User{
 		Name:     req.Name,
@@ -343,6 +344,7 @@ func (s *userService) GetByID(ctx context.Context, req *userV1.GetUserByIDReques
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	user, err := s.iDao.GetByID(ctx, req.Id)
 	if err != nil {
@@ -369,6 +371,7 @@ func (s *userService) List(ctx context.Context, req *userV1.ListUserRequest) (*u
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	params := &query.Params{}
 	err = copier.Copy(params, req.Params)
@@ -411,6 +414,7 @@ func (s *userService) UpdatePassword(ctx context.Context, req *userV1.UpdatePass
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	password, err := gocrypto.HashAndSaltPassword(req.Password)
 	if err != nil {
@@ -431,13 +435,36 @@ func (s *userService) UpdatePassword(ctx context.Context, req *userV1.UpdatePass
 	return &userV1.UpdatePasswordReply{}, nil
 }
 
-func (s *userService) checkLogin(ctx context.Context, id uint64) (string, error) {
-	cacheToken, err := s.userTokenCache.Get(ctx, id)
-	if err != nil && !errors.Is(err, model.ErrCacheNotFound) {
-		return "", err
+// CheckLogin 判断是否登录
+func (s *userService) CheckLogin(ctx context.Context, req *userV1.CheckLoginRequest) (*userV1.CheckLoginReply, error) {
+	err := req.Validate()
+	if err != nil {
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	return cacheToken, nil
+	token, err := model.GetRedisCli().Get(ctx, cache.GetUserTokenCacheKey(req.Id)).Result()
+	if err != nil {
+		logger.Warn("get token error", logger.Err(err), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusInternalServerError.Err()
+	}
+
+	reply := &userV1.CheckLoginReply{}
+
+	if len(token) > 11 {
+		reply.IsLogin = true
+		reply.TokenTails = token[len(token)-11 : len(token)-1]
+	}
+
+	return reply, nil
+}
+
+func (h *userService) checkLogin(ctx context.Context, id uint64) (bool, error) {
+	result, err := model.GetRedisCli().Exists(ctx, cache.GetUserTokenCacheKey(id)).Result()
+	if err != nil {
+		return false, err
+	}
+	return result > 0, nil
 }
 
 func isTestEmail(email string) bool {

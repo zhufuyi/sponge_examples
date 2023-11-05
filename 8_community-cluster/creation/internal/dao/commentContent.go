@@ -26,12 +26,14 @@ type CommentContentDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.CommentContent) error
 	GetByID(ctx context.Context, id uint64) (*model.CommentContent, error)
+	GetByCondition(ctx context.Context, condition *query.Conditions) (*model.CommentContent, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.CommentContent, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.CommentContent, int64, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.CommentContent) (uint64, error)
+	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.CommentContent) error
-	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64, delFlag int) error
+
 	GetByCommentID(ctx context.Context, commentID uint64) (*model.CommentContent, error)
 	GetByCommentIDs(ctx context.Context, commentIDs []uint64) (map[uint64]*model.CommentContent, error)
 }
@@ -43,8 +45,12 @@ type commentContentDao struct {
 }
 
 // NewCommentContentDao creating the dao interface
-func NewCommentContentDao(db *gorm.DB, cache cache.CommentContentCache) CommentContentDao {
-	return &commentContentDao{db: db, cache: cache, sfg: new(singleflight.Group)}
+func NewCommentContentDao(db *gorm.DB, xCache cache.CommentContentCache) CommentContentDao {
+	return &commentContentDao{
+		db:    db,
+		cache: xCache,
+		sfg:   new(singleflight.Group),
+	}
 }
 
 // Create a record, insert the record and the id value is written back to the table
@@ -54,7 +60,7 @@ func (d *commentContentDao) Create(ctx context.Context, table *model.CommentCont
 	return err
 }
 
-// DeleteByID delete a record based on id
+// DeleteByID delete a record by id
 func (d *commentContentDao) DeleteByID(ctx context.Context, id uint64) error {
 	err := d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.CommentContent{}).Error
 	if err != nil {
@@ -67,7 +73,7 @@ func (d *commentContentDao) DeleteByID(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// DeleteByIDs batch delete multiple records
+// DeleteByIDs delete records by batch id
 func (d *commentContentDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	err := d.db.WithContext(ctx).Where("id IN (?)", ids).Delete(&model.CommentContent{}).Error
 	if err != nil {
@@ -82,12 +88,17 @@ func (d *commentContentDao) DeleteByIDs(ctx context.Context, ids []uint64) error
 	return nil
 }
 
+// UpdateByID update a record by id
 func (d *commentContentDao) UpdateByID(ctx context.Context, table *model.CommentContent) error {
-	return d.updateByID(ctx, d.db, table)
+	err := d.updateDataByID(ctx, d.db, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
 }
 
-// UpdateByID update records by id
-func (d *commentContentDao) updateByID(ctx context.Context, db *gorm.DB, table *model.CommentContent) error {
+func (d *commentContentDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.CommentContent) error {
 	if table.ID < 1 {
 		return errors.New("id cannot be 0")
 	}
@@ -107,18 +118,10 @@ func (d *commentContentDao) updateByID(ctx context.Context, db *gorm.DB, table *
 		update["ip"] = table.IP
 	}
 
-	err := db.WithContext(ctx).Model(table).Updates(update).Error
-	if err != nil {
-		return err
-	}
-
-	// delete cache
-	_ = d.cache.Del(ctx, table.ID)
-
-	return nil
+	return db.WithContext(ctx).Model(table).Updates(update).Error
 }
 
-// GetByID get a record based on id
+// GetByID get a record by id
 func (d *commentContentDao) GetByID(ctx context.Context, id uint64) (*model.CommentContent, error) {
 	record, err := d.cache.Get(ctx, id)
 	if err == nil {
@@ -164,7 +167,43 @@ func (d *commentContentDao) GetByID(ctx context.Context, id uint64) (*model.Comm
 	return nil, err
 }
 
-// GetByIDs get multiple rows by ids
+// GetByCondition get a record by condition
+// query conditions:
+//
+//	name: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
+//	logic: logical type, defaults to and when value is null, only &(and), ||(or)
+//
+// example: find a male aged 20
+//
+//	condition = &query.Conditions{
+//	    Columns: []query.Column{
+//		{
+//			Name:    "age",
+//			Value:   20,
+//		},
+//		{
+//			Name:  "gender",
+//			Value: "male",
+//		},
+//	}
+func (d *commentContentDao) GetByCondition(ctx context.Context, c *query.Conditions) (*model.CommentContent, error) {
+	queryStr, args, err := c.ConvertToGorm()
+	if err != nil {
+		return nil, err
+	}
+
+	table := &model.CommentContent{}
+	err = d.db.WithContext(ctx).Where(queryStr, args...).First(table).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}
+
+// GetByIDs list of records by batch id
 func (d *commentContentDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.CommentContent, error) {
 	itemMap, err := d.cache.MultiGet(ctx, ids)
 	if err != nil {
@@ -188,9 +227,8 @@ func (d *commentContentDao) GetByIDs(ctx context.Context, ids []uint64) (map[uin
 			_, err = d.cache.Get(ctx, id)
 			if errors.Is(err, cacheBase.ErrPlaceholder) {
 				continue
-			} else {
-				realMissedIDs = append(realMissedIDs, id)
 			}
+			realMissedIDs = append(realMissedIDs, id)
 		}
 
 		if len(realMissedIDs) > 0 {
@@ -215,10 +253,12 @@ func (d *commentContentDao) GetByIDs(ctx context.Context, ids []uint64) (map[uin
 			}
 		}
 	}
+
 	return itemMap, nil
 }
 
-// GetByColumns filter multiple rows based on paging and column information
+// GetByColumns get records by paging and column information,
+// Note: query performance degrades when table rows are very large because of the use of offset.
 //
 // params includes paging parameters and query parameters
 // paging parameters (required):
@@ -230,8 +270,8 @@ func (d *commentContentDao) GetByIDs(ctx context.Context, ids []uint64) (map[uin
 // query parameters (not required):
 //
 //	name: column name
-//	exp: expressions, which default to = when the value is null, have =, ! =, >, >=, <, <=, like
-//	value: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
 //	logic: logical type, defaults to and when value is null, only &(and), ||(or)
 //
 // example: search for a male over 20 years of age
@@ -283,8 +323,8 @@ func (d *commentContentDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *
 	return table.ID, err
 }
 
-// DeleteByTx delete a record in by id the database using the provided transaction
-func (d *commentContentDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64, delFlag int) error {
+// DeleteByTx delete a record by id in the database using the provided transaction
+func (d *commentContentDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error {
 	update := map[string]interface{}{
 		"deleted_at": time.Now(),
 	}
@@ -301,7 +341,12 @@ func (d *commentContentDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint
 
 // UpdateByTx update a record by id in the database using the provided transaction
 func (d *commentContentDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.CommentContent) error {
-	return d.updateByID(ctx, tx, table)
+	err := d.updateDataByID(ctx, tx, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
 }
 
 // GetByCommentID get a record by comment id

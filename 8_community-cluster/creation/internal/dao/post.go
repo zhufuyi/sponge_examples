@@ -26,6 +26,7 @@ type PostDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.Post) error
 	GetByID(ctx context.Context, id uint64) (*model.Post, error)
+	GetByCondition(ctx context.Context, condition *query.Conditions) (*model.Post, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Post, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Post, int64, error)
 
@@ -34,6 +35,8 @@ type PostDao interface {
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, post *model.Post) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64, delFlag int) error
+	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Post) error
+
 	IncrCommentCountByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	DecrCommentCountByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	IncrLikeCountByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -49,8 +52,12 @@ type postDao struct {
 }
 
 // NewPostDao creating the dao interface
-func NewPostDao(db *gorm.DB, cache cache.PostCache) PostDao {
-	return &postDao{db: db, cache: cache, sfg: new(singleflight.Group)}
+func NewPostDao(db *gorm.DB, xCache cache.PostCache) PostDao {
+	return &postDao{
+		db:    db,
+		cache: xCache,
+		sfg:   new(singleflight.Group),
+	}
 }
 
 // Create a record, insert the record and the id value is written back to the table
@@ -60,7 +67,7 @@ func (d *postDao) Create(ctx context.Context, table *model.Post) error {
 	return err
 }
 
-// DeleteByID delete a record based on id
+// DeleteByID delete a record by id
 func (d *postDao) DeleteByID(ctx context.Context, id uint64) error {
 	err := d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Post{}).Error
 	if err != nil {
@@ -73,7 +80,7 @@ func (d *postDao) DeleteByID(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// DeleteByIDs batch delete multiple records
+// DeleteByIDs delete records by batch id
 func (d *postDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	err := d.db.WithContext(ctx).Where("id IN (?)", ids).Delete(&model.Post{}).Error
 	if err != nil {
@@ -88,8 +95,17 @@ func (d *postDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	return nil
 }
 
-// UpdateByID update records by id
+// UpdateByID update a record by id
 func (d *postDao) UpdateByID(ctx context.Context, table *model.Post) error {
+	err := d.updateDataByID(ctx, d.db, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
+}
+
+func (d *postDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.Post) error {
 	if table.ID < 1 {
 		return errors.New("id cannot be 0")
 	}
@@ -139,18 +155,10 @@ func (d *postDao) UpdateByID(ctx context.Context, table *model.Post) error {
 		update["del_flag"] = table.DelFlag
 	}
 
-	err := d.db.WithContext(ctx).Model(table).Updates(update).Error
-	if err != nil {
-		return err
-	}
-
-	// delete cache
-	_ = d.cache.Del(ctx, table.ID)
-
-	return nil
+	return db.WithContext(ctx).Model(table).Updates(update).Error
 }
 
-// GetByID get a record based on id
+// GetByID get a record by id
 func (d *postDao) GetByID(ctx context.Context, id uint64) (*model.Post, error) {
 	record, err := d.cache.Get(ctx, id)
 	if err == nil {
@@ -196,7 +204,43 @@ func (d *postDao) GetByID(ctx context.Context, id uint64) (*model.Post, error) {
 	return nil, err
 }
 
-// GetByIDs get multiple rows by ids
+// GetByCondition get a record by condition
+// query conditions:
+//
+//	name: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
+//	logic: logical type, defaults to and when value is null, only &(and), ||(or)
+//
+// example: find a male aged 20
+//
+//	condition = &query.Conditions{
+//	    Columns: []query.Column{
+//		{
+//			Name:    "age",
+//			Value:   20,
+//		},
+//		{
+//			Name:  "gender",
+//			Value: "male",
+//		},
+//	}
+func (d *postDao) GetByCondition(ctx context.Context, c *query.Conditions) (*model.Post, error) {
+	queryStr, args, err := c.ConvertToGorm()
+	if err != nil {
+		return nil, err
+	}
+
+	table := &model.Post{}
+	err = d.db.WithContext(ctx).Where(queryStr, args...).First(table).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}
+
+// GetByIDs list of records by batch id
 func (d *postDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Post, error) {
 	itemMap, err := d.cache.MultiGet(ctx, ids)
 	if err != nil {
@@ -220,9 +264,8 @@ func (d *postDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 			_, err = d.cache.Get(ctx, id)
 			if errors.Is(err, cacheBase.ErrPlaceholder) {
 				continue
-			} else {
-				realMissedIDs = append(realMissedIDs, id)
 			}
+			realMissedIDs = append(realMissedIDs, id)
 		}
 
 		if len(realMissedIDs) > 0 {
@@ -247,10 +290,12 @@ func (d *postDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 			}
 		}
 	}
+
 	return itemMap, nil
 }
 
-// GetByColumns filter multiple rows based on paging and column information
+// GetByColumns get records by paging and column information,
+// Note: query performance degrades when table rows are very large because of the use of offset.
 //
 // params includes paging parameters and query parameters
 // paging parameters (required):
@@ -262,8 +307,8 @@ func (d *postDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 // query parameters (not required):
 //
 //	name: column name
-//	exp: expressions, which default to = when the value is null, have =, ! =, >, >=, <, <=, like
-//	value: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
 //	logic: logical type, defaults to and when value is null, only &(and), ||(or)
 //
 // example: search for a male over 20 years of age
@@ -344,9 +389,9 @@ func (d *postDao) IncrShareCount(ctx context.Context, id uint64) error {
 }
 
 // CreateByTx create a record in the database using the provided transaction
-func (d *postDao) CreateByTx(ctx context.Context, tx *gorm.DB, post *model.Post) (uint64, error) {
-	err := tx.WithContext(ctx).Create(post).Error
-	return post.ID, err
+func (d *postDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Post) (uint64, error) {
+	err := tx.WithContext(ctx).Create(table).Error
+	return table.ID, err
 }
 
 // DeleteByTx delete a record in the database using the provided transaction
@@ -361,12 +406,19 @@ func (d *postDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64, delFla
 	}
 
 	// delete cache
-	err = d.cache.Del(ctx, id)
-	if err != nil {
-		return err
-	}
+	_ = d.cache.Del(ctx, id)
 
 	return nil
+}
+
+// UpdateByTx update a record by id in the database using the provided transaction
+func (d *postDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Post) error {
+	err := d.updateDataByID(ctx, tx, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
 }
 
 // IncrCommentCountByTx increment comment_count by 1 using the provided transaction

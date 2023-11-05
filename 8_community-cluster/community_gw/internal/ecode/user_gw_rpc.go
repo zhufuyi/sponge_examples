@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// userService rpc service level error code
+// userService business-level rpc error codes.
+// the userServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_userServiceNO       = 7 // number range 1~100, if there is the same number, trigger panic.
+	_userServiceNO       = 6
 	_userServiceName     = "userService"
 	_userServiceBaseCode = errcode.RCode(_userServiceNO)
 
@@ -19,5 +20,5 @@ var (
 	StatusUpdateByIDUserService          = errcode.NewRPCStatus(_userServiceBaseCode+5, "failed to UpdateByID "+_userServiceName)
 	StatusGetByIDUserService             = errcode.NewRPCStatus(_userServiceBaseCode+6, "failed to GetByID "+_userServiceName)
 	StatusUpdatePasswordUserService      = errcode.NewRPCStatus(_userServiceBaseCode+7, "failed to UpdatePassword "+_userServiceName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

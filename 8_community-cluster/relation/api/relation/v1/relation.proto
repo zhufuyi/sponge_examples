@@ -5,7 +5,7 @@ package api.relation.v1;
 //import "tagger/tagger.proto";
 import "validate/validate.proto";
 
-option go_package = "relation/api/relation/v1;v1";
+option go_package = "community_gw/api/relation/v1;v1";
 
 // 好友关系服务
 service RelationService {

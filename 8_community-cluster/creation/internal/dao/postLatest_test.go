@@ -141,7 +141,7 @@ func Test_postLatestDao_GetByID(t *testing.T) {
 		WithArgs(testData.ID).
 		WillReturnRows(rows)
 
-	_, err := d.IDao.(PostLatestDao).GetByID(d.Ctx, testData.ID) // notfound
+	_, err := d.IDao.(PostLatestDao).GetByID(d.Ctx, testData.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -162,6 +162,50 @@ func Test_postLatestDao_GetByID(t *testing.T) {
 		WithArgs(3, 4).
 		WillReturnRows(rows)
 	_, err = d.IDao.(PostLatestDao).GetByID(d.Ctx, 4)
+	assert.Error(t, err)
+}
+
+func Test_postLatestDao_GetByCondition(t *testing.T) {
+	d := newPostLatestDao()
+	defer d.Close()
+	testData := d.TestData.(*model.PostLatest)
+
+	rows := sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).
+		AddRow(testData.ID, testData.CreatedAt, testData.UpdatedAt)
+
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID).
+		WillReturnRows(rows)
+
+	_, err := d.IDao.(PostLatestDao).GetByCondition(d.Ctx, &query.Conditions{
+		Columns: []query.Column{
+			{
+				Name:  "id",
+				Value: testData.ID,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = d.SQLMock.ExpectationsWereMet()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// notfound error
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(2).
+		WillReturnRows(rows)
+	_, err = d.IDao.(PostLatestDao).GetByCondition(d.Ctx, &query.Conditions{
+		Columns: []query.Column{
+			{
+				Name:  "id",
+				Value: 2,
+			},
+		},
+	})
 	assert.Error(t, err)
 }
 
@@ -246,7 +290,7 @@ func Test_postLatestDao_CreateByTx(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	d.SQLMock.ExpectCommit()
 
-	err := d.IDao.(PostLatestDao).CreateByTx(d.Ctx, d.DB, testData)
+	_, err := d.IDao.(PostLatestDao).CreateByTx(d.Ctx, d.DB, testData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -268,7 +312,24 @@ func Test_postLatestDao_DeleteByTx(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(int64(testData.ID), 1))
 	d.SQLMock.ExpectCommit()
 
-	err := d.IDao.(PostLatestDao).DeleteByTx(d.Ctx, d.DB, testData.ID, 1)
+	err := d.IDao.(PostLatestDao).DeleteByTx(d.Ctx, d.DB, testData.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_postLatestDao_UpdateByTx(t *testing.T) {
+	d := newPostLatestDao()
+	defer d.Close()
+	testData := d.TestData.(*model.PostLatest)
+
+	d.SQLMock.ExpectBegin()
+	d.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(d.AnyTime, testData.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	d.SQLMock.ExpectCommit()
+
+	err := d.IDao.(PostLatestDao).UpdateByTx(d.Ctx, d.DB, testData)
 	if err != nil {
 		t.Fatal(err)
 	}

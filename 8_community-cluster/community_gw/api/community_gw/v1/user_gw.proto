@@ -86,6 +86,8 @@ service UserService {
       }
     };
   }
+  // 检查登录状态
+  rpc CheckLogin(CheckLoginRequest) returns (CheckLoginReply) {}
   // 更新用户
   rpc UpdateByID(UpdateUserByIDRequest) returns (UpdateUserByIDReply) {
     option (google.api.http) = {
@@ -175,6 +177,15 @@ message CheckAuthReply {}
 message LogoutRequest {
   uint64 id = 1 [(validate.rules).uint64.gte  = 1];
   string token = 2 [(validate.rules).string.min_len  = 20];
+}
+
+message CheckLoginRequest {
+  uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+}
+
+message CheckLoginReply {
+  bool isLogin = 1; // true:已登录, false:未登录
+  string tokenTails = 2; // token尾部10字节
 }
 
 message LogoutReply {

@@ -1297,6 +1297,223 @@ var _ interface {
 	ErrorName() string
 } = LogoutReplyValidationError{}
 
+// Validate checks the field values on CheckLoginRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CheckLoginRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckLoginRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckLoginRequestMultiError, or nil if none found.
+func (m *CheckLoginRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckLoginRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() < 1 {
+		err := CheckLoginRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CheckLoginRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckLoginRequestMultiError is an error wrapping multiple validation errors
+// returned by CheckLoginRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CheckLoginRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckLoginRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckLoginRequestMultiError) AllErrors() []error { return m }
+
+// CheckLoginRequestValidationError is the validation error returned by
+// CheckLoginRequest.Validate if the designated constraints aren't met.
+type CheckLoginRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckLoginRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckLoginRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckLoginRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckLoginRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckLoginRequestValidationError) ErrorName() string {
+	return "CheckLoginRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckLoginRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckLoginRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckLoginRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckLoginRequestValidationError{}
+
+// Validate checks the field values on CheckLoginReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CheckLoginReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckLoginReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckLoginReplyMultiError, or nil if none found.
+func (m *CheckLoginReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckLoginReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IsLogin
+
+	// no validation rules for TokenTails
+
+	if len(errors) > 0 {
+		return CheckLoginReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckLoginReplyMultiError is an error wrapping multiple validation errors
+// returned by CheckLoginReply.ValidateAll() if the designated constraints
+// aren't met.
+type CheckLoginReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckLoginReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckLoginReplyMultiError) AllErrors() []error { return m }
+
+// CheckLoginReplyValidationError is the validation error returned by
+// CheckLoginReply.Validate if the designated constraints aren't met.
+type CheckLoginReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckLoginReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckLoginReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckLoginReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckLoginReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckLoginReplyValidationError) ErrorName() string { return "CheckLoginReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CheckLoginReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckLoginReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckLoginReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckLoginReplyValidationError{}
+
 // Validate checks the field values on DeleteUserByIDRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

@@ -169,7 +169,7 @@ func (r *relationServiceRouter) Follow_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Follow(ctx, req)
@@ -195,7 +195,7 @@ func (r *relationServiceRouter) Unfollow_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Unfollow(ctx, req)
@@ -221,7 +221,7 @@ func (r *relationServiceRouter) ListFollowing_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListFollowing(ctx, req)
@@ -247,7 +247,7 @@ func (r *relationServiceRouter) ListFollower_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListFollower(ctx, req)
@@ -273,7 +273,7 @@ func (r *relationServiceRouter) BatchGetRelation_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.BatchGetRelation(ctx, req)

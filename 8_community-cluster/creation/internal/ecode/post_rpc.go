@@ -6,14 +6,15 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// postService rpc service level error code
+// postService business-level rpc error codes.
+// the _postServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_postServiceNO       = 3 // number range 1~100, if there is the same number, trigger panic.
+	_postServiceNO       = 43
 	_postServiceName     = "postService"
 	_postServiceBaseCode = errcode.RCode(_postServiceNO)
 
 	StatusCreatePostService         = errcode.NewRPCStatus(_postServiceBaseCode+1, "failed to Create "+_postServiceName)
-	StatusUpdateByIDPostService     = errcode.NewRPCStatus(_postServiceBaseCode+2, "failed to UpdateByID "+_postServiceName)
+	StatusUpdateContentPostService  = errcode.NewRPCStatus(_postServiceBaseCode+2, "failed to UpdateContent "+_postServiceName)
 	StatusDeletePostService         = errcode.NewRPCStatus(_postServiceBaseCode+3, "failed to Delete "+_postServiceName)
 	StatusGetByIDPostService        = errcode.NewRPCStatus(_postServiceBaseCode+4, "failed to GetByID "+_postServiceName)
 	StatusListByIDsPostService      = errcode.NewRPCStatus(_postServiceBaseCode+5, "failed to ListByIDs "+_postServiceName)
@@ -25,5 +26,5 @@ var (
 	StatusPostTypePostService       = errcode.NewRPCStatus(_postServiceBaseCode+11, "发布类型参数错误")
 	StatusPostType2PostService      = errcode.NewRPCStatus(_postServiceBaseCode+12, "发布类型中图片和视频只能选其中一个")
 	StatusVideoParamPostService     = errcode.NewRPCStatus(_postServiceBaseCode+13, "发布视频参数错误")
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

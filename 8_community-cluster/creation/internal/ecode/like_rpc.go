@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// likeService rpc service level error code
+// likeService business-level rpc error codes.
+// the _likeServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_likeServiceNO       = 5 // number range 1~100, if there is the same number, trigger panic.
+	_likeServiceNO       = 79
 	_likeServiceName     = "likeService"
 	_likeServiceBaseCode = errcode.RCode(_likeServiceNO)
 
@@ -16,5 +17,5 @@ var (
 	StatusDeleteLikeService      = errcode.NewRPCStatus(_likeServiceBaseCode+2, "failed to Delete "+_likeServiceName)
 	StatusListPostLikeService    = errcode.NewRPCStatus(_likeServiceBaseCode+3, "failed to ListPost "+_likeServiceName)
 	StatusListCommentLikeService = errcode.NewRPCStatus(_likeServiceBaseCode+4, "failed to ListComment "+_likeServiceName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

@@ -14,6 +14,7 @@ import (
 // import packages: strings. context. errcode. middleware. zap. gin.
 
 type UserServiceLogicer interface {
+	CheckLogin(ctx context.Context, req *CheckLoginRequest) (*CheckLoginReply, error)
 	GetByID(ctx context.Context, req *GetUserByIDRequest) (*GetUserByIDReply, error)
 	Login(ctx context.Context, req *LoginRequest) (*LoginReply, error)
 	Logout(ctx context.Context, req *LogoutRequest) (*LogoutReply, error)
@@ -126,6 +127,7 @@ func (r *userServiceRouter) register() {
 	r.iRouter.Handle("POST", "/api/v1/auth/register", r.withMiddleware("POST", "/api/v1/auth/register", r.Register_0)...)
 	r.iRouter.Handle("POST", "/api/v1/auth/login", r.withMiddleware("POST", "/api/v1/auth/login", r.Login_0)...)
 	r.iRouter.Handle("POST", "/api/v1/auth/logout", r.withMiddleware("POST", "/api/v1/auth/logout", r.Logout_0)...)
+	r.iRouter.Handle("POST", "login", r.withMiddleware("POST", "login", r.CheckLogin_0)...)
 	r.iRouter.Handle("PUT", "/api/v1/user/:id", r.withMiddleware("PUT", "/api/v1/user/:id", r.UpdateByID_2)...)
 	r.iRouter.Handle("GET", "/api/v1/user/:id", r.withMiddleware("GET", "/api/v1/user/:id", r.GetByID_4)...)
 	r.iRouter.Handle("PUT", "/api/v1/user/password/:id", r.withMiddleware("PUT", "/api/v1/user/password/:id", r.UpdatePassword_0)...)
@@ -173,7 +175,7 @@ func (r *userServiceRouter) SendEmailVerifyCode_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.SendEmailVerifyCode(ctx, req)
@@ -199,7 +201,7 @@ func (r *userServiceRouter) Register_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Register(ctx, req)
@@ -225,7 +227,7 @@ func (r *userServiceRouter) Login_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Login(ctx, req)
@@ -251,10 +253,36 @@ func (r *userServiceRouter) Logout_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Logout(ctx, req)
+	if err != nil {
+		r.iResponse.Error(c, err)
+		return
+	}
+
+	r.iResponse.Success(c, out)
+}
+
+func (r *userServiceRouter) CheckLogin_0(c *gin.Context) {
+	req := &CheckLoginRequest{}
+	var err error
+
+	if err = c.ShouldBindJSON(req); err != nil {
+		r.zapLog.Warn("ShouldBindJSON error", zap.Error(err), middleware.GCtxRequestIDField(c))
+		r.iResponse.ParamError(c, err)
+		return
+	}
+
+	var ctx context.Context
+	if r.wrapCtxFn != nil {
+		ctx = r.wrapCtxFn(c)
+	} else {
+		ctx = middleware.WrapCtx(c)
+	}
+
+	out, err := r.iLogic.CheckLogin(ctx, req)
 	if err != nil {
 		r.iResponse.Error(c, err)
 		return
@@ -283,7 +311,7 @@ func (r *userServiceRouter) UpdateByID_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdateByID(ctx, req)
@@ -315,7 +343,7 @@ func (r *userServiceRouter) GetByID_4(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.GetByID(ctx, req)
@@ -347,7 +375,7 @@ func (r *userServiceRouter) UpdatePassword_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdatePassword(ctx, req)

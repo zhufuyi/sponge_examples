@@ -72,6 +72,7 @@ func NewUserRPCConn() {
 	// if service discovery is not used, connect directly to the rpc service using the ip and port
 	endpoint := fmt.Sprintf("%s:%d", grpcClientCfg.Host, grpcClientCfg.Port)
 
+	isUseDiscover := false
 	switch grpcClientCfg.RegistryDiscoveryType {
 	// discovering services using consul
 	case "consul":
@@ -82,6 +83,7 @@ func NewUserRPCConn() {
 		}
 		iDiscovery := consul.New(cli)
 		cliOptions = append(cliOptions, grpccli.WithDiscovery(iDiscovery))
+		isUseDiscover = true
 	// discovering services using etcd
 	case "etcd":
 		endpoint = "discovery:///" + grpcClientCfg.Name // Connecting to grpc services by service name
@@ -91,6 +93,7 @@ func NewUserRPCConn() {
 		}
 		iDiscovery := etcd.New(cli)
 		cliOptions = append(cliOptions, grpccli.WithDiscovery(iDiscovery))
+		isUseDiscover = true
 	// discovering services using nacos
 	case "nacos":
 		// example: endpoint = "discovery:///serverName.scheme"
@@ -105,6 +108,7 @@ func NewUserRPCConn() {
 		}
 		iDiscovery := nacos.New(cli)
 		cliOptions = append(cliOptions, grpccli.WithDiscovery(iDiscovery))
+		isUseDiscover = true
 	}
 
 	if cfg.App.EnableTrace {
@@ -117,11 +121,16 @@ func NewUserRPCConn() {
 		cliOptions = append(cliOptions, grpccli.WithEnableMetrics())
 	}
 
-	logger.Info("dialing rpc server", logger.String("name", serverName), logger.String("endpoint", endpoint))
+	msg := "dialing rpc server"
+	if isUseDiscover {
+		msg += " with discovery from " + grpcClientCfg.RegistryDiscoveryType
+	}
+	logger.Info(msg, logger.String("name", serverName), logger.String("endpoint", endpoint))
+
 	var err error
 	userConn, err = grpccli.Dial(context.Background(), endpoint, cliOptions...)
 	if err != nil {
-		panic(fmt.Sprintf("dial rpc server failed: %v, endpoint: %s", err, endpoint))
+		panic(fmt.Sprintf("dial rpc server failed: %v, name: %s, endpoint: %s", err, serverName, endpoint))
 	}
 }
 

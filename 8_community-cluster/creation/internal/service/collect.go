@@ -55,6 +55,7 @@ func (s *collectService) Create(ctx context.Context, req *creationV1.CreateColle
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断收藏对象是否存在
 	post, err := s.postDao.GetByID(ctx, req.PostId)
@@ -132,6 +133,7 @@ func (s *collectService) Delete(ctx context.Context, req *creationV1.DeleteColle
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断收藏对象是否存在
 	_, err = s.userCollectDao.GetByID(ctx, req.Id)
@@ -187,6 +189,7 @@ func (s *collectService) List(ctx context.Context, req *creationV1.ListCollectRe
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userCollectDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),

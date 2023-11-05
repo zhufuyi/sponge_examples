@@ -6,7 +6,7 @@ import "api/types/types.proto";
 import "tagger/tagger.proto";
 import "validate/validate.proto";
 
-option go_package = "user/api/user/v1;v1";
+option go_package = "community_gw/api/user/v1;v1";
 
 service UserService {
   // 发送邮件验证码
@@ -15,9 +15,11 @@ service UserService {
   rpc Register(RegisterRequest) returns (RegisterReply) {}
   // 登录
   rpc Login(LoginRequest) returns (LoginReply) {}
-
   // 登出
   rpc Logout(LogoutRequest) returns (LogoutReply) {}
+  // 检查登录状态
+  rpc CheckLogin(CheckLoginRequest) returns (CheckLoginReply) {}
+
   // 删除用户
   rpc DeleteByID(DeleteUserByIDRequest) returns (DeleteUserByIDReply) {}
   // 更新用户
@@ -63,6 +65,15 @@ message LogoutRequest {
 }
 
 message LogoutReply {
+}
+
+message CheckLoginRequest {
+  uint64 id = 1 [(validate.rules).uint64.gte  = 1];
+}
+
+message CheckLoginReply {
+  bool isLogin = 1; // true:已登录, false:未登录
+  string tokenTails = 2; // token尾部10字节
 }
 
 message DeleteUserByIDRequest {

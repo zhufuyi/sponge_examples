@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// relationService rpc service level error code
+// relationService business-level rpc error codes.
+// the relationServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_relationServiceNO       = 8 // number range 1~100, if there is the same number, trigger panic.
+	_relationServiceNO       = 5
 	_relationServiceName     = "relationService"
 	_relationServiceBaseCode = errcode.RCode(_relationServiceNO)
 
@@ -17,5 +18,5 @@ var (
 	StatusListFollowingRelationService    = errcode.NewRPCStatus(_relationServiceBaseCode+3, "failed to ListFollowing "+_relationServiceName)
 	StatusListFollowerRelationService     = errcode.NewRPCStatus(_relationServiceBaseCode+4, "failed to ListFollower "+_relationServiceName)
 	StatusBatchGetRelationRelationService = errcode.NewRPCStatus(_relationServiceBaseCode+5, "failed to BatchGetRelation "+_relationServiceName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

@@ -5,7 +5,7 @@ package api.creation.v1;
 //import "tagger/tagger.proto";
 import "validate/validate.proto";
 
-option go_package = "creation/api/creation/v1;v1";
+option go_package = "community_gw/api/creation/v1;v1";
 
 service LikeService {
 	// 点赞

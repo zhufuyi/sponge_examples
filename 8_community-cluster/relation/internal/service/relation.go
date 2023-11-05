@@ -66,6 +66,7 @@ func (s *relationService) Follow(ctx context.Context, req *relationV1.FollowRequ
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断是否关注了自己
 	if req.UserId == req.FollowedUid {
@@ -96,7 +97,7 @@ func (s *relationService) Follow(ctx context.Context, req *relationV1.FollowRequ
 	}()
 
 	// 添加关注
-	err = s.userFollowingDao.CreateByTx(ctx, tx, &model.UserFollowing{
+	_, err = s.userFollowingDao.CreateByTx(ctx, tx, &model.UserFollowing{
 		Model:       mysql.Model{ID: userFollowing.ID},
 		UserID:      req.UserId,
 		FollowedUid: req.FollowedUid,
@@ -110,7 +111,7 @@ func (s *relationService) Follow(ctx context.Context, req *relationV1.FollowRequ
 
 	// 添加粉丝
 	userFollower, _ := s.userFollowerDao.GetRelation(ctx, req.FollowedUid, req.UserId)
-	err = s.userFollowerDao.CreateByTx(ctx, tx, &model.UserFollower{
+	_, err = s.userFollowerDao.CreateByTx(ctx, tx, &model.UserFollower{
 		Model:       mysql.Model{ID: userFollower.ID},
 		UserID:      req.FollowedUid,
 		FollowerUid: req.UserId,
@@ -155,6 +156,7 @@ func (s *relationService) Unfollow(ctx context.Context, req *relationV1.Unfollow
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断是否取消关注自己
 	if req.UserId == req.FollowedUid {
@@ -241,6 +243,7 @@ func (s *relationService) ListFollowing(ctx context.Context, req *relationV1.Lis
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userFollowingDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -280,6 +283,7 @@ func (s *relationService) ListFollower(ctx context.Context, req *relationV1.List
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userFollowerDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -319,6 +323,7 @@ func (s *relationService) BatchGetRelation(ctx context.Context, req *relationV1.
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
+	//ctx = interceptor.WrapServerCtx(ctx)
 
 	records, err := s.userFollowingDao.BatchGetUserFollowing(ctx, req.UserId, req.Uids)
 	if err != nil {

@@ -8,7 +8,10 @@ spec:
     app: relation
   type: ClusterIP
   ports:
-    - name: relation-svc-http-port
-      port: 8080
-      targetPort: 8080
+    - name: relation-svc-grpc-port
+      port: 8282
+      targetPort: 8282
+    - name: relation-svc-grpc-metrics-port
+      port: 8283
+      targetPort: 8283
 

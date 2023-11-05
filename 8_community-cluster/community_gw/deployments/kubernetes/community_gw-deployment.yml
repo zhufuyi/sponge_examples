@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: community-gw
-          image: /community.community-gw:latest
+          image: /community/community-gw:latest
           # If using a local image, use Never, default is Always
           #imagePullPolicy: Never
           command: ["./community_gw", "-c", "/app/configs/community_gw.yml"]

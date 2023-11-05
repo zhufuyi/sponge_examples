@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   community-gw:
-    image: community.community-gw:latest
+    image: community/community-gw:latest
     container_name: community-gw
     restart: always
     command: ["./community_gw", "-c", "/app/configs/community_gw.yml"]

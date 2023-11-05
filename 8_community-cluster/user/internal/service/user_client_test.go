@@ -32,7 +32,7 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.SendEmailVerifyCodeRequest{
-					Email: "", 
+					Email: "",
 				}
 				return cli.SendEmailVerifyCode(ctx, req)
 			},
@@ -43,9 +43,9 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.RegisterRequest{
-					Email: "", 
-					EmailCode: "", 
-					Password: "", 
+					Email:     "",
+					EmailCode: "",
+					Password:  "",
 				}
 				return cli.Register(ctx, req)
 			},
@@ -56,9 +56,9 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.LoginRequest{
-					Email: "", 
-					Password: "", 
-					Ip: "", 
+					Email:    "",
+					Password: "",
+					Ip:       "",
 				}
 				return cli.Login(ctx, req)
 			},
@@ -69,10 +69,21 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.LogoutRequest{
-					Id: 0, 
-					Token: "", 
+					Id:    0,
+					Token: "",
 				}
 				return cli.Logout(ctx, req)
+			},
+			wantErr: false,
+		},
+		{
+			name: "CheckLogin",
+			fn: func() (interface{}, error) {
+				// todo type in the parameters to test
+				req := &userV1.CheckLoginRequest{
+					Id: 0,
+				}
+				return cli.CheckLogin(ctx, req)
 			},
 			wantErr: false,
 		},
@@ -81,7 +92,7 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.DeleteUserByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				return cli.DeleteByID(ctx, req)
 			},
@@ -92,14 +103,14 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.UpdateUserByIDRequest{
-					Id: 0, 
-					Name: "",  // 用户名
-					NickName: "",  // 用户昵称
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
+					Id:       0,
+					Name:     "", // 用户名
+					NickName: "", // 用户昵称
+					Phone:    "", // 手机号码
+					Avatar:   "", // 头像
+					Gender:   0,  // 性别，1:男，2:女，其他值:未知
+					Age:      0,  // 年龄
+					Birthday: "", // 出生日期
 				}
 				return cli.UpdateByID(ctx, req)
 			},
@@ -110,7 +121,7 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.GetUserByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				return cli.GetByID(ctx, req)
 			},
@@ -121,7 +132,7 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.ListUserRequest{
-					Params: nil, 
+					Params: nil,
 				}
 				return cli.List(ctx, req)
 			},
@@ -132,8 +143,8 @@ func Test_service_userService_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.UpdatePasswordRequest{
-					Id: 0, 
-					Password: "", 
+					Id:       0,
+					Password: "",
 				}
 				return cli.UpdatePassword(ctx, req)
 			},
@@ -154,7 +165,7 @@ func Test_service_userService_methods(t *testing.T) {
 	}
 }
 
-// Perform a stress test on userService's method and 
+// Perform a stress test on userService's method and
 // copy the press test report to your browser when you are finished.
 func Test_service_userService_benchmark(t *testing.T) {
 	err := config.Init(configs.Path("user.yml"))
@@ -180,7 +191,7 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.SendEmailVerifyCodeRequest{
-					Email: "", 
+					Email: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "SendEmailVerifyCode", message, total, importPaths...)
@@ -196,9 +207,9 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.RegisterRequest{
-					Email: "", 
-					EmailCode: "", 
-					Password: "", 
+					Email:     "",
+					EmailCode: "",
+					Password:  "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Register", message, total, importPaths...)
@@ -214,9 +225,9 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.LoginRequest{
-					Email: "", 
-					Password: "", 
-					Ip: "", 
+					Email:    "",
+					Password: "",
+					Ip:       "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Login", message, total, importPaths...)
@@ -232,11 +243,27 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.LogoutRequest{
-					Id: 0, 
-					Token: "", 
+					Id:    0,
+					Token: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Logout", message, total, importPaths...)
+				if err != nil {
+					return err
+				}
+				return b.Run()
+			},
+			wantErr: false,
+		},
+		{
+			name: "CheckLogin",
+			fn: func() error {
+				// todo type in the parameters to test
+				message := &userV1.CheckLoginRequest{
+					Id: 0,
+				}
+				var total uint = 1000 // total number of requests
+				b, err := benchmark.New(host, protoFile, "CheckLogin", message, total, importPaths...)
 				if err != nil {
 					return err
 				}
@@ -249,7 +276,7 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.DeleteUserByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "DeleteByID", message, total, importPaths...)
@@ -265,14 +292,14 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.UpdateUserByIDRequest{
-					Id: 0, 
-					Name: "",  // 用户名
-					NickName: "",  // 用户昵称
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
+					Id:       0,
+					Name:     "", // 用户名
+					NickName: "", // 用户昵称
+					Phone:    "", // 手机号码
+					Avatar:   "", // 头像
+					Gender:   0,  // 性别，1:男，2:女，其他值:未知
+					Age:      0,  // 年龄
+					Birthday: "", // 出生日期
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "UpdateByID", message, total, importPaths...)
@@ -288,7 +315,7 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.GetUserByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "GetByID", message, total, importPaths...)
@@ -304,7 +331,7 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.ListUserRequest{
-					Params: nil, 
+					Params: nil,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "List", message, total, importPaths...)
@@ -320,8 +347,8 @@ func Test_service_userService_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.UpdatePasswordRequest{
-					Id: 0, 
-					Password: "", 
+					Id:       0,
+					Password: "",
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "UpdatePassword", message, total, importPaths...)

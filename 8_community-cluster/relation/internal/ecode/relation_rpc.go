@@ -6,18 +6,19 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// relationService rpc service level error code
+// relationService business-level rpc error codes.
+// the _relationServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_relationServiceNO       = 2 // number range 1~100, if there is the same number, trigger panic.
+	_relationServiceNO       = 31
 	_relationServiceName     = "relationService"
 	_relationServiceBaseCode = errcode.RCode(_relationServiceNO)
 
 	StatusFollowRelationService           = errcode.NewRPCStatus(_relationServiceBaseCode+1, "failed to Follow "+_relationServiceName)
 	StatusUnfollowRelationService         = errcode.NewRPCStatus(_relationServiceBaseCode+2, "failed to Unfollow "+_relationServiceName)
-	StatusBatchGetRelationRelationService = errcode.NewRPCStatus(_relationServiceBaseCode+3, "failed to BatchGetRelation "+_relationServiceName)
-	StatusListGetFollowingRelationService = errcode.NewRPCStatus(_relationServiceBaseCode+4, "failed to ListGetFollowing "+_relationServiceName)
-	StatusListGetFollowerRelationService  = errcode.NewRPCStatus(_relationServiceBaseCode+5, "failed to ListGetFollower "+_relationServiceName)
+	StatusListFollowingRelationService    = errcode.NewRPCStatus(_relationServiceBaseCode+3, "failed to ListFollowing "+_relationServiceName)
+	StatusListFollowerRelationService     = errcode.NewRPCStatus(_relationServiceBaseCode+4, "failed to ListFollower "+_relationServiceName)
+	StatusBatchGetRelationRelationService = errcode.NewRPCStatus(_relationServiceBaseCode+5, "failed to BatchGetRelation "+_relationServiceName)
 	StatusFollowSelfRelationService       = errcode.NewRPCStatus(_relationServiceBaseCode+6, "禁止关注自己")
 	StatusAlreadyFollowRelationService    = errcode.NewRPCStatus(_relationServiceBaseCode+7, "已经关注过了")
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

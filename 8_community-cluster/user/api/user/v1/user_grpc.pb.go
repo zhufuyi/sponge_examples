@@ -30,6 +30,8 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	// 登出
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error)
+	// 检查登录状态
+	CheckLogin(ctx context.Context, in *CheckLoginRequest, opts ...grpc.CallOption) (*CheckLoginReply, error)
 	// 删除用户
 	DeleteByID(ctx context.Context, in *DeleteUserByIDRequest, opts ...grpc.CallOption) (*DeleteUserByIDReply, error)
 	// 更新用户
@@ -80,6 +82,15 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 func (c *userServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error) {
 	out := new(LogoutReply)
 	err := c.cc.Invoke(ctx, "/api.user.v1.UserService/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CheckLogin(ctx context.Context, in *CheckLoginRequest, opts ...grpc.CallOption) (*CheckLoginReply, error) {
+	out := new(CheckLoginReply)
+	err := c.cc.Invoke(ctx, "/api.user.v1.UserService/CheckLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,6 +154,8 @@ type UserServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	// 登出
 	Logout(context.Context, *LogoutRequest) (*LogoutReply, error)
+	// 检查登录状态
+	CheckLogin(context.Context, *CheckLoginRequest) (*CheckLoginReply, error)
 	// 删除用户
 	DeleteByID(context.Context, *DeleteUserByIDRequest) (*DeleteUserByIDReply, error)
 	// 更新用户
@@ -171,6 +184,9 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*Lo
 }
 func (UnimplementedUserServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedUserServiceServer) CheckLogin(context.Context, *CheckLoginRequest) (*CheckLoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckLogin not implemented")
 }
 func (UnimplementedUserServiceServer) DeleteByID(context.Context, *DeleteUserByIDRequest) (*DeleteUserByIDReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByID not implemented")
@@ -268,6 +284,24 @@ func _UserService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CheckLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CheckLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.user.v1.UserService/CheckLogin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CheckLogin(ctx, req.(*CheckLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -384,6 +418,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _UserService_Logout_Handler,
+		},
+		{
+			MethodName: "CheckLogin",
+			Handler:    _UserService_CheckLogin_Handler,
 		},
 		{
 			MethodName: "DeleteByID",

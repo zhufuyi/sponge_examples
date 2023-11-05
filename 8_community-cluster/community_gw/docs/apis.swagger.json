@@ -1547,6 +1547,17 @@
         }
       }
     },
+    "v1CheckLoginReply": {
+      "type": "object",
+      "properties": {
+        "isLogin": {
+          "type": "boolean"
+        },
+        "tokenTails": {
+          "type": "string"
+        }
+      }
+    },
     "v1CollectInfo": {
       "type": "object",
       "properties": {

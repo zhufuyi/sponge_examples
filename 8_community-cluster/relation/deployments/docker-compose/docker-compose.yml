@@ -2,16 +2,18 @@ version: "3.7"
 
 services:
   relation:
-    image: community.relation:latest
+    image: community/relation:latest
     container_name: relation
     restart: always
     command: ["./relation", "-c", "/app/configs/relation.yml"]
     volumes:
       - $PWD/configs:/app/configs
+
     ports:
-      - "8080:8080"   # http port
+      - "8282:8282"   # grpc port
+      - "8283:8283"   # grpc metrics or pprof port
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]   # http health check, note: mirror must contain curl command
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:8282"]    # grpc health check, note: the image must contain the grpc_health_probe command
 
       interval: 10s         # interval time
       timeout: 5s           # timeout time
