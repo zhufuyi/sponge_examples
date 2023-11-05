@@ -26,13 +26,16 @@ type UserLikeDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.UserLike) error
 	GetByID(ctx context.Context, id uint64) (*model.UserLike, error)
+	GetByCondition(ctx context.Context, condition *query.Conditions) (*model.UserLike, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.UserLike, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.UserLike, int64, error)
 
-	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.UserLike) (uint64, error)
-	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.UserLike) error
-	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	GetByUser(ctx context.Context, userID uint64, objType int, objID uint64) (*model.UserLike, error)
+
+	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.UserLike) (uint64, error)
+	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
+	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.UserLike) error
+
 	UpdateStatusByTx(ctx context.Context, tx *gorm.DB, id uint64, status int) error
 }
 
@@ -43,8 +46,12 @@ type userLikeDao struct {
 }
 
 // NewUserLikeDao creating the dao interface
-func NewUserLikeDao(db *gorm.DB, cache cache.UserLikeCache) UserLikeDao {
-	return &userLikeDao{db: db, cache: cache, sfg: new(singleflight.Group)}
+func NewUserLikeDao(db *gorm.DB, xCache cache.UserLikeCache) UserLikeDao {
+	return &userLikeDao{
+		db:    db,
+		cache: xCache,
+		sfg:   new(singleflight.Group),
+	}
 }
 
 // Create a record, insert the record and the id value is written back to the table
@@ -54,7 +61,7 @@ func (d *userLikeDao) Create(ctx context.Context, table *model.UserLike) error {
 	return err
 }
 
-// DeleteByID delete a record based on id
+// DeleteByID delete a record by id
 func (d *userLikeDao) DeleteByID(ctx context.Context, id uint64) error {
 	err := d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.UserLike{}).Error
 	if err != nil {
@@ -67,7 +74,7 @@ func (d *userLikeDao) DeleteByID(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// DeleteByIDs batch delete multiple records
+// DeleteByIDs delete records by batch id
 func (d *userLikeDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	err := d.db.WithContext(ctx).Where("id IN (?)", ids).Delete(&model.UserLike{}).Error
 	if err != nil {
@@ -82,12 +89,17 @@ func (d *userLikeDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	return nil
 }
 
+// UpdateByID update a record by id
 func (d *userLikeDao) UpdateByID(ctx context.Context, table *model.UserLike) error {
-	return d.updateByID(ctx, d.db, table)
+	err := d.updateDataByID(ctx, d.db, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
 }
 
-// UpdateByID update records by id
-func (d *userLikeDao) updateByID(ctx context.Context, db *gorm.DB, table *model.UserLike) error {
+func (d *userLikeDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.UserLike) error {
 	if table.ID < 1 {
 		return errors.New("id cannot be 0")
 	}
@@ -107,18 +119,10 @@ func (d *userLikeDao) updateByID(ctx context.Context, db *gorm.DB, table *model.
 		update["status"] = table.Status
 	}
 
-	err := db.WithContext(ctx).Model(table).Updates(update).Error
-	if err != nil {
-		return err
-	}
-
-	// delete cache
-	_ = d.cache.Del(ctx, table.ID)
-
-	return nil
+	return db.WithContext(ctx).Model(table).Updates(update).Error
 }
 
-// GetByID get a record based on id
+// GetByID get a record by id
 func (d *userLikeDao) GetByID(ctx context.Context, id uint64) (*model.UserLike, error) {
 	record, err := d.cache.Get(ctx, id)
 	if err == nil {
@@ -164,7 +168,43 @@ func (d *userLikeDao) GetByID(ctx context.Context, id uint64) (*model.UserLike, 
 	return nil, err
 }
 
-// GetByIDs get multiple rows by ids
+// GetByCondition get a record by condition
+// query conditions:
+//
+//	name: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
+//	logic: logical type, defaults to and when value is null, only &(and), ||(or)
+//
+// example: find a male aged 20
+//
+//	condition = &query.Conditions{
+//	    Columns: []query.Column{
+//		{
+//			Name:    "age",
+//			Value:   20,
+//		},
+//		{
+//			Name:  "gender",
+//			Value: "male",
+//		},
+//	}
+func (d *userLikeDao) GetByCondition(ctx context.Context, c *query.Conditions) (*model.UserLike, error) {
+	queryStr, args, err := c.ConvertToGorm()
+	if err != nil {
+		return nil, err
+	}
+
+	table := &model.UserLike{}
+	err = d.db.WithContext(ctx).Where(queryStr, args...).First(table).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}
+
+// GetByIDs list of records by batch id
 func (d *userLikeDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.UserLike, error) {
 	itemMap, err := d.cache.MultiGet(ctx, ids)
 	if err != nil {
@@ -188,9 +228,8 @@ func (d *userLikeDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*m
 			_, err = d.cache.Get(ctx, id)
 			if errors.Is(err, cacheBase.ErrPlaceholder) {
 				continue
-			} else {
-				realMissedIDs = append(realMissedIDs, id)
 			}
+			realMissedIDs = append(realMissedIDs, id)
 		}
 
 		if len(realMissedIDs) > 0 {
@@ -215,10 +254,12 @@ func (d *userLikeDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*m
 			}
 		}
 	}
+
 	return itemMap, nil
 }
 
-// GetByColumns filter multiple rows based on paging and column information
+// GetByColumns get records by paging and column information,
+// Note: query performance degrades when table rows are very large because of the use of offset.
 //
 // params includes paging parameters and query parameters
 // paging parameters (required):
@@ -230,8 +271,8 @@ func (d *userLikeDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*m
 // query parameters (not required):
 //
 //	name: column name
-//	exp: expressions, which default to = when the value is null, have =, ! =, >, >=, <, <=, like
-//	value: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
 //	logic: logical type, defaults to and when value is null, only &(and), ||(or)
 //
 // example: search for a male over 20 years of age
@@ -283,7 +324,7 @@ func (d *userLikeDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.
 	return table.ID, err
 }
 
-// DeleteByTx delete a record in by id the database using the provided transaction
+// DeleteByTx delete a record by id in the database using the provided transaction
 func (d *userLikeDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error {
 	update := map[string]interface{}{
 		"deleted_at": time.Now(),
@@ -301,7 +342,12 @@ func (d *userLikeDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) er
 
 // UpdateByTx update a record by id in the database using the provided transaction
 func (d *userLikeDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.UserLike) error {
-	return d.updateByID(ctx, tx, table)
+	err := d.updateDataByID(ctx, tx, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
 }
 
 // GetByUser get a record by user

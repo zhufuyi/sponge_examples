@@ -26,6 +26,7 @@ type UserTokenCache interface {
 	Set(ctx context.Context, id uint64, token string, duration time.Duration) error
 	Get(ctx context.Context, id uint64) (string, error)
 	Del(ctx context.Context, id uint64) error
+	Exist(ctx context.Context, id uint64) (int64, error)
 }
 
 type userTokenCache struct {
@@ -52,21 +53,16 @@ func NewUserTokenCache(cacheType *model.CacheType) UserTokenCache {
 	}
 }
 
-// GetUserTokenCacheKey cache key
-func (c *userTokenCache) getCacheKey(id uint64) string {
-	return fmt.Sprintf("%s%v", userTokenCachePrefixKey, id)
-}
-
 // Set cache
 func (c *userTokenCache) Set(ctx context.Context, id uint64, token string, duration time.Duration) error {
-	cacheKey := c.getCacheKey(id)
+	cacheKey := GetUserTokenCacheKey(id)
 	return c.cache.Set(ctx, cacheKey, &token, duration)
 }
 
 // Get cache value
 func (c *userTokenCache) Get(ctx context.Context, id uint64) (string, error) {
 	var token string
-	cacheKey := c.getCacheKey(id)
+	cacheKey := GetUserTokenCacheKey(id)
 	err := c.cache.Get(ctx, cacheKey, &token)
 	if err != nil {
 		return "", err
@@ -76,6 +72,17 @@ func (c *userTokenCache) Get(ctx context.Context, id uint64) (string, error) {
 
 // Del delete cache
 func (c *userTokenCache) Del(ctx context.Context, id uint64) error {
-	cacheKey := c.getCacheKey(id)
+	cacheKey := GetUserTokenCacheKey(id)
 	return c.cache.Del(ctx, cacheKey)
+}
+
+// Exist check key
+func (c *userTokenCache) Exist(ctx context.Context, id uint64) (int64, error) {
+	cacheKey := GetUserTokenCacheKey(id)
+	return model.GetRedisCli().Exists(ctx, cacheKey).Result()
+}
+
+// GetUserTokenCacheKey cache key
+func GetUserTokenCacheKey(id uint64) string {
+	return fmt.Sprintf("%s%v", userTokenCachePrefixKey, id)
 }

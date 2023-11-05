@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// postService http service level error code
+// postService business-level http error codes.
+// the postServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	postServiceNO       = 3 // number range 1~100, if there is the same number, trigger panic.
+	postServiceNO       = 4
 	postServiceName     = "postService"
 	postServiceBaseCode = errcode.HCode(postServiceNO)
 
@@ -25,5 +26,5 @@ var (
 	ErrPostTypePostService       = errcode.NewError(postServiceBaseCode+11, "发布类型参数错误")
 	ErrPostType2PostService      = errcode.NewError(postServiceBaseCode+12, "发布类型中图片和视频只能选其中一个")
 	ErrVideoParamPostService     = errcode.NewError(postServiceBaseCode+13, "发布视频参数错误")
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

@@ -6,14 +6,15 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// collectService http service level error code
+// collectService business-level http error codes.
+// the collectServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	collectServiceNO       = 6 // number range 1~100, if there is the same number, trigger panic.
+	collectServiceNO       = 1
 	collectServiceName     = "collectService"
 	collectServiceBaseCode = errcode.HCode(collectServiceNO)
 
 	ErrCreateCollectService = errcode.NewError(collectServiceBaseCode+1, "failed to Create "+collectServiceName)
 	ErrDeleteCollectService = errcode.NewError(collectServiceBaseCode+2, "failed to Delete "+collectServiceName)
 	ErrListCollectService   = errcode.NewError(collectServiceBaseCode+3, "failed to List "+collectServiceName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

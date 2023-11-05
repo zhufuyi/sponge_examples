@@ -19,7 +19,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/mysql"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
@@ -75,22 +74,21 @@ func NewPostServiceHandler() communityV1.PostServiceLogicer {
 
 // Create 创建帖子
 func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.CreatePostRequest) (*communityV1.CreatePostReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 	err = checkPostParams(req)
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -102,7 +100,7 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	postType := getPostType(req)
 	content, err := getContent(postType, req)
 	if err != nil {
-		logger.Warn("getContent error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("getContent error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, err
 	}
 
@@ -121,7 +119,7 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	postID, err := h.postDao.CreateByTx(ctx, tx, postData)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.CreateByTx error", logger.Err(err), logger.Any("postData", postData), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.CreateByTx error", logger.Err(err), logger.Any("postData", postData), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -131,10 +129,10 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		DelFlag: delFlagNormal,
 	}
 	// 创建最新帖子
-	err = h.postLatestDao.CreateByTx(ctx, tx, postLatestData)
+	_, err = h.postLatestDao.CreateByTx(ctx, tx, postLatestData)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postLatestDao.CreateByTx error", logger.Err(err), logger.Any("postLatestData", postLatestData), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postLatestDao.CreateByTx error", logger.Err(err), logger.Any("postLatestData", postLatestData), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -144,10 +142,10 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		DelFlag: delFlagNormal,
 	}
 	// 创建热门帖子
-	err = h.postHotDao.CreateByTx(ctx, tx, postHotData)
+	_, err = h.postHotDao.CreateByTx(ctx, tx, postHotData)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postHotDao.CreateByTx error", logger.Err(err), logger.Any("postHotData", postHotData), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postHotDao.CreateByTx error", logger.Err(err), logger.Any("postHotData", postHotData), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -157,17 +155,17 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		DelFlag: delFlagNormal,
 	}
 	// 创建用户帖子
-	err = h.userPostDao.CreateByTx(ctx, tx, userPostData)
+	_, err = h.userPostDao.CreateByTx(ctx, tx, userPostData)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userPostDao.CreateByTx error", logger.Err(err), logger.Any("userPostData", postHotData), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userPostDao.CreateByTx error", logger.Err(err), logger.Any("userPostData", postHotData), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -175,7 +173,7 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	postInfo, err := convertPost(postData)
 	if err != nil {
 		// 已经添加成功，不需要返回错误
-		logger.Warn("convertPost error", logger.Err(err), logger.Any("postData", postData), middleware.GCtxRequestIDField(c))
+		logger.Warn("convertPost error", logger.Err(err), logger.Any("postData", postData), middleware.CtxRequestIDField(ctx))
 	}
 
 	return &communityV1.CreatePostReply{Post: postInfo}, nil
@@ -183,30 +181,29 @@ func (h *postServiceHandler) Create(ctx context.Context, req *communityV1.Create
 
 // UpdateContent 更新帖子内容
 func (h *postServiceHandler) UpdateContent(ctx context.Context, req *communityV1.UpdatePostContentRequest) (*communityV1.UpdatePostContentReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	reqVal := &communityV1.CreatePostRequest{}
 	err = copier.Copy(reqVal, req)
 	if err != nil {
-		logger.Warn("copier.Copy error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("copier.Copy error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	err = checkPostParams(reqVal)
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	postType := getPostType(reqVal)
 	content, err := getContent(postType, reqVal)
 	if err != nil {
-		logger.Warn("getContent error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("getContent error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, err
 	}
 
@@ -216,7 +213,7 @@ func (h *postServiceHandler) UpdateContent(ctx context.Context, req *communityV1
 		Content: content,
 	})
 	if err != nil {
-		logger.Error("h.postDao.UpdateByID error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.UpdateByID error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -225,10 +222,9 @@ func (h *postServiceHandler) UpdateContent(ctx context.Context, req *communityV1
 
 // Delete 删除帖子
 func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.DeletePostRequest) (*communityV1.DeletePostReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -236,14 +232,14 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	post, err := h.postDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if post.UserID != req.UserId {
-		logger.Error("only delete your own posts", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("only delete your own posts", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.Forbidden.Err()
 	}
 	if post.DelFlag > 0 {
@@ -253,7 +249,7 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -266,7 +262,7 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = h.postDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -274,7 +270,7 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = h.postLatestDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postLatestDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postLatestDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -282,7 +278,7 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = h.postHotDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postHotDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postHotDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -290,14 +286,14 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = h.userPostDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userPostDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userPostDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -306,31 +302,30 @@ func (h *postServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 
 // GetByID 根据id获取帖子详情
 func (h *postServiceHandler) GetByID(ctx context.Context, req *communityV1.GetPostByIDRequest) (*communityV1.GetPostByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	post, err := h.postDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	if post.DelFlag > 0 {
-		logger.Warn("not found the post", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("not found the post", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.NotFound.Err()
 	}
 
 	postInfo, err := convertPost(post)
 	if err != nil {
-		logger.Warn("convertPost error", logger.Err(err), logger.Any("post", post), middleware.GCtxRequestIDField(c))
+		logger.Warn("convertPost error", logger.Err(err), logger.Any("post", post), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -339,16 +334,15 @@ func (h *postServiceHandler) GetByID(ctx context.Context, req *communityV1.GetPo
 
 // ListByIDs 根据批量id获取帖子列表
 func (h *postServiceHandler) ListByIDs(ctx context.Context, req *communityV1.ListPostByIDsRequest) (*communityV1.ListPostByIDsReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	postMap, err := h.postDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
-		logger.Error("h.postDao.GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -361,7 +355,7 @@ func (h *postServiceHandler) ListByIDs(ctx context.Context, req *communityV1.Lis
 			}
 			post, err := convertPost(v)
 			if err != nil {
-				logger.Warn("convertPost error", logger.Err(err), logger.Any("post", v), middleware.GCtxRequestIDField(c))
+				logger.Warn("convertPost error", logger.Err(err), logger.Any("post", v), middleware.CtxRequestIDField(ctx))
 				continue
 			}
 			posts = append(posts, post)
@@ -373,10 +367,9 @@ func (h *postServiceHandler) ListByIDs(ctx context.Context, req *communityV1.Lis
 
 // ListByUserID 用户发布过的帖子列表
 func (h *postServiceHandler) ListByUserID(ctx context.Context, req *communityV1.ListPostByUserIDRequest) (*communityV1.ListPostByUserIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -396,7 +389,7 @@ func (h *postServiceHandler) ListByUserID(ctx context.Context, req *communityV1.
 		},
 	})
 	if err != nil {
-		logger.Error("h.userPostDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userPostDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -411,7 +404,7 @@ func (h *postServiceHandler) ListByUserID(ctx context.Context, req *communityV1.
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListPostByIDsRequest{Ids: postIDs})
 	if err != nil {
-		logger.Error("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -420,10 +413,9 @@ func (h *postServiceHandler) ListByUserID(ctx context.Context, req *communityV1.
 
 // ListLatest 最新的帖子列表
 func (h *postServiceHandler) ListLatest(ctx context.Context, req *communityV1.ListPostLatestRequest) (*communityV1.ListPostLatestReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -439,7 +431,7 @@ func (h *postServiceHandler) ListLatest(ctx context.Context, req *communityV1.Li
 		},
 	})
 	if err != nil {
-		logger.Error("h.postLatestDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postLatestDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -454,7 +446,7 @@ func (h *postServiceHandler) ListLatest(ctx context.Context, req *communityV1.Li
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListPostByIDsRequest{Ids: postIDs})
 	if err != nil {
-		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -463,10 +455,9 @@ func (h *postServiceHandler) ListLatest(ctx context.Context, req *communityV1.Li
 
 // ListHot 热门的帖子列表
 func (h *postServiceHandler) ListHot(ctx context.Context, req *communityV1.ListPostHotRequest) (*communityV1.ListPostHotReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -482,7 +473,7 @@ func (h *postServiceHandler) ListHot(ctx context.Context, req *communityV1.ListP
 		},
 	})
 	if err != nil {
-		logger.Error("h.postHotDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postHotDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -497,7 +488,7 @@ func (h *postServiceHandler) ListHot(ctx context.Context, req *communityV1.ListP
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListPostByIDsRequest{Ids: postIDs})
 	if err != nil {
-		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -506,16 +497,15 @@ func (h *postServiceHandler) ListHot(ctx context.Context, req *communityV1.ListP
 
 // IncrViewCount 观看数量+1
 func (h *postServiceHandler) IncrViewCount(ctx context.Context, req *communityV1.IncrPostViewCountRequest) (*communityV1.IncrPostViewCountReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	err = h.postDao.IncrViewCount(ctx, req.Id)
 	if err != nil {
-		logger.Error("h.postDao.IncrViewCount error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.IncrViewCount error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -524,16 +514,15 @@ func (h *postServiceHandler) IncrViewCount(ctx context.Context, req *communityV1
 
 // IncrShareCount 分享数量+1
 func (h *postServiceHandler) IncrShareCount(ctx context.Context, req *communityV1.IncrPostShareCountRequest) (*communityV1.IncrPostShareCountReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	err = h.postDao.IncrShareCount(ctx, req.Id)
 	if err != nil {
-		logger.Error("h.postDao.IncrShareCount error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.IncrShareCount error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 

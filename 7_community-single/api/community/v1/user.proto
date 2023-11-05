@@ -139,6 +139,7 @@ service UserService {
   rpc List(ListUserRequest) returns (ListUserReply) {
     option (google.api.http) = {
       post: "/api/v1/user/list"
+      body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "获取用户列表",

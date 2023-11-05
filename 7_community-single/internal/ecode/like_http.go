@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// likeService http service level error code
+// likeService business-level http error codes.
+// the likeServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	likeServiceNO       = 4 // number range 1~100, if there is the same number, trigger panic.
+	likeServiceNO       = 3
 	likeServiceName     = "likeService"
 	likeServiceBaseCode = errcode.HCode(likeServiceNO)
 
@@ -16,5 +17,5 @@ var (
 	ErrDeleteLikeService      = errcode.NewError(likeServiceBaseCode+2, "failed to Delete "+likeServiceName)
 	ErrListPostLikeService    = errcode.NewError(likeServiceBaseCode+3, "failed to ListPost "+likeServiceName)
 	ErrListCommentLikeService = errcode.NewError(likeServiceBaseCode+4, "failed to ListComment "+likeServiceName)
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

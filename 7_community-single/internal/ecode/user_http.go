@@ -6,26 +6,27 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// userService http service level error code
+// userService business-level http error codes.
+// the userServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	userServiceNO       = 1 // number range 1~100, if there is the same number, trigger panic.
+	userServiceNO       = 6
 	userServiceName     = "userService"
 	userServiceBaseCode = errcode.HCode(userServiceNO)
 
-	ErrRegisterUserService       = errcode.NewError(userServiceBaseCode+1, "failed to Register "+userServiceName)
-	ErrLoginUserService          = errcode.NewError(userServiceBaseCode+2, "failed to Login "+userServiceName)
-	ErrLogoutUserService         = errcode.NewError(userServiceBaseCode+3, "failed to Logout "+userServiceName)
-	ErrCreateUserService         = errcode.NewError(userServiceBaseCode+4, "failed to Create "+userServiceName)
-	ErrDeleteByIDUserService     = errcode.NewError(userServiceBaseCode+5, "failed to DeleteByID "+userServiceName)
-	ErrUpdateByIDUserService     = errcode.NewError(userServiceBaseCode+6, "failed to UpdateByID "+userServiceName)
-	ErrGetByIDUserService        = errcode.NewError(userServiceBaseCode+7, "failed to GetByID "+userServiceName)
-	ErrListUserService           = errcode.NewError(userServiceBaseCode+8, "failed to List "+userServiceName)
-	ErrUpdatePasswordUserService = errcode.NewError(userServiceBaseCode+9, "failed to UpdatePassword "+userServiceName)
-	ErrVerigyCodeUserService     = errcode.NewError(userServiceBaseCode+10, "验证码错误")
-	ErrPasswordUserService       = errcode.NewError(userServiceBaseCode+11, "账号或密码错误")
-	ErrTokenUserService          = errcode.NewError(userServiceBaseCode+12, "token验证失败")
-	ErrNoAccountUserService      = errcode.NewError(userServiceBaseCode+13, "未注册账号")
-	ErrAlreadyLoginUserService   = errcode.NewError(userServiceBaseCode+14, "请勿重复登录")
-	ErrNotLoginUserService       = errcode.NewError(userServiceBaseCode+15, "未登录，禁止操作")
-	// add +1 to the previous error code
+	ErrSendEmailVerifyCodeUserService = errcode.NewError(userServiceBaseCode+1, "failed to SendEmailVerifyCode "+userServiceName)
+	ErrRegisterUserService            = errcode.NewError(userServiceBaseCode+2, "failed to Register "+userServiceName)
+	ErrLoginUserService               = errcode.NewError(userServiceBaseCode+3, "failed to Login "+userServiceName)
+	ErrLogoutUserService              = errcode.NewError(userServiceBaseCode+4, "failed to Logout "+userServiceName)
+	ErrDeleteByIDUserService          = errcode.NewError(userServiceBaseCode+5, "failed to DeleteByID "+userServiceName)
+	ErrUpdateByIDUserService          = errcode.NewError(userServiceBaseCode+6, "failed to UpdateByID "+userServiceName)
+	ErrGetByIDUserService             = errcode.NewError(userServiceBaseCode+7, "failed to GetByID "+userServiceName)
+	ErrListUserService                = errcode.NewError(userServiceBaseCode+8, "failed to List "+userServiceName)
+	ErrUpdatePasswordUserService      = errcode.NewError(userServiceBaseCode+9, "failed to UpdatePassword "+userServiceName)
+	ErrVerigyCodeUserService          = errcode.NewError(userServiceBaseCode+10, "验证码错误")
+	ErrPasswordUserService            = errcode.NewError(userServiceBaseCode+11, "账号或密码错误")
+	ErrTokenUserService               = errcode.NewError(userServiceBaseCode+12, "token验证失败")
+	ErrNoAccountUserService           = errcode.NewError(userServiceBaseCode+13, "未注册账号")
+	ErrAlreadyLoginUserService        = errcode.NewError(userServiceBaseCode+14, "请勿重复登录")
+	ErrNotLoginUserService            = errcode.NewError(userServiceBaseCode+15, "未登录，禁止操作")
+	// error codes are globally unique, adding 1 to the previous error code
 )

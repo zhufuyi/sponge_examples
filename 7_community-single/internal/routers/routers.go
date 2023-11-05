@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"community/docs"
-	"community/internal/cache"
 	"community/internal/config"
 
 	"github.com/zhufuyi/sponge/pkg/errcode"
@@ -50,9 +49,9 @@ func NewRouter() *gin.Engine { //nolint
 
 	// init jwt middleware
 	jwt.Init(
-		jwt.WithExpire(cache.UserTokenExpireTime),
-		//jwt.WithSigningKey("123456"),
-		//jwt.WithSigningMethod(jwt.SigningMethodHS384),
+	//jwt.WithExpire(time.Hour*24),
+	//jwt.WithSigningKey("123456"),
+	//jwt.WithSigningMethod(jwt.HS384),
 	)
 
 	// metrics middleware
@@ -82,7 +81,7 @@ func NewRouter() *gin.Engine { //nolint
 		r.Use(middleware.Tracing(config.Get().App.Name))
 	}
 
-	// pprof performance analysis
+	// profile performance analysis
 	if config.Get().App.EnableHTTPProfile {
 		prof.Register(r, prof.WithIOWaitTime())
 	}
@@ -92,6 +91,8 @@ func NewRouter() *gin.Engine { //nolint
 
 	r.GET("/health", handlerfunc.CheckHealth)
 	r.GET("/ping", handlerfunc.Ping)
+	r.GET("/codes", handlerfunc.ListCodes)
+	r.GET("/config", gin.WrapF(errcode.ShowConfig([]byte(config.Show()))))
 
 	// access path /apis/swagger/index.html
 	swagger.CustomRouter(r, "apis", docs.ApiDocs)

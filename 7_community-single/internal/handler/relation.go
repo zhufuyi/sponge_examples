@@ -16,8 +16,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/mysql"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
-
-	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -54,23 +52,22 @@ func NewRelationServiceHandler() communityV1.RelationServiceLogicer {
 
 // Follow 关注
 func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.FollowRequest) (*communityV1.FollowReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	// 判断是否关注了自己
 	if req.UserId == req.FollowedUid {
-		logger.Warn("can not follow yourself", logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("can not follow yourself", logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrFollowSelfRelationService.Err()
 	}
 
 	// 判断是否已经关注过了
 	userFollowing, err := h.userFollowingDao.GetRelation(ctx, req.UserId, req.FollowedUid)
 	if err != nil && !errors.Is(err, model.ErrRecordNotFound) {
-		logger.Warn("h.userFollowingDao.GetRelation error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.userFollowingDao.GetRelation error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if userFollowing.Status == followStatusDone {
@@ -80,7 +77,7 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -90,7 +87,7 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	}()
 
 	// 添加关注
-	err = h.userFollowingDao.CreateByTx(ctx, tx, &model.UserFollowing{
+	_, err = h.userFollowingDao.CreateByTx(ctx, tx, &model.UserFollowing{
 		Model:       mysql.Model{ID: userFollowing.ID},
 		UserID:      req.UserId,
 		FollowedUid: req.FollowedUid,
@@ -98,13 +95,13 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	})
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	// 添加粉丝
 	userFollower, _ := h.userFollowerDao.GetRelation(ctx, req.FollowedUid, req.UserId)
-	err = h.userFollowerDao.CreateByTx(ctx, tx, &model.UserFollower{
+	_, err = h.userFollowerDao.CreateByTx(ctx, tx, &model.UserFollower{
 		Model:       mysql.Model{ID: userFollower.ID},
 		UserID:      req.FollowedUid,
 		FollowerUid: req.UserId,
@@ -112,7 +109,7 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	})
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -120,7 +117,7 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	err = h.relationNumDao.ModifyFollowingNumByTx(ctx, tx, req.UserId, 1)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.relationNumDao.ModifyFollowingNumByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.relationNumDao.ModifyFollowingNumByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -128,14 +125,14 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 	err = h.relationNumDao.ModifyFollowerNumByTx(ctx, tx, req.FollowedUid, 1)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.relationNumDao.ModifyFollowerNumByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.relationNumDao.ModifyFollowerNumByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -144,23 +141,22 @@ func (h *relationServiceHandler) Follow(ctx context.Context, req *communityV1.Fo
 
 // Unfollow 取消关注
 func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.UnfollowRequest) (*communityV1.UnfollowReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	// 判断是否取消关注自己
 	if req.UserId == req.FollowedUid {
-		logger.Warn("can not unfollow yourself", logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("can not unfollow yourself", logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrFollowSelfRelationService.Err()
 	}
 
 	// 判断是否已取消关注
 	userFollowing, err := h.userFollowingDao.GetRelation(ctx, req.UserId, req.FollowedUid)
 	if err != nil && !errors.Is(err, model.ErrRecordNotFound) {
-		logger.Warn("h.userFollowingDao.GetRelation error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.userFollowingDao.GetRelation error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if userFollowing != nil && userFollowing.Status == followStatusNot {
@@ -170,7 +166,7 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -187,7 +183,7 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 	})
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -199,7 +195,7 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 	})
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.CreateByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -207,7 +203,7 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 	err = h.relationNumDao.ModifyFollowingNumByTx(ctx, tx, req.UserId, -1)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.relationNumDao.ModifyFollowingNumByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.relationNumDao.ModifyFollowingNumByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -215,14 +211,14 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 	err = h.relationNumDao.ModifyFollowerNumByTx(ctx, tx, req.FollowedUid, -1)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.relationNumDao.ModifyFollowerNumByTx error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.relationNumDao.ModifyFollowerNumByTx error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -231,10 +227,9 @@ func (h *relationServiceHandler) Unfollow(ctx context.Context, req *communityV1.
 
 // ListFollowing 关注列表
 func (h *relationServiceHandler) ListFollowing(ctx context.Context, req *communityV1.ListFollowingRequest) (*communityV1.ListFollowingReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -254,7 +249,7 @@ func (h *relationServiceHandler) ListFollowing(ctx context.Context, req *communi
 		},
 	})
 	if err != nil {
-		logger.Error("h.userFollowingDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -271,10 +266,9 @@ func (h *relationServiceHandler) ListFollowing(ctx context.Context, req *communi
 
 // ListFollower 粉丝列表
 func (h *relationServiceHandler) ListFollower(ctx context.Context, req *communityV1.ListFollowerRequest) (*communityV1.ListFollowerReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -294,7 +288,7 @@ func (h *relationServiceHandler) ListFollower(ctx context.Context, req *communit
 		},
 	})
 	if err != nil {
-		logger.Error("h.userFollowerDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowerDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -311,16 +305,15 @@ func (h *relationServiceHandler) ListFollower(ctx context.Context, req *communit
 
 // BatchGetRelation 批量获取关注关系，a和b,c,d的关注状态
 func (h *relationServiceHandler) BatchGetRelation(ctx context.Context, req *communityV1.BatchGetRelationRequest) (*communityV1.BatchGetRelationReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	records, err := h.userFollowingDao.BatchGetUserFollowing(ctx, req.UserId, req.Uids)
 	if err != nil {
-		logger.Error("h.userFollowingDao.BatchGetUserFollowing error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userFollowingDao.BatchGetUserFollowing error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 

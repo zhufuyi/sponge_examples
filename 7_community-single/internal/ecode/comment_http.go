@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// commentService http service level error code
+// commentService business-level http error codes.
+// the commentServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	commentServiceNO       = 5 // number range 1~100, if there is the same number, trigger panic.
+	commentServiceNO       = 2
 	commentServiceName     = "commentService"
 	commentServiceBaseCode = errcode.HCode(commentServiceNO)
 
@@ -22,5 +23,5 @@ var (
 	ErrListHotCommentService    = errcode.NewError(commentServiceBaseCode+8, "failed to ListHot "+commentServiceName)
 	ErrListReplyCommentService  = errcode.NewError(commentServiceBaseCode+9, "failed to ListReply "+commentServiceName)
 	ErrReCommentService         = errcode.NewError(commentServiceBaseCode+10, "不支持多次嵌套已回复的评论")
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

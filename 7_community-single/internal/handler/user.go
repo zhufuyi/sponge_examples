@@ -25,7 +25,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
 	"github.com/zhufuyi/sponge/pkg/utils"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
@@ -34,6 +33,7 @@ var emailWhiteList = map[string]struct{}{
 	"foo1@bar.com":  {},
 	"foo2@bar.com":  {},
 	"foo3@bar.com":  {},
+	"foo4@bar.com":  {},
 	"123456@qq.com": {},
 }
 
@@ -79,17 +79,16 @@ func (h *userServiceHandler) checkEmailExist(ctx context.Context, email string) 
 
 // SendEmailVerifyCode 发送邮件验证码
 func (h *userServiceHandler) SendEmailVerifyCode(ctx context.Context, req *communityV1.SendEmailVerifyCodeRequest) (*communityV1.SendEmailVerifyCodeReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	// 检查邮箱是否已经注册过
 	data, _ := h.iDao.GetByEmail(ctx, req.Email)
 	if data != nil && data.ID > 0 {
-		logger.Warn("email is already in use", middleware.GCtxRequestIDField(c))
+		logger.Warn("email is already in use", middleware.CtxRequestIDField(ctx))
 		return nil, ecode.AlreadyExists.Err()
 	}
 
@@ -110,13 +109,13 @@ func (h *userServiceHandler) SendEmailVerifyCode(ctx context.Context, req *commu
 		// 发送验证码到邮箱
 		err = h.emailCli.SendMessage(msg)
 		if err != nil {
-			logger.Error("client.SendMessage error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Error("client.SendMessage error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 		// 缓存验证码
 		err = h.emailVerifyCodeCache.Set(ctx, req.Email, verifyCode, cache.EmailVerifyCodeExpireTime)
 		if err != nil {
-			logger.Error("h.emailVerifyCodeCache.Set error", logger.Err(err), logger.String("email", req.Email), middleware.GCtxRequestIDField(c))
+			logger.Error("h.emailVerifyCodeCache.Set error", logger.Err(err), logger.String("email", req.Email), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	}
@@ -126,10 +125,9 @@ func (h *userServiceHandler) SendEmailVerifyCode(ctx context.Context, req *commu
 
 // Register 注册
 func (h *userServiceHandler) Register(ctx context.Context, req *communityV1.RegisterRequest) (*communityV1.RegisterReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -137,11 +135,11 @@ func (h *userServiceHandler) Register(ctx context.Context, req *communityV1.Regi
 		// 检查验证码是否存在
 		verifyCode, err := h.emailVerifyCodeCache.Get(ctx, req.Email)
 		if err != nil {
-			logger.Warn("h.emailVerifyCodeCache.Set error", logger.Err(err), logger.String("email", req.Email), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.emailVerifyCodeCache.Set error", logger.Err(err), logger.String("email", req.Email), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.ErrVerigyCodeUserService.Err()
 		}
 		if verifyCode != req.EmailCode {
-			logger.Warn("email verify code error", logger.Err(err), logger.String("verifyCode", verifyCode), logger.String("emailCode", req.EmailCode), middleware.GCtxRequestIDField(c))
+			logger.Warn("email verify code error", logger.Err(err), logger.String("verifyCode", verifyCode), logger.String("emailCode", req.EmailCode), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.ErrVerigyCodeUserService.Err()
 		}
 	}
@@ -149,17 +147,17 @@ func (h *userServiceHandler) Register(ctx context.Context, req *communityV1.Regi
 	// 检查邮箱是否已经注册过
 	data, err := h.iDao.GetByEmail(ctx, req.Email)
 	if err != nil && !errors.Is(err, model.ErrRecordNotFound) {
-		logger.Warn("h.checkEmailExist", logger.Err(err), logger.String("email", req.Email), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.checkEmailExist", logger.Err(err), logger.String("email", req.Email), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if data != nil && data.ID > 0 {
-		logger.Warn("email is already in use", middleware.GCtxRequestIDField(c))
+		logger.Warn("email is already in use", middleware.CtxRequestIDField(ctx))
 		return nil, ecode.AlreadyExists.Err()
 	}
 
 	password, err := gocrypto.HashAndSaltPassword(req.Password)
 	if err != nil {
-		logger.Error("gocrypto.HashAndSaltPassword error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("gocrypto.HashAndSaltPassword error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -167,11 +165,12 @@ func (h *userServiceHandler) Register(ctx context.Context, req *communityV1.Regi
 		Password: password,
 		Email:    req.Email,
 		Name:     krand.String(krand.R_All, 10),
+		LoginAt:  time.Now(),
 	}
 
 	err = h.iDao.Create(ctx, user)
 	if err != nil {
-		logger.Error("h.iDao.Create error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.Create error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -180,47 +179,46 @@ func (h *userServiceHandler) Register(ctx context.Context, req *communityV1.Regi
 
 // Login 登录
 func (h *userServiceHandler) Login(ctx context.Context, req *communityV1.LoginRequest) (*communityV1.LoginReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	// 检查邮箱是否已经注册过
 	data, err := h.iDao.GetByEmail(ctx, req.Email)
 	if err != nil || data == nil {
-		logger.Warn("h.checkEmailExist error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.checkEmailExist error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrNoAccountUserService.Err()
 	}
 
 	// 验证密码
 	if !gocrypto.VerifyPassword(req.Password, data.Password) {
-		logger.Warn("password error", middleware.GCtxRequestIDField(c))
+		logger.Warn("password error", middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrPasswordUserService.Err()
 	}
 
 	// 判断是否已经登录过
-	cacheToken, err := h.checkLogin(ctx, data.ID)
+	isLogin, err := h.checkLogin(ctx, data.ID)
 	if err != nil {
-		logger.Error("h.userTokenCache.Get error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("checkLogin error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
-	if cacheToken != "" {
-		return nil, ecode.ErrAlreadyLoginUserService.WithDetails("token: " + cacheToken).Err()
+	if isLogin {
+		return nil, ecode.ErrAlreadyLoginUserService.Err()
 	}
 
 	// 生成token
 	token, err := jwt.GenerateToken(utils.Uint64ToStr(data.ID))
 	if err != nil {
-		logger.Error("jwt.GenerateToken error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("jwt.GenerateToken error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	// 缓存token
 	err = h.userTokenCache.Set(ctx, data.ID, token, cache.UserTokenExpireTime)
 	if err != nil {
-		logger.Error("h.userTokenCache.Set error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userTokenCache.Set error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -232,7 +230,7 @@ func (h *userServiceHandler) Login(ctx context.Context, req *communityV1.LoginRe
 	user.ID = data.ID
 	err = h.iDao.UpdateByID(ctx, user)
 	if err != nil {
-		logger.Warn("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -244,42 +242,36 @@ func (h *userServiceHandler) Login(ctx context.Context, req *communityV1.LoginRe
 
 // Logout 登出
 func (h *userServiceHandler) Logout(ctx context.Context, req *communityV1.LogoutRequest) (*communityV1.LogoutReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
-	claims, err := jwt.VerifyToken(req.Token)
+	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
-		logger.Warn("jwt.VerifyToken error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("jwt.VerifyToken error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrTokenUserService.Err()
 	}
 
 	if claims.UID != utils.Uint64ToStr(req.Id) {
-		logger.Warn("uid error", middleware.GCtxRequestIDField(c))
+		logger.Warn("uid error", middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrTokenUserService.Err()
 	}
 
 	// 判断是否已经登录过
-	cacheToken, err := h.checkLogin(ctx, req.Id)
+	isLogin, err := h.checkLogin(ctx, req.Id)
 	if err != nil {
-		logger.Error("h.userTokenCache.Get error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("checkLogin error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
-	if cacheToken == "" {
+	if !isLogin {
 		return nil, ecode.ErrNotLoginUserService.Err()
-	}
-
-	if cacheToken != req.Token {
-		logger.Warn("token error", middleware.GCtxRequestIDField(c))
-		return nil, ecode.AccessDenied.Err()
 	}
 
 	err = h.userTokenCache.Del(ctx, req.Id)
 	if err != nil {
-		logger.Error("h.userTokenCache.Del error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userTokenCache.Del error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -288,16 +280,15 @@ func (h *userServiceHandler) Logout(ctx context.Context, req *communityV1.Logout
 
 // DeleteByID 删除用户
 func (h *userServiceHandler) DeleteByID(ctx context.Context, req *communityV1.DeleteUserByIDRequest) (*communityV1.DeleteUserByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	err = h.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
-		logger.Error("h.iDao.DeleteByID error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.DeleteByID error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -308,10 +299,9 @@ func (h *userServiceHandler) DeleteByID(ctx context.Context, req *communityV1.De
 
 // UpdateByID 更新用户
 func (h *userServiceHandler) UpdateByID(ctx context.Context, req *communityV1.UpdateUserByIDRequest) (*communityV1.UpdateUserByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -327,7 +317,7 @@ func (h *userServiceHandler) UpdateByID(ctx context.Context, req *communityV1.Up
 	user.ID = req.Id
 	err = h.iDao.UpdateByID(ctx, user)
 	if err != nil {
-		logger.Error("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -336,25 +326,24 @@ func (h *userServiceHandler) UpdateByID(ctx context.Context, req *communityV1.Up
 
 // GetByID 用户详情
 func (h *userServiceHandler) GetByID(ctx context.Context, req *communityV1.GetUserByIDRequest) (*communityV1.GetUserByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	user, err := h.iDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.iDao.GetByID error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.iDao.GetByID error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.iDao.GetByID error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.GetByID error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	userInfo, err := covertUser(user)
 	if err != nil {
-		logger.Error("covertUser error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("covertUser error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrGetByIDUserService.Err()
 	}
 
@@ -363,17 +352,16 @@ func (h *userServiceHandler) GetByID(ctx context.Context, req *communityV1.GetUs
 
 // List 获取用户列表
 func (h *userServiceHandler) List(ctx context.Context, req *communityV1.ListUserRequest) (*communityV1.ListUserReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	params := &query.Params{}
 	err = copier.Copy(params, req.Params)
 	if err != nil {
-		logger.Error("covertUser error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("covertUser error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrListUserService.Err()
 	}
 	params.Size = int(req.Params.Limit)
@@ -381,10 +369,10 @@ func (h *userServiceHandler) List(ctx context.Context, req *communityV1.ListUser
 	records, total, err := h.iDao.GetByColumns(ctx, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "query params error:") {
-			logger.Warn("h.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InvalidParams.Err()
 		}
-		logger.Error("h.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.GetByColumns error", logger.Err(err), logger.Any("params", params), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -392,7 +380,7 @@ func (h *userServiceHandler) List(ctx context.Context, req *communityV1.ListUser
 	for _, record := range records {
 		user, err := covertUser(record)
 		if err != nil {
-			logger.Warn("covertUser error", logger.Err(err), logger.Uint64("id", record.ID), middleware.GCtxRequestIDField(c))
+			logger.Warn("covertUser error", logger.Err(err), logger.Uint64("id", record.ID), middleware.CtxRequestIDField(ctx))
 			continue
 		}
 		users = append(users, user)
@@ -406,16 +394,15 @@ func (h *userServiceHandler) List(ctx context.Context, req *communityV1.ListUser
 
 // UpdatePassword 更新密码
 func (h *userServiceHandler) UpdatePassword(ctx context.Context, req *communityV1.UpdatePasswordRequest) (*communityV1.UpdatePasswordReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	password, err := gocrypto.HashAndSaltPassword(req.Password)
 	if err != nil {
-		logger.Error("gocrypto.HashAndSaltPassword error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("gocrypto.HashAndSaltPassword error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -425,20 +412,19 @@ func (h *userServiceHandler) UpdatePassword(ctx context.Context, req *communityV
 	user.ID = req.Id
 	err = h.iDao.UpdateByID(ctx, user)
 	if err != nil {
-		logger.Error("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.GCtxRequestIDField(c))
+		logger.Error("h.iDao.UpdateByID error", logger.Err(err), logger.Any("user", user), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	return &communityV1.UpdatePasswordReply{}, nil
 }
 
-func (h *userServiceHandler) checkLogin(ctx context.Context, id uint64) (string, error) {
-	cacheToken, err := h.userTokenCache.Get(ctx, id)
-	if err != nil && !errors.Is(err, model.ErrCacheNotFound) {
-		return "", err
+func (h *userServiceHandler) checkLogin(ctx context.Context, id uint64) (bool, error) {
+	result, err := model.GetRedisCli().Exists(ctx, cache.GetUserTokenCacheKey(id)).Result()
+	if err != nil {
+		return false, err
 	}
-
-	return cacheToken, nil
+	return result > 0, nil
 }
 
 func isTestEmail(email string) bool {
@@ -457,4 +443,19 @@ func covertUser(record *model.User) (*communityV1.User, error) {
 	value.UpdatedAt = record.UpdatedAt.Unix()
 	value.LoginAt = record.LoginAt.Unix()
 	return value, nil
+}
+
+// CheckLogin 判断用户是否登录
+func CheckLogin(ctx context.Context, id uint64) (string, error) {
+	token, err := model.GetRedisCli().Get(ctx, cache.GetUserTokenCacheKey(id)).Result()
+	if err != nil {
+		logger.Warn("get token error", logger.Err(err), middleware.CtxRequestIDField(ctx))
+		return "", ecode.InternalServerError.Err()
+	}
+
+	if token == "" {
+		return "", ecode.ErrNotLoginUserService.Err()
+	}
+
+	return token, nil
 }

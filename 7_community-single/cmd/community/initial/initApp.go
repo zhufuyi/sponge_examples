@@ -1,3 +1,6 @@
+// Package initial is the package that starts the service to initialize the service, including
+// the initialization configuration, service configuration, connecting to the database, and
+// resource release needed when shutting down the service.
 package initial
 
 import (
@@ -8,7 +11,7 @@ import (
 	"community/configs"
 	"community/internal/config"
 
-	"community/internal/model"
+	//"community/internal/model"
 
 	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/nacoscli"
@@ -30,15 +33,18 @@ func Config() {
 	cfg := config.Get()
 
 	// initializing log
-	_, _ = logger.Init(
+	_, err := logger.Init(
 		logger.WithLevel(cfg.Logger.Level),
 		logger.WithFormat(cfg.Logger.Format),
 		logger.WithSave(cfg.Logger.IsSave),
 	)
+	if err != nil {
+		panic(err)
+	}
 
 	// initializing database
-	model.InitMysql()
-	model.InitCache(cfg.App.CacheType)
+	//model.InitMysql()
+	//model.InitCache(cfg.App.CacheType)
 
 	// initializing tracing
 	if cfg.App.EnableTrace {

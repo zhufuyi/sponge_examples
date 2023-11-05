@@ -1,11 +1,13 @@
 package dao
 
 import (
-	"community/internal/cache"
-	"community/internal/model"
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
+	"community/internal/cache"
+	"community/internal/model"
 
 	cacheBase "github.com/zhufuyi/sponge/pkg/cache"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
@@ -24,11 +26,16 @@ type UserFollowerDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.UserFollower) error
 	GetByID(ctx context.Context, id uint64) (*model.UserFollower, error)
+	GetByCondition(ctx context.Context, condition *query.Conditions) (*model.UserFollower, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.UserFollower, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.UserFollower, int64, error)
 
 	GetRelation(ctx context.Context, userID uint64, followedUid uint64) (*model.UserFollower, error)
-	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.UserFollower) error
+
+	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.UserFollower) (uint64, error)
+	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
+	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.UserFollower) error
+
 	UpdateStatusByTx(ctx context.Context, tx *gorm.DB, userFollower *model.UserFollower) error
 }
 
@@ -39,8 +46,12 @@ type userFollowerDao struct {
 }
 
 // NewUserFollowerDao creating the dao interface
-func NewUserFollowerDao(db *gorm.DB, cache cache.UserFollowerCache) UserFollowerDao {
-	return &userFollowerDao{db: db, cache: cache, sfg: new(singleflight.Group)}
+func NewUserFollowerDao(db *gorm.DB, xCache cache.UserFollowerCache) UserFollowerDao {
+	return &userFollowerDao{
+		db:    db,
+		cache: xCache,
+		sfg:   new(singleflight.Group),
+	}
 }
 
 // Create a record, insert the record and the id value is written back to the table
@@ -50,7 +61,7 @@ func (d *userFollowerDao) Create(ctx context.Context, table *model.UserFollower)
 	return err
 }
 
-// DeleteByID delete a record based on id
+// DeleteByID delete a record by id
 func (d *userFollowerDao) DeleteByID(ctx context.Context, id uint64) error {
 	err := d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.UserFollower{}).Error
 	if err != nil {
@@ -63,7 +74,7 @@ func (d *userFollowerDao) DeleteByID(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// DeleteByIDs batch delete multiple records
+// DeleteByIDs delete records by batch id
 func (d *userFollowerDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	err := d.db.WithContext(ctx).Where("id IN (?)", ids).Delete(&model.UserFollower{}).Error
 	if err != nil {
@@ -78,36 +89,37 @@ func (d *userFollowerDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
 	return nil
 }
 
-// UpdateByID update records by id
+// UpdateByID update a record by id
 func (d *userFollowerDao) UpdateByID(ctx context.Context, table *model.UserFollower) error {
+	err := d.updateDataByID(ctx, d.db, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
+}
+
+func (d *userFollowerDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.UserFollower) error {
 	if table.ID < 1 {
 		return errors.New("id cannot be 0")
 	}
 
 	update := map[string]interface{}{}
 
-	if table.FollowerUid != 0 {
-		update["follower_uid"] = table.FollowerUid
-	}
 	if table.UserID != 0 {
 		update["user_id"] = table.UserID
+	}
+	if table.FollowerUid != 0 {
+		update["follower_uid"] = table.FollowerUid
 	}
 	if table.Status != 0 {
 		update["status"] = table.Status
 	}
 
-	err := d.db.WithContext(ctx).Model(table).Updates(update).Error
-	if err != nil {
-		return err
-	}
-
-	// delete cache
-	_ = d.cache.Del(ctx, table.ID)
-
-	return nil
+	return db.WithContext(ctx).Model(table).Updates(update).Error
 }
 
-// GetByID get a record based on id
+// GetByID get a record by id
 func (d *userFollowerDao) GetByID(ctx context.Context, id uint64) (*model.UserFollower, error) {
 	record, err := d.cache.Get(ctx, id)
 	if err == nil {
@@ -153,7 +165,43 @@ func (d *userFollowerDao) GetByID(ctx context.Context, id uint64) (*model.UserFo
 	return nil, err
 }
 
-// GetByIDs get multiple rows by ids
+// GetByCondition get a record by condition
+// query conditions:
+//
+//	name: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
+//	logic: logical type, defaults to and when value is null, only &(and), ||(or)
+//
+// example: find a male aged 20
+//
+//	condition = &query.Conditions{
+//	    Columns: []query.Column{
+//		{
+//			Name:    "age",
+//			Value:   20,
+//		},
+//		{
+//			Name:  "gender",
+//			Value: "male",
+//		},
+//	}
+func (d *userFollowerDao) GetByCondition(ctx context.Context, c *query.Conditions) (*model.UserFollower, error) {
+	queryStr, args, err := c.ConvertToGorm()
+	if err != nil {
+		return nil, err
+	}
+
+	table := &model.UserFollower{}
+	err = d.db.WithContext(ctx).Where(queryStr, args...).First(table).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}
+
+// GetByIDs list of records by batch id
 func (d *userFollowerDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.UserFollower, error) {
 	itemMap, err := d.cache.MultiGet(ctx, ids)
 	if err != nil {
@@ -177,9 +225,8 @@ func (d *userFollowerDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint6
 			_, err = d.cache.Get(ctx, id)
 			if errors.Is(err, cacheBase.ErrPlaceholder) {
 				continue
-			} else {
-				realMissedIDs = append(realMissedIDs, id)
 			}
+			realMissedIDs = append(realMissedIDs, id)
 		}
 
 		if len(realMissedIDs) > 0 {
@@ -204,10 +251,12 @@ func (d *userFollowerDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint6
 			}
 		}
 	}
+
 	return itemMap, nil
 }
 
-// GetByColumns filter multiple rows based on paging and column information
+// GetByColumns get records by paging and column information,
+// Note: query performance degrades when table rows are very large because of the use of offset.
 //
 // params includes paging parameters and query parameters
 // paging parameters (required):
@@ -219,8 +268,8 @@ func (d *userFollowerDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint6
 // query parameters (not required):
 //
 //	name: column name
-//	exp: expressions, which default to = when the value is null, have =, ! =, >, >=, <, <=, like
-//	value: column name
+//	exp: expressions, which default is "=",  support =, !=, >, >=, <, <=, like, in
+//	value: column value, if exp=in, multiple values are separated by commas
 //	logic: logical type, defaults to and when value is null, only &(and), ||(or)
 //
 // example: search for a male over 20 years of age
@@ -266,19 +315,43 @@ func (d *userFollowerDao) GetByColumns(ctx context.Context, params *query.Params
 	return records, total, err
 }
 
+// CreateByTx create a record in the database using the provided transaction
+func (d *userFollowerDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.UserFollower) (uint64, error) {
+	err := tx.WithContext(ctx).Create(table).Error
+	return table.ID, err
+}
+
+// DeleteByTx delete a record by id in the database using the provided transaction
+func (d *userFollowerDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error {
+	update := map[string]interface{}{
+		"deleted_at": time.Now(),
+	}
+	err := tx.WithContext(ctx).Model(&model.UserFollower{}).Where("id = ?", id).Updates(update).Error
+	if err != nil {
+		return err
+	}
+
+	// delete cache
+	_ = d.cache.Del(ctx, id)
+
+	return nil
+}
+
+// UpdateByTx update a record by id in the database using the provided transaction
+func (d *userFollowerDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.UserFollower) error {
+	err := d.updateDataByID(ctx, tx, table)
+
+	// delete cache
+	_ = d.cache.Del(ctx, table.ID)
+
+	return err
+}
+
 // GetRelation get user relation
 func (d *userFollowerDao) GetRelation(ctx context.Context, userID uint64, followerUid uint64) (*model.UserFollower, error) {
 	userFollower := &model.UserFollower{}
 	err := d.db.WithContext(ctx).Where("user_id = ? AND follower_uid = ?", userID, followerUid).First(userFollower).Error
 	return userFollower, err
-}
-
-// CreateByTx create a record in the database using the provided transaction
-func (d *userFollowerDao) CreateByTx(ctx context.Context, tx *gorm.DB, userFollower *model.UserFollower) error {
-	if userFollower.ID == 0 {
-		return tx.WithContext(ctx).Create(userFollower).Error
-	}
-	return tx.WithContext(ctx).Model(userFollower).Update("status", 1).Error
 }
 
 // UpdateStatusByTx cancel follower using the provided transaction

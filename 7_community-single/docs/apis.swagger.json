@@ -1437,24 +1437,12 @@
         },
         "parameters": [
           {
-            "name": "params.page",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "params.limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "params.sort",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListUserRequest"
+            }
           }
         ],
         "tags": [
@@ -2487,6 +2475,14 @@
           "items": {
             "$ref": "#/definitions/v1User"
           }
+        }
+      }
+    },
+    "v1ListUserRequest": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/typesParams"
         }
       }
     },

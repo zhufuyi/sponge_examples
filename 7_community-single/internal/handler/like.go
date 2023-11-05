@@ -15,8 +15,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
-
-	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -57,10 +55,9 @@ func NewLikeServiceHandler() communityV1.LikeServiceLogicer {
 
 // Create 点赞
 func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.CreateLikeRequest) (*communityV1.CreateLikeReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -73,7 +70,7 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	// 判断是否已经点赞过
 	userLike, err := h.userLikeDao.GetByUser(ctx, req.UserId, int(req.ObjType), req.ObjId)
 	if err != nil && !errors.Is(err, model.ErrRecordNotFound) {
-		logger.Error("h.userLikeDao.GetByUser error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userLikeDao.GetByUser error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if userLike.Status == likeStatusLiked {
@@ -83,7 +80,7 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -104,7 +101,7 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		_, err = h.userLikeDao.CreateByTx(ctx, tx, userLikeRecord)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.userLikeDao.CreateByTx error", logger.Err(err), logger.Any("userLike", userLikeRecord), middleware.GCtxRequestIDField(c))
+			logger.Error("h.userLikeDao.CreateByTx error", logger.Err(err), logger.Any("userLike", userLikeRecord), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	} else {
@@ -112,7 +109,7 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		err = h.userLikeDao.UpdateStatusByTx(ctx, tx, userLike.ID, likeStatusLiked)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.userLikeDao.UpdateByTx error", logger.Err(err), logger.Any("id", userLike.ID), middleware.GCtxRequestIDField(c))
+			logger.Error("h.userLikeDao.UpdateByTx error", logger.Err(err), logger.Any("id", userLike.ID), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	}
@@ -123,14 +120,14 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 		err = h.postDao.IncrLikeCountByTx(ctx, tx, req.ObjId)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.postDao.IncrLikeCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Error("h.postDao.IncrLikeCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	case likeTypeComment:
 		err = h.commentDao.IncrLikeCountByTx(ctx, tx, req.ObjId)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.commentDao.IncrLikeCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Error("h.commentDao.IncrLikeCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	}
@@ -138,7 +135,7 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -147,10 +144,9 @@ func (h *likeServiceHandler) Create(ctx context.Context, req *communityV1.Create
 
 // Delete 取消点赞
 func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.DeleteLikeRequest) (*communityV1.DeleteLikeReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -164,10 +160,10 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	userLike, err := h.userLikeDao.GetByUser(ctx, req.UserId, int(req.ObjType), req.ObjId)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.userLikeDao.GetByUser error", logger.Err(err), logger.Uint64("id", req.ObjId), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.userLikeDao.GetByUser error", logger.Err(err), logger.Uint64("id", req.ObjId), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.userLikeDao.GetByUser error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userLikeDao.GetByUser error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if userLike.Status == likeStatusUnliked {
@@ -177,7 +173,7 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -190,7 +186,7 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = h.userLikeDao.UpdateStatusByTx(ctx, tx, userLike.ID, likeStatusUnliked)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userLikeDao.UpdateByTx error", logger.Err(err), logger.Any("id", userLike.ID), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userLikeDao.UpdateByTx error", logger.Err(err), logger.Any("id", userLike.ID), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -200,14 +196,14 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 		err = h.postDao.DecrLikeCountByTx(ctx, tx, req.ObjId)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.postDao.DecrLikeCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Error("h.postDao.DecrLikeCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	case likeTypeComment:
 		err = h.commentDao.DecrLikeCountByTx(ctx, tx, req.ObjId)
 		if err != nil {
 			tx.Rollback()
-			logger.Error("h.commentDao.DecrLikeCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+			logger.Error("h.commentDao.DecrLikeCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.InternalServerError.Err()
 		}
 	}
@@ -215,7 +211,7 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -224,10 +220,9 @@ func (h *likeServiceHandler) Delete(ctx context.Context, req *communityV1.Delete
 
 // ListPost 获取帖子点赞列表
 func (h *likeServiceHandler) ListPost(ctx context.Context, req *communityV1.ListPostLikeRequest) (*communityV1.ListPostLikeReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -251,7 +246,7 @@ func (h *likeServiceHandler) ListPost(ctx context.Context, req *communityV1.List
 		},
 	})
 	if err != nil {
-		logger.Error("h.userLikeDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userLikeDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -265,10 +260,9 @@ func (h *likeServiceHandler) ListPost(ctx context.Context, req *communityV1.List
 
 // ListComment 获取评论点赞列表
 func (h *likeServiceHandler) ListComment(ctx context.Context, req *communityV1.ListCommentLikeRequest) (*communityV1.ListCommentLikeReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -292,7 +286,7 @@ func (h *likeServiceHandler) ListComment(ctx context.Context, req *communityV1.L
 		},
 	})
 	if err != nil {
-		logger.Error("h.userLikeDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userLikeDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -305,26 +299,25 @@ func (h *likeServiceHandler) ListComment(ctx context.Context, req *communityV1.L
 }
 
 func (h *likeServiceHandler) checkLikeExist(ctx context.Context, objType int32, objID uint64) error {
-	c := ctx.(*gin.Context)
 	switch objType {
 	case likeTypePost:
 		_, err := h.postDao.GetByID(ctx, objID)
 		if err != nil {
 			if errors.Is(err, model.ErrRecordNotFound) {
-				logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.GCtxRequestIDField(c))
+				logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.CtxRequestIDField(ctx))
 				return ecode.NotFound.Err()
 			}
-			logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.GCtxRequestIDField(c))
+			logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.CtxRequestIDField(ctx))
 			return ecode.InternalServerError.Err()
 		}
 	case likeTypeComment:
 		_, err := h.commentDao.GetByID(ctx, objID)
 		if err != nil {
 			if errors.Is(err, model.ErrRecordNotFound) {
-				logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.GCtxRequestIDField(c))
+				logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.CtxRequestIDField(ctx))
 				return ecode.NotFound.Err()
 			}
-			logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.GCtxRequestIDField(c))
+			logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", objID), middleware.CtxRequestIDField(ctx))
 			return ecode.InternalServerError.Err()
 		}
 	}

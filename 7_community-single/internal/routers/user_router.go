@@ -3,11 +3,15 @@
 package routers
 
 import (
+	"context"
+
 	communityV1 "community/api/community/v1"
 	"community/internal/handler"
 
+	"github.com/zhufuyi/sponge/pkg/gin/middleware"
+	"github.com/zhufuyi/sponge/pkg/jwt"
 	"github.com/zhufuyi/sponge/pkg/logger"
-	//"github.com/zhufuyi/sponge/pkg/middleware"
+	"github.com/zhufuyi/sponge/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -50,16 +54,29 @@ func userServiceRouter(
 func userServiceMiddlewares(c *middlewareConfig) {
 	// set up group route middleware, group path is left prefix rules,
 	// if the left prefix is hit, the middleware will take effect, e.g. group route is /api/v1, route /api/v1/userService/:id  will take effect
-	// c.setGroupPath("/api/v1/userService", middleware.Auth())
+	// c.setGroupPath("/api/v1/user", middleware.Auth())
 
 	// set up single route middleware, just uncomment the code and fill in the middlewares, nothing else needs to be changed
 	//c.setSinglePath("POST", "/api/v1/auth/email", middleware.Auth())
 	//c.setSinglePath("POST", "/api/v1/auth/register", middleware.Auth())
 	//c.setSinglePath("POST", "/api/v1/auth/login", middleware.Auth())
-	//c.setSinglePath("POST", "/api/v1/auth/logout", middleware.Auth())
-	//c.setSinglePath("DELETE", "/api/v1/user/:id", middleware.Auth())
-	//c.setSinglePath("PUT", "/api/v1/user/:id", middleware.Auth())
-	//c.setSinglePath("GET", "/api/v1/user/:id", middleware.Auth())
-	//c.setSinglePath("POST", "/api/v1/user/list", middleware.Auth())
-	//c.setSinglePath("PUT", "/api/v1/user/password/:id", middleware.Auth())
+	c.setSinglePath("POST", "/api/v1/auth/logout", middleware.Auth(middleware.WithVerify(verify)))
+	c.setSinglePath("DELETE", "/api/v1/user/:id", middleware.Auth(middleware.WithVerify(verify)))
+	c.setSinglePath("PUT", "/api/v1/user/:id", middleware.Auth(middleware.WithVerify(verify)))
+	c.setSinglePath("GET", "/api/v1/user/:id", middleware.Auth(middleware.WithVerify(verify)))
+	c.setSinglePath("POST", "/api/v1/user/list", middleware.Auth(middleware.WithVerify(verify)))
+	c.setSinglePath("PUT", "/api/v1/user/password/:id", middleware.Auth(middleware.WithVerify(verify)))
+}
+
+var verify = func(claims *jwt.Claims /*token string*/) error {
+	_, err := handler.CheckLogin(context.Background(), utils.StrToUint64(claims.UID))
+	if err != nil {
+		return err
+	}
+
+	//if tokenStr != token {
+	//	return ecode.Unauthorized.Err()
+	//}
+
+	return nil
 }

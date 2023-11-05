@@ -6,9 +6,10 @@ import (
 	"github.com/zhufuyi/sponge/pkg/errcode"
 )
 
-// relationService http service level error code
+// relationService business-level http error codes.
+// the relationServiceNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	relationServiceNO       = 2 // number range 1~100, if there is the same number, trigger panic.
+	relationServiceNO       = 5
 	relationServiceName     = "relationService"
 	relationServiceBaseCode = errcode.HCode(relationServiceNO)
 
@@ -19,5 +20,5 @@ var (
 	ErrBatchGetRelationRelationService = errcode.NewError(relationServiceBaseCode+5, "failed to BatchGetRelation "+relationServiceName)
 	ErrFollowSelfRelationService       = errcode.NewError(relationServiceBaseCode+6, "禁止关注自己")
 	ErrAlreadyFollowRelationService    = errcode.NewError(relationServiceBaseCode+7, "已经关注过了")
-	// add +1 to the previous error code
+	// error codes are globally unique, adding 1 to the previous error code
 )

@@ -177,7 +177,7 @@ func (r *userServiceRouter) SendEmailVerifyCode_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.SendEmailVerifyCode(ctx, req)
@@ -203,7 +203,7 @@ func (r *userServiceRouter) Register_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Register(ctx, req)
@@ -229,7 +229,7 @@ func (r *userServiceRouter) Login_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Login(ctx, req)
@@ -255,7 +255,7 @@ func (r *userServiceRouter) Logout_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Logout(ctx, req)
@@ -287,7 +287,7 @@ func (r *userServiceRouter) DeleteByID_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.DeleteByID(ctx, req)
@@ -319,7 +319,7 @@ func (r *userServiceRouter) UpdateByID_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdateByID(ctx, req)
@@ -351,7 +351,7 @@ func (r *userServiceRouter) GetByID_4(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.GetByID(ctx, req)
@@ -377,7 +377,7 @@ func (r *userServiceRouter) List_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.List(ctx, req)
@@ -409,7 +409,7 @@ func (r *userServiceRouter) UpdatePassword_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdatePassword(ctx, req)

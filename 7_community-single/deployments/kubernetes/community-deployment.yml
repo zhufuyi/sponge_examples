@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: community
-          image: /community.community:latest
+          image: /community/community:latest
           # If using a local image, use Never, default is Always
           #imagePullPolicy: Never
           command: ["./community", "-c", "/app/configs/community.yml"]

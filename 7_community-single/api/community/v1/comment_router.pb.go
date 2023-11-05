@@ -177,7 +177,7 @@ func (r *commentServiceRouter) Create_2(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Create(ctx, req)
@@ -203,7 +203,7 @@ func (r *commentServiceRouter) DeleteByID_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.DeleteByID(ctx, req)
@@ -229,7 +229,7 @@ func (r *commentServiceRouter) UpdateByID_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.UpdateByID(ctx, req)
@@ -255,7 +255,7 @@ func (r *commentServiceRouter) Reply_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.Reply(ctx, req)
@@ -287,7 +287,7 @@ func (r *commentServiceRouter) GetByID_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.GetByID(ctx, req)
@@ -313,7 +313,7 @@ func (r *commentServiceRouter) ListByIDs_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListByIDs(ctx, req)
@@ -339,7 +339,7 @@ func (r *commentServiceRouter) ListLatest_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListLatest(ctx, req)
@@ -365,7 +365,7 @@ func (r *commentServiceRouter) ListHot_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListHot(ctx, req)
@@ -391,7 +391,7 @@ func (r *commentServiceRouter) ListReply_0(c *gin.Context) {
 	if r.wrapCtxFn != nil {
 		ctx = r.wrapCtxFn(c)
 	} else {
-		ctx = c
+		ctx = middleware.WrapCtx(c)
 	}
 
 	out, err := r.iLogic.ListReply(ctx, req)

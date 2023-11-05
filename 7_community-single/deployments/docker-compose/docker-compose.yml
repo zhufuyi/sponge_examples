@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   community:
-    image: community.community:latest
+    image: community/community:latest
     container_name: community
     restart: always
     command: ["./community", "-c", "/app/configs/community.yml"]

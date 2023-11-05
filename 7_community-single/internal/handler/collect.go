@@ -15,8 +15,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
-
-	"github.com/gin-gonic/gin"
 )
 
 var _ communityV1.CollectServiceLogicer = (*collectServiceHandler)(nil)
@@ -42,10 +40,9 @@ func NewCollectServiceHandler() communityV1.CollectServiceLogicer {
 
 // Create 收藏
 func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.CreateCollectRequest) (*communityV1.CreateCollectReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -53,23 +50,23 @@ func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	post, err := h.postDao.GetByID(ctx, req.PostId)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.PostId), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.PostId), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.PostId), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.PostId), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	// 判断是否自己的帖子
 	if post.UserID == req.UserId {
-		logger.Warn(ecode.ErrCreateCollectService.Msg(), logger.Uint64("postId", req.PostId), middleware.GCtxRequestIDField(c))
+		logger.Warn(ecode.ErrCreateCollectService.Msg(), logger.Uint64("postId", req.PostId), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrCreateCollectService.Err()
 	}
 
 	// 判断是否已经收藏过
 	userCollect, err := h.userCollectDao.GetByUserPost(ctx, req.UserId, req.PostId)
 	if err != nil && !errors.Is(err, model.ErrRecordNotFound) {
-		logger.Error("h.userCollectDao.GetByUserPost error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCollectDao.GetByUserPost error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if userCollect.ID > 0 {
@@ -79,7 +76,7 @@ func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -96,7 +93,7 @@ func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.userCollectDao.CreateByTx(ctx, tx, userCollectRecord)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userCollectDao.CreateByTx error", logger.Err(err), logger.Any("userCollect", userCollectRecord), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCollectDao.CreateByTx error", logger.Err(err), logger.Any("userCollect", userCollectRecord), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -104,14 +101,14 @@ func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	err = h.postDao.IncrCollectCountByTx(ctx, tx, req.PostId)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.IncrCollectCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.IncrCollectCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -120,10 +117,9 @@ func (h *collectServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 
 // Delete 删除收藏
 func (h *collectServiceHandler) Delete(ctx context.Context, req *communityV1.DeleteCollectRequest) (*communityV1.DeleteCollectReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -131,17 +127,17 @@ func (h *collectServiceHandler) Delete(ctx context.Context, req *communityV1.Del
 	_, err = h.userCollectDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.userCollectDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.userCollectDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.userCollectDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCollectDao.GetByID error", logger.Err(err), logger.Uint64("postId", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -153,21 +149,21 @@ func (h *collectServiceHandler) Delete(ctx context.Context, req *communityV1.Del
 	err = h.userCollectDao.DeleteByID(ctx, req.Id)
 	if err != nil {
 		tx.Rollback()
-		logger.Warn("h.userCollectDao.DeleteByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.userCollectDao.DeleteByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = h.postDao.DecrCollectCountByTx(ctx, tx, req.PostId)
 	if err != nil {
 		tx.Rollback()
-		logger.Warn("h.postDao.DecrCollectCountByTx error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.postDao.DecrCollectCountByTx error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -176,10 +172,9 @@ func (h *collectServiceHandler) Delete(ctx context.Context, req *communityV1.Del
 
 // List 获取收藏列表
 func (h *collectServiceHandler) List(ctx context.Context, req *communityV1.ListCollectRequest) (*communityV1.ListCollectReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -195,7 +190,7 @@ func (h *collectServiceHandler) List(ctx context.Context, req *communityV1.ListC
 		},
 	})
 	if err != nil {
-		logger.Error("h.userCollectDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCollectDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 

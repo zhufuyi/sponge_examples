@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"community/internal/config"
-	"community/internal/model"
+	//"community/internal/model"
 
 	"github.com/zhufuyi/sponge/pkg/app"
 	"github.com/zhufuyi/sponge/pkg/tracer"
@@ -21,16 +21,16 @@ func RegisterClose(servers []app.IServer) []app.Close {
 	}
 
 	// close mysql
-	closes = append(closes, func() error {
-		return model.CloseMysql()
-	})
+	//closes = append(closes, func() error {
+	//	return model.CloseMysql()
+	//})
 
 	// close redis
-	if config.Get().App.CacheType == "redis" {
-		closes = append(closes, func() error {
-			return model.CloseRedis()
-		})
-	}
+	//if config.Get().App.CacheType == "redis" {
+	//	closes = append(closes, func() error {
+	//		return model.CloseRedis()
+	//	})
+	//}
 
 	// close tracing
 	if config.Get().App.EnableTrace {

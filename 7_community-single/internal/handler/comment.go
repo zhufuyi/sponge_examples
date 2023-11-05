@@ -16,7 +16,6 @@ import (
 	"github.com/zhufuyi/sponge/pkg/logger"
 	"github.com/zhufuyi/sponge/pkg/mysql/query"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
@@ -63,10 +62,9 @@ func NewCommentServiceHandler() communityV1.CommentServiceLogicer {
 
 // Create 创建评论
 func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.CreateCommentRequest) (*communityV1.CreateCommentReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -74,17 +72,17 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.postDao.GetByID(ctx, req.PostId)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.GetByID error", logger.Err(err), logger.Uint64("id", req.PostId), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -102,7 +100,7 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	commentID, err := h.commentDao.CreateByTx(ctx, tx, comment)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentDao.CreateByTx error", logger.Err(err), logger.Any("comment", comment), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.CreateByTx error", logger.Err(err), logger.Any("comment", comment), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -116,7 +114,7 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.commentContentDao.CreateByTx(ctx, tx, commentContent)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentContentDao.CreateByTx error", logger.Err(err), logger.Any("commentContent", commentContent), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.CreateByTx error", logger.Err(err), logger.Any("commentContent", commentContent), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -130,7 +128,7 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.commentLatestDao.CreateByTx(ctx, tx, commentLatest)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentLatestDao.CreateByTx error", logger.Err(err), logger.Any("commentLatest", commentLatest), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentLatestDao.CreateByTx error", logger.Err(err), logger.Any("commentLatest", commentLatest), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -144,7 +142,7 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.commentHotDao.CreateByTx(ctx, tx, commentHot)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentHotDao.CreateByTx error", logger.Err(err), logger.Any("commentHot", commentHot), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentHotDao.CreateByTx error", logger.Err(err), logger.Any("commentHot", commentHot), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -157,7 +155,7 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	_, err = h.userCommentDao.CreateByTx(ctx, tx, userComment)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userCommentDao.CreateByTx error", logger.Err(err), logger.Any("userComment", userComment), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCommentDao.CreateByTx error", logger.Err(err), logger.Any("userComment", userComment), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -165,14 +163,14 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 	err = h.postDao.IncrCommentCountByTx(ctx, tx, req.PostId)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.IncrCommentCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.IncrCommentCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -186,10 +184,9 @@ func (h *commentServiceHandler) Create(ctx context.Context, req *communityV1.Cre
 
 // DeleteByID 删除评论
 func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1.DeleteCommentByIDRequest) (*communityV1.DeleteCommentByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -197,14 +194,14 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	comment, err := h.commentDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	if comment.UserID != req.UserId {
-		logger.Error("only delete your own comment", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("only delete your own comment", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.Forbidden.Err()
 	}
 	if comment.DelFlag > 0 {
@@ -214,7 +211,7 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -227,15 +224,15 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	err = h.commentDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	// 删除评论内容
-	err = h.commentContentDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
+	err = h.commentContentDao.DeleteByTx(ctx, tx, req.Id)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentContentDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -243,7 +240,7 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	err = h.commentLatestDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentLatestDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentLatestDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -251,7 +248,7 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	err = h.commentHotDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentHotDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentHotDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -259,7 +256,7 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	err = h.userCommentDao.DeleteByTx(ctx, tx, req.Id, int(req.DelFlag))
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userCommentDao.DeleteByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCommentDao.DeleteByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -267,14 +264,14 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 	err = h.postDao.DecrCommentCountByTx(ctx, tx, comment.PostID)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.DecrCommentCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.DecrCommentCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -283,27 +280,26 @@ func (h *commentServiceHandler) DeleteByID(ctx context.Context, req *communityV1
 
 // UpdateByID 更新评论
 func (h *commentServiceHandler) UpdateByID(ctx context.Context, req *communityV1.UpdateCommentByIDRequest) (*communityV1.UpdateCommentByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	commentComment, err := h.commentContentDao.GetByCommentID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	commentComment.Content = req.Content
 	err = h.commentContentDao.UpdateByID(ctx, commentComment)
 	if err != nil {
-		logger.Error("h.commentContentDao.UpdateByID error", logger.Err(err), logger.Any("commentComment", commentComment), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.UpdateByID error", logger.Err(err), logger.Any("commentComment", commentComment), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -312,10 +308,9 @@ func (h *commentServiceHandler) UpdateByID(ctx context.Context, req *communityV1
 
 // Reply 回复评论
 func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.ReplyCommentRequest) (*communityV1.ReplyCommentReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -323,22 +318,22 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	commentInfo, err := h.commentDao.GetByID(ctx, req.CommentId)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.CommentId), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("id", req.CommentId), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	if commentInfo.ParentID > 0 {
-		logger.Error("re-commenting on replied comments is prohibited", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("re-commenting on replied comments is prohibited", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.ErrReCommentService.Err()
 	}
 
 	db := model.GetDB()
 	tx := db.Begin()
 	if tx.Error != nil {
-		logger.Error("tx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	defer func() {
@@ -357,7 +352,7 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	commentID, err := h.commentDao.CreateByTx(ctx, tx, comment)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentDao.CreateByTx error", logger.Err(err), logger.Any("comment", comment), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.CreateByTx error", logger.Err(err), logger.Any("comment", comment), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -371,7 +366,7 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	_, err = h.commentContentDao.CreateByTx(ctx, tx, commentContent)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentContentDao.CreateByTx error", logger.Err(err), logger.Any("commentContent", commentContent), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.CreateByTx error", logger.Err(err), logger.Any("commentContent", commentContent), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -386,7 +381,7 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	_, err = h.commentLatestDao.CreateByTx(ctx, tx, commentLatest)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.commentLatestDao.CreateByTx error", logger.Err(err), logger.Any("commentLatest", commentLatest), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentLatestDao.CreateByTx error", logger.Err(err), logger.Any("commentLatest", commentLatest), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -399,7 +394,7 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	_, err = h.userCommentDao.CreateByTx(ctx, tx, userComment)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.userCommentDao.CreateByTx error", logger.Err(err), logger.Any("userComment", userComment), middleware.GCtxRequestIDField(c))
+		logger.Error("h.userCommentDao.CreateByTx error", logger.Err(err), logger.Any("userComment", userComment), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -407,7 +402,7 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	err = h.postDao.IncrCommentCountByTx(ctx, tx, comment.PostID)
 	if err != nil {
 		tx.Rollback()
-		logger.Error("h.postDao.IncrCommentCountByTx error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("h.postDao.IncrCommentCountByTx error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -421,13 +416,13 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		logger.Error("tx.Commit error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("tx.Commit error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	data, err := convertComment(comment, commentContent)
 	if err != nil {
-		logger.Error("convertComment error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("convertComment error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -436,36 +431,35 @@ func (h *commentServiceHandler) Reply(ctx context.Context, req *communityV1.Repl
 
 // GetByID 根据id获取评论
 func (h *commentServiceHandler) GetByID(ctx context.Context, req *communityV1.GetCommentByIDRequest) (*communityV1.GetCommentByIDReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	comment, err := h.commentDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	commentContent, err := h.commentContentDao.GetByID(ctx, comment.ID)
 	if err != nil {
 		if errors.Is(err, model.ErrRecordNotFound) {
-			logger.Warn("h.commentContentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.GCtxRequestIDField(c))
+			logger.Warn("h.commentContentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.CtxRequestIDField(ctx))
 			return nil, ecode.NotFound.Err()
 		}
-		logger.Error("h.commentContentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.GetByID error", logger.Err(err), logger.Uint64("commentID", req.Id), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
 	data, err := convertComment(comment, commentContent)
 	if err != nil {
-		logger.Error("convertComment error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Error("convertComment error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -474,21 +468,20 @@ func (h *commentServiceHandler) GetByID(ctx context.Context, req *communityV1.Ge
 
 // ListByIDs 根据批量id获取评论列表
 func (h *commentServiceHandler) ListByIDs(ctx context.Context, req *communityV1.ListCommentByIDsRequest) (*communityV1.ListCommentByIDsReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
 	commentMap, err := h.commentDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
-		logger.Error("h.commentDao.GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 	commentContentMap, err := h.commentContentDao.GetByCommentIDs(ctx, req.Ids)
 	if err != nil {
-		logger.Error("h.commentContentDao.GetByCommentIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentContentDao.GetByCommentIDs error", logger.Err(err), logger.Any("ids", req.Ids), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -502,7 +495,7 @@ func (h *commentServiceHandler) ListByIDs(ctx context.Context, req *communityV1.
 			if commentContent, ok2 := commentContentMap[id]; ok2 {
 				commentInfo, err := convertComment(comment, commentContent)
 				if err != nil {
-					logger.Warn("convertPost error", logger.Err(err), logger.Any("comment", comment), middleware.GCtxRequestIDField(c))
+					logger.Warn("convertPost error", logger.Err(err), logger.Any("comment", comment), middleware.CtxRequestIDField(ctx))
 					continue
 				}
 				commentInfos = append(commentInfos, commentInfo)
@@ -515,10 +508,9 @@ func (h *commentServiceHandler) ListByIDs(ctx context.Context, req *communityV1.
 
 // ListLatest 最新评论列表
 func (h *commentServiceHandler) ListLatest(ctx context.Context, req *communityV1.ListCommentLatestRequest) (*communityV1.ListCommentLatestReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -538,7 +530,7 @@ func (h *commentServiceHandler) ListLatest(ctx context.Context, req *communityV1
 		},
 	})
 	if err != nil {
-		logger.Error("h.commentLatestDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentLatestDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -553,7 +545,7 @@ func (h *commentServiceHandler) ListLatest(ctx context.Context, req *communityV1
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListCommentByIDsRequest{Ids: commentIDs})
 	if err != nil {
-		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -562,10 +554,9 @@ func (h *commentServiceHandler) ListLatest(ctx context.Context, req *communityV1
 
 // ListHot 热门评论列表
 func (h *commentServiceHandler) ListHot(ctx context.Context, req *communityV1.ListCommentHotRequest) (*communityV1.ListCommentHotReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -585,7 +576,7 @@ func (h *commentServiceHandler) ListHot(ctx context.Context, req *communityV1.Li
 		},
 	})
 	if err != nil {
-		logger.Error("h.commentHotDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentHotDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -600,7 +591,7 @@ func (h *commentServiceHandler) ListHot(ctx context.Context, req *communityV1.Li
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListCommentByIDsRequest{Ids: commentIDs})
 	if err != nil {
-		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -609,10 +600,9 @@ func (h *commentServiceHandler) ListHot(ctx context.Context, req *communityV1.Li
 
 // ListReply 评论回复列表
 func (h *commentServiceHandler) ListReply(ctx context.Context, req *communityV1.ListCommentReplyRequest) (*communityV1.ListCommentReplyReply, error) {
-	c := ctx.(*gin.Context)
 	err := req.Validate()
 	if err != nil {
-		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InvalidParams.Err()
 	}
 
@@ -632,7 +622,7 @@ func (h *commentServiceHandler) ListReply(ctx context.Context, req *communityV1.
 		},
 	})
 	if err != nil {
-		logger.Error("h.commentDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.GCtxRequestIDField(c))
+		logger.Error("h.commentDao.GetByColumns error", logger.Err(err), logger.Any("req", req), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
@@ -647,7 +637,7 @@ func (h *commentServiceHandler) ListReply(ctx context.Context, req *communityV1.
 
 	reply, err := h.ListByIDs(ctx, &communityV1.ListCommentByIDsRequest{Ids: commentIDs})
 	if err != nil {
-		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		logger.Warn("h.ListByIDs error", logger.Err(err), middleware.CtxRequestIDField(ctx))
 		return nil, ecode.InternalServerError.Err()
 	}
 
