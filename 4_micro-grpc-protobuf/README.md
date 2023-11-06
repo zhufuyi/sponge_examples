@@ -1,4 +1,4 @@
-[**micro-grpc-protobuf 中文示例**](https://www.bilibili.com/read/cv23099236)
+[**micro-grpc-protobuf 中文说明**](https://www.bilibili.com/read/cv23099236)
 
 <br>
 
@@ -29,6 +29,6 @@ Open user service code with goland IDE, go to internal/service directory, open `
 
 <br>
 
-More detailed development documentation https://go-sponge.com/microservice-development-protobuf
+**More detailed development microservice documentation** https://go-sponge.com/microservice-development-protobuf
 
 <br>

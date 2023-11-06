@@ -1,4 +1,4 @@
-[**micro-cluster 中文示例**](https://www.bilibili.com/read/cv23255594)
+[**micro-cluster 中文说明**](https://www.bilibili.com/read/cv23255594)
 
 <br>
 

@@ -1,4 +1,4 @@
-[**community-single 中文**](https://juejin.cn/post/7254123931246788664)
+[**community-single 中文说明**](https://juejin.cn/post/7254123931246788664)
 
 <br>
 

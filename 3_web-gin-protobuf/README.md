@@ -1,4 +1,4 @@
-[web-gin-protobuf 中文示例](https://www.bilibili.com/read/cv23040234)
+[web-gin-protobuf 中文说明](https://www.bilibili.com/read/cv23040234)
 
 <br>
 
@@ -34,6 +34,6 @@ Open [http://localhost:8080/apis/swagger/index.html](http://localhost:8080/apis/
 
 <br>
 
-More detailed development documentation https://go-sponge.com/web-development-protobuf
+**More detailed development web documentation** https://go-sponge.com/web-development-protobuf
 
 <br>

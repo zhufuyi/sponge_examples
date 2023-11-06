@@ -21,122 +21,122 @@ import (
 
 func init() {
 	registerFns = append(registerFns, func(server *grpc.Server) {
-		userV1.RegisterTeachServer(server, NewTeachServer()) // register service to the rpc service
+		userV1.RegisterTeacherServer(server, NewTeacherServer()) // register service to the rpc service
 	})
 }
 
-var _ userV1.TeachServer = (*teach)(nil)
+var _ userV1.TeacherServer = (*teacher)(nil)
 
-type teach struct {
-	userV1.UnimplementedTeachServer
+type teacher struct {
+	userV1.UnimplementedTeacherServer
 
-	iDao dao.TeachDao
+	iDao dao.TeacherDao
 }
 
-// NewTeachServer create a new service
-func NewTeachServer() userV1.TeachServer {
-	return &teach{
-		iDao: dao.NewTeachDao(
+// NewTeacherServer create a new service
+func NewTeacherServer() userV1.TeacherServer {
+	return &teacher{
+		iDao: dao.NewTeacherDao(
 			model.GetDB(),
-			cache.NewTeachCache(model.GetCacheType()),
+			cache.NewTeacherCache(model.GetCacheType()),
 		),
 	}
 }
 
 // Create a record
-func (s *teach) Create(ctx context.Context, req *userV1.CreateTeachRequest) (*userV1.CreateTeachReply, error) {
+func (s *teacher) Create(ctx context.Context, req *userV1.CreateTeacherRequest) (*userV1.CreateTeacherReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	record := &model.Teach{}
+	record := &model.Teacher{}
 	err = copier.Copy(record, req)
 	if err != nil {
-		return nil, ecode.StatusCreateTeach.Err()
+		return nil, ecode.StatusCreateTeacher.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.Create(ctx, record)
 	if err != nil {
-		logger.Error("Create error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("Create error", logger.Err(err), logger.Any("teacher", record), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	return &userV1.CreateTeachReply{Id: record.ID}, nil
+	return &userV1.CreateTeacherReply{Id: record.ID}, nil
 }
 
 // DeleteByID delete a record by id
-func (s *teach) DeleteByID(ctx context.Context, req *userV1.DeleteTeachByIDRequest) (*userV1.DeleteTeachByIDReply, error) {
+func (s *teacher) DeleteByID(ctx context.Context, req *userV1.DeleteTeacherByIDRequest) (*userV1.DeleteTeacherByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
 		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	return &userV1.DeleteTeachByIDReply{}, nil
+	return &userV1.DeleteTeacherByIDReply{}, nil
 }
 
 // DeleteByIDs delete records by batch id
-func (s *teach) DeleteByIDs(ctx context.Context, req *userV1.DeleteTeachByIDsRequest) (*userV1.DeleteTeachByIDsReply, error) {
+func (s *teacher) DeleteByIDs(ctx context.Context, req *userV1.DeleteTeacherByIDsRequest) (*userV1.DeleteTeacherByIDsReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.DeleteByIDs(ctx, req.Ids)
 	if err != nil {
 		logger.Error("DeleteByID error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	return &userV1.DeleteTeachByIDsReply{}, nil
+	return &userV1.DeleteTeacherByIDsReply{}, nil
 }
 
 // UpdateByID update a record by id
-func (s *teach) UpdateByID(ctx context.Context, req *userV1.UpdateTeachByIDRequest) (*userV1.UpdateTeachByIDReply, error) {
+func (s *teacher) UpdateByID(ctx context.Context, req *userV1.UpdateTeacherByIDRequest) (*userV1.UpdateTeacherByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	record := &model.Teach{}
+	record := &model.Teacher{}
 	err = copier.Copy(record, req)
 	if err != nil {
-		return nil, ecode.StatusUpdateByIDTeach.Err()
+		return nil, ecode.StatusUpdateByIDTeacher.Err()
 	}
 	record.ID = req.Id
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.UpdateByID(ctx, record)
 	if err != nil {
-		logger.Error("UpdateByID error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
+		logger.Error("UpdateByID error", logger.Err(err), logger.Any("teacher", record), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	return &userV1.UpdateTeachByIDReply{}, nil
+	return &userV1.UpdateTeacherByIDReply{}, nil
 }
 
 // GetByID get a record by id
-func (s *teach) GetByID(ctx context.Context, req *userV1.GetTeachByIDRequest) (*userV1.GetTeachByIDReply, error) {
+func (s *teacher) GetByID(ctx context.Context, req *userV1.GetTeacherByIDRequest) (*userV1.GetTeacherByIDReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	record, err := s.iDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, query.ErrNotFound) {
@@ -147,24 +147,24 @@ func (s *teach) GetByID(ctx context.Context, req *userV1.GetTeachByIDRequest) (*
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	data, err := convertTeach(record)
+	data, err := convertTeacher(record)
 	if err != nil {
-		logger.Warn("convertTeach error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
-		return nil, ecode.StatusGetByIDTeach.Err()
+		logger.Warn("convertTeacher error", logger.Err(err), logger.Any("teacher", record), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusGetByIDTeacher.Err()
 	}
 
-	return &userV1.GetTeachByIDReply{Teach: data}, nil
+	return &userV1.GetTeacherByIDReply{Teacher: data}, nil
 }
 
 // GetByCondition get a record by id
-func (s *teach) GetByCondition(ctx context.Context, req *userV1.GetTeachByConditionRequest) (*userV1.GetTeachByConditionReply, error) {
+func (s *teacher) GetByCondition(ctx context.Context, req *userV1.GetTeacherByConditionRequest) (*userV1.GetTeacherByConditionReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	conditions := &query.Conditions{}
 	for _, v := range req.Conditions.GetColumns() {
 		column := query.Column{}
@@ -187,49 +187,49 @@ func (s *teach) GetByCondition(ctx context.Context, req *userV1.GetTeachByCondit
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	data, err := convertTeach(record)
+	data, err := convertTeacher(record)
 	if err != nil {
-		logger.Warn("convertTeach error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
-		return nil, ecode.StatusGetByConditionTeach.Err()
+		logger.Warn("convertTeacher error", logger.Err(err), logger.Any("teacher", record), interceptor.ServerCtxRequestIDField(ctx))
+		return nil, ecode.StatusGetByConditionTeacher.Err()
 	}
 
-	return &userV1.GetTeachByConditionReply{
-		Teach: data,
+	return &userV1.GetTeacherByConditionReply{
+		Teacher: data,
 	}, nil
 }
 
 // ListByIDs list of records by batch id
-func (s *teach) ListByIDs(ctx context.Context, req *userV1.ListTeachByIDsRequest) (*userV1.ListTeachByIDsReply, error) {
+func (s *teacher) ListByIDs(ctx context.Context, req *userV1.ListTeacherByIDsRequest) (*userV1.ListTeacherByIDsReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
-	teachMap, err := s.iDao.GetByIDs(ctx, req.Ids)
+	//ctx = interceptor.WrapServerCtx(ctx)
+	teacherMap, err := s.iDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
 		logger.Error("GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	teachs := []*userV1.Teach{}
+	teachers := []*userV1.Teacher{}
 	for _, id := range req.Ids {
-		if v, ok := teachMap[id]; ok {
-			record, err := convertTeach(v)
+		if v, ok := teacherMap[id]; ok {
+			record, err := convertTeacher(v)
 			if err != nil {
-				logger.Warn("convertTeach error", logger.Err(err), logger.Any("teach", v), interceptor.ServerCtxRequestIDField(ctx))
+				logger.Warn("convertTeacher error", logger.Err(err), logger.Any("teacher", v), interceptor.ServerCtxRequestIDField(ctx))
 				return nil, ecode.StatusInternalServerError.ToRPCErr()
 			}
-			teachs = append(teachs, record)
+			teachers = append(teachers, record)
 		}
 	}
 
-	return &userV1.ListTeachByIDsReply{Teachs: teachs}, nil
+	return &userV1.ListTeacherByIDsReply{Teachers: teachers}, nil
 }
 
 // List of records by query parameters
-func (s *teach) List(ctx context.Context, req *userV1.ListTeachRequest) (*userV1.ListTeachReply, error) {
+func (s *teacher) List(ctx context.Context, req *userV1.ListTeacherRequest) (*userV1.ListTeacherReply, error) {
 	err := req.Validate()
 	if err != nil {
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
@@ -239,11 +239,11 @@ func (s *teach) List(ctx context.Context, req *userV1.ListTeachRequest) (*userV1
 	params := &query.Params{}
 	err = copier.Copy(params, req.Params)
 	if err != nil {
-		return nil, ecode.StatusListTeach.Err()
+		return nil, ecode.StatusListTeacher.Err()
 	}
 	params.Size = int(req.Params.Limit)
 
-	ctx = context.WithValue(ctx, interceptor.ContextRequestIDKey, interceptor.ServerCtxRequestID(ctx)) //nolint
+	//ctx = interceptor.WrapServerCtx(ctx)
 	records, total, err := s.iDao.GetByColumns(ctx, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "query params error:") {
@@ -254,24 +254,24 @@ func (s *teach) List(ctx context.Context, req *userV1.ListTeachRequest) (*userV1
 		return nil, ecode.StatusInternalServerError.ToRPCErr()
 	}
 
-	teachs := []*userV1.Teach{}
+	teachers := []*userV1.Teacher{}
 	for _, record := range records {
-		data, err := convertTeach(record)
+		data, err := convertTeacher(record)
 		if err != nil {
-			logger.Warn("convertTeach error", logger.Err(err), logger.Any("id", record.ID), interceptor.ServerCtxRequestIDField(ctx))
+			logger.Warn("convertTeacher error", logger.Err(err), logger.Any("id", record.ID), interceptor.ServerCtxRequestIDField(ctx))
 			continue
 		}
-		teachs = append(teachs, data)
+		teachers = append(teachers, data)
 	}
 
-	return &userV1.ListTeachReply{
-		Total:  total,
-		Teachs: teachs,
+	return &userV1.ListTeacherReply{
+		Total:    total,
+		Teachers: teachers,
 	}, nil
 }
 
-func convertTeach(record *model.Teach) (*userV1.Teach, error) {
-	value := &userV1.Teach{}
+func convertTeacher(record *model.Teacher) (*userV1.Teacher, error) {
+	value := &userV1.Teacher{}
 	err := copier.Copy(value, record)
 	if err != nil {
 		return nil, err

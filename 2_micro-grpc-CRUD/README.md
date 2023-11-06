@@ -1,4 +1,4 @@
-[**micro-grpc-CRUD 中文示例**](https://www.bilibili.com/read/cv23064432)
+[**micro-grpc-CRUD 中文说明**](https://www.bilibili.com/read/cv23064432)
 
 <br>
 
@@ -52,6 +52,6 @@ Use goland IDE, enter internal/service directory, open `teach_client_test.go` an
 
 <br>
 
-More detailed development documentation https://go-sponge.com/microservice-development-mysql
+**More detailed development microservice documentation** https://go-sponge.com/microservice-development-mysql
 
 <br>

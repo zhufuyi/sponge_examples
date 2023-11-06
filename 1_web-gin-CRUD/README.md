@@ -1,4 +1,4 @@
-[**web-gin-CRUD 中文示例**](https://www.bilibili.com/read/cv23018269)
+[**web-gin-CRUD 中文说明**](https://www.bilibili.com/read/cv23018269)
 
 <br>
 
@@ -51,6 +51,6 @@ Open [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/in
 
 <br>
 
-More detailed development documentation https://go-sponge.com/web-development-mysql
+**More detailed development web documentation** https://go-sponge.com/web-development-mysql
 
 <br>

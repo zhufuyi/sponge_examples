@@ -1,4 +1,4 @@
-[**micro-gin-rpc-gateway 中文示例**](https://www.bilibili.com/read/cv23189890)
+[**micro-gin-rpc-gateway 中文说明**](https://www.bilibili.com/read/cv23189890)
 
 <br>
 
@@ -80,6 +80,6 @@ Open [http://localhost:8080/apis/swagger/index.html](http://localhost:8080/apis/
 
 <br>
 
-More detailed development documentation https://go-sponge.com/rpc-gateway-development-protobuf
+**More detailed documentation for developing grpc gateways** https://go-sponge.com/rpc-gateway-development-protobuf
 
 <br>
