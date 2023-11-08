@@ -4,8 +4,10 @@ package routers
 
 import (
 	"context"
+	"strings"
 
 	communityV1 "community/api/community/v1"
+	"community/internal/ecode"
 	"community/internal/handler"
 
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
@@ -68,15 +70,15 @@ func userServiceMiddlewares(c *middlewareConfig) {
 	c.setSinglePath("PUT", "/api/v1/user/password/:id", middleware.Auth(middleware.WithVerify(verify)))
 }
 
-var verify = func(claims *jwt.Claims /*token string*/) error {
-	_, err := handler.CheckLogin(context.Background(), utils.StrToUint64(claims.UID))
+var verify = func(claims *jwt.Claims, tokenTail10 string) error {
+	token, err := handler.CheckLogin(context.Background(), utils.StrToUint64(claims.UID))
 	if err != nil {
 		return err
 	}
 
-	//if tokenStr != token {
-	//	return ecode.Unauthorized.Err()
-	//}
+	if !strings.Contains(token, tokenTail10) {
+		return ecode.Unauthorized.Err()
+	}
 
 	return nil
 }

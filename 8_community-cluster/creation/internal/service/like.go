@@ -69,7 +69,7 @@ func (s *likeService) Create(ctx context.Context, req *creationV1.CreateLikeRequ
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断点赞对象是否存在
 	err = s.checkLikeExist(ctx, req.ObjType, req.ObjId)
@@ -159,7 +159,7 @@ func (s *likeService) Delete(ctx context.Context, req *creationV1.DeleteLikeRequ
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断点赞对象是否存在
 	err = s.checkLikeExist(ctx, req.ObjType, req.ObjId)
@@ -236,7 +236,7 @@ func (s *likeService) ListPost(ctx context.Context, req *creationV1.ListPostLike
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userLikeDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -277,7 +277,7 @@ func (s *likeService) ListComment(ctx context.Context, req *creationV1.ListComme
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userLikeDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),

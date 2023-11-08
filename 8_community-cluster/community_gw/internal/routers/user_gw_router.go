@@ -4,14 +4,16 @@ package routers
 
 import (
 	"context"
-	"github.com/zhufuyi/sponge/pkg/jwt"
-	"github.com/zhufuyi/sponge/pkg/utils"
+	"strings"
 
 	community_gwV1 "community_gw/api/community_gw/v1"
+	"community_gw/internal/ecode"
 	"community_gw/internal/service"
 
 	"github.com/zhufuyi/sponge/pkg/gin/middleware"
+	"github.com/zhufuyi/sponge/pkg/jwt"
 	"github.com/zhufuyi/sponge/pkg/logger"
+	"github.com/zhufuyi/sponge/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/metadata"
@@ -65,7 +67,7 @@ func userServiceRouter(
 func userServiceMiddlewares(c *middlewareConfig) {
 	// set up group route middleware, group path is left prefix rules,
 	// if the left prefix is hit, the middleware will take effect, e.g. group route is /api/v1, route /api/v1/userService/:id  will take effect
-	// c.setGroupPath("/api/v1/userService", middleware.Auth())
+	// c.setGroupPath("/api/v1/user", middleware.Auth())
 
 	// set up single route middleware, just uncomment the code and fill in the middlewares, nothing else needs to be changed
 	//c.setSinglePath("POST", "/api/v1/auth/email", middleware.Auth())
@@ -77,15 +79,15 @@ func userServiceMiddlewares(c *middlewareConfig) {
 	c.setSinglePath("PUT", "/api/v1/user/password/:id", middleware.Auth(middleware.WithVerify(verify)))
 }
 
-var verify = func(claims *jwt.Claims /*token string*/) error {
-	_, err := service.CheckLogin(context.Background(), utils.StrToUint64(claims.UID))
+var verify = func(claims *jwt.Claims, tokenTail10 string) error {
+	token, err := service.CheckLogin(context.Background(), utils.StrToUint64(claims.UID))
 	if err != nil {
 		return err
 	}
 
-	//if tokenTails != token[len(token)-10:] {
-	//	return ecode.StatusUnauthorized.Err()
-	//}
+	if !strings.Contains(token, tokenTail10) {
+		return ecode.StatusUnauthorized.Err()
+	}
 
 	return nil
 }

@@ -1,4 +1,5 @@
-[**micro-cluster 中文说明**](https://www.bilibili.com/read/cv23255594)
+
+[**micro-cluster 中文说明**](https://juejin.cn/post/7230366377705685052)
 
 <br>
 

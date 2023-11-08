@@ -32,18 +32,18 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.CreateTeacherRequest{
-					Name: "",  // 用户名
-					Password: "",  // 密码
-					Email: "",  // 邮件
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
-					SchoolName: "",  // 学校名称
-					College: "",  // 学院
-					Title: "",  // 职称
-					Profile: "",  // 个人简介
+					Name:       "", // 用户名
+					Password:   "", // 密码
+					Email:      "", // 邮件
+					Phone:      "", // 手机号码
+					Avatar:     "", // 头像
+					Gender:     0,  // 性别，1:男，2:女，其他值:未知
+					Age:        0,  // 年龄
+					Birthday:   "", // 出生日期
+					SchoolName: "", // 学校名称
+					College:    "", // 学院
+					Title:      "", // 职称
+					Profile:    "", // 个人简介
 				}
 				return cli.Create(ctx, req)
 			},
@@ -54,7 +54,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.DeleteTeacherByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				return cli.DeleteByID(ctx, req)
 			},
@@ -65,7 +65,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.DeleteTeacherByIDsRequest{
-					Ids: nil, 
+					Ids: nil,
 				}
 				return cli.DeleteByIDs(ctx, req)
 			},
@@ -76,19 +76,19 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.UpdateTeacherByIDRequest{
-					Id: 0, 
-					Name: "",  // 用户名
-					Password: "",  // 密码
-					Email: "",  // 邮件
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
-					SchoolName: "",  // 学校名称
-					College: "",  // 学院
-					Title: "",  // 职称
-					Profile: "",  // 个人简介
+					Id:         0,
+					Name:       "", // 用户名
+					Password:   "", // 密码
+					Email:      "", // 邮件
+					Phone:      "", // 手机号码
+					Avatar:     "", // 头像
+					Gender:     0,  // 性别，1:男，2:女，其他值:未知
+					Age:        0,  // 年龄
+					Birthday:   "", // 出生日期
+					SchoolName: "", // 学校名称
+					College:    "", // 学院
+					Title:      "", // 职称
+					Profile:    "", // 个人简介
 				}
 				return cli.UpdateByID(ctx, req)
 			},
@@ -99,7 +99,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.GetTeacherByIDRequest{
-					Id: 0, 
+					Id: 1,
 				}
 				return cli.GetByID(ctx, req)
 			},
@@ -110,7 +110,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.GetTeacherByConditionRequest{
-					Conditions: nil, 
+					Conditions: nil,
 				}
 				return cli.GetByCondition(ctx, req)
 			},
@@ -121,7 +121,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.ListTeacherByIDsRequest{
-					Ids: nil, 
+					Ids: nil,
 				}
 				return cli.ListByIDs(ctx, req)
 			},
@@ -132,7 +132,7 @@ func Test_service_teacher_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters to test
 				req := &userV1.ListTeacherRequest{
-					Params: nil, 
+					Params: nil,
 				}
 				return cli.List(ctx, req)
 			},
@@ -153,7 +153,7 @@ func Test_service_teacher_methods(t *testing.T) {
 	}
 }
 
-// Perform a stress test on teacher's method and 
+// Perform a stress test on teacher's method and
 // copy the press test report to your browser when you are finished.
 func Test_service_teacher_benchmark(t *testing.T) {
 	err := config.Init(configs.Path("user.yml"))
@@ -179,18 +179,18 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.CreateTeacherRequest{
-					Name: "",  // 用户名
-					Password: "",  // 密码
-					Email: "",  // 邮件
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
-					SchoolName: "",  // 学校名称
-					College: "",  // 学院
-					Title: "",  // 职称
-					Profile: "",  // 个人简介
+					Name:       "", // 用户名
+					Password:   "", // 密码
+					Email:      "", // 邮件
+					Phone:      "", // 手机号码
+					Avatar:     "", // 头像
+					Gender:     0,  // 性别，1:男，2:女，其他值:未知
+					Age:        0,  // 年龄
+					Birthday:   "", // 出生日期
+					SchoolName: "", // 学校名称
+					College:    "", // 学院
+					Title:      "", // 职称
+					Profile:    "", // 个人简介
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "Create", message, total, importPaths...)
@@ -206,7 +206,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.DeleteTeacherByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "DeleteByID", message, total, importPaths...)
@@ -222,7 +222,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.DeleteTeacherByIDsRequest{
-					Ids: nil, 
+					Ids: nil,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "DeleteByIDs", message, total, importPaths...)
@@ -238,19 +238,19 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.UpdateTeacherByIDRequest{
-					Id: 0, 
-					Name: "",  // 用户名
-					Password: "",  // 密码
-					Email: "",  // 邮件
-					Phone: "",  // 手机号码
-					Avatar: "",  // 头像
-					Gender: 0,  // 性别，1:男，2:女，其他值:未知
-					Age: 0,  // 年龄
-					Birthday: "",  // 出生日期
-					SchoolName: "",  // 学校名称
-					College: "",  // 学院
-					Title: "",  // 职称
-					Profile: "",  // 个人简介
+					Id:         0,
+					Name:       "", // 用户名
+					Password:   "", // 密码
+					Email:      "", // 邮件
+					Phone:      "", // 手机号码
+					Avatar:     "", // 头像
+					Gender:     0,  // 性别，1:男，2:女，其他值:未知
+					Age:        0,  // 年龄
+					Birthday:   "", // 出生日期
+					SchoolName: "", // 学校名称
+					College:    "", // 学院
+					Title:      "", // 职称
+					Profile:    "", // 个人简介
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "UpdateByID", message, total, importPaths...)
@@ -266,7 +266,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.GetTeacherByIDRequest{
-					Id: 0, 
+					Id: 0,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "GetByID", message, total, importPaths...)
@@ -282,7 +282,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.GetTeacherByConditionRequest{
-					Conditions: nil, 
+					Conditions: nil,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "GetByCondition", message, total, importPaths...)
@@ -298,7 +298,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.ListTeacherByIDsRequest{
-					Ids: nil, 
+					Ids: nil,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "ListByIDs", message, total, importPaths...)
@@ -314,7 +314,7 @@ func Test_service_teacher_benchmark(t *testing.T) {
 			fn: func() error {
 				// todo type in the parameters to test
 				message := &userV1.ListTeacherRequest{
-					Params: nil, 
+					Params: nil,
 				}
 				var total uint = 1000 // total number of requests
 				b, err := benchmark.New(host, protoFile, "List", message, total, importPaths...)

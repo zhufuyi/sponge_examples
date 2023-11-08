@@ -449,7 +449,7 @@ func covertUser(record *model.User) (*communityV1.User, error) {
 func CheckLogin(ctx context.Context, id uint64) (string, error) {
 	token, err := model.GetRedisCli().Get(ctx, cache.GetUserTokenCacheKey(id)).Result()
 	if err != nil {
-		logger.Warn("get token error", logger.Err(err), middleware.CtxRequestIDField(ctx))
+		logger.Warn("get token error", logger.Err(err))
 		return "", ecode.InternalServerError.Err()
 	}
 

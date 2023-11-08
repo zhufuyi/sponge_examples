@@ -1,4 +1,5 @@
-[**micro-grpc-CRUD 中文说明**](https://www.bilibili.com/read/cv23064432)
+
+[**micro-grpc-CRUD 中文说明**](https://juejin.cn/post/7225257817346129981)
 
 <br>
 
@@ -19,8 +20,6 @@ Switch to the user directory and run the command:
 ```bash
 # Generate pb.go code
 make proto
-
-# Open the file internal/service/teacher.go and fill in the specific logic code according to the template code.
 
 # Compile and start grpc service
 make run

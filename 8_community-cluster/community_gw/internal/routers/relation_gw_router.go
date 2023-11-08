@@ -63,7 +63,7 @@ func relationServiceRouter(
 func relationServiceMiddlewares(c *middlewareConfig) {
 	// set up group route middleware, group path is left prefix rules,
 	// if the left prefix is hit, the middleware will take effect, e.g. group route is /api/v1, route /api/v1/relationService/:id  will take effect
-	// c.setGroupPath("/api/v1/relationService", middleware.Auth())
+	c.setGroupPath("/api/v1/relation", middleware.Auth(middleware.WithVerify(verify)))
 
 	// set up single route middleware, just uncomment the code and fill in the middlewares, nothing else needs to be changed
 	//c.setSinglePath("POST", "/api/v1/relation/follow", middleware.Auth())

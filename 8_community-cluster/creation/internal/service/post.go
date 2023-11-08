@@ -88,7 +88,7 @@ func (s *postService) Create(ctx context.Context, req *creationV1.CreatePostRequ
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	err = checkPostParams(req)
 	if err != nil {
@@ -197,7 +197,7 @@ func (s *postService) UpdateContent(ctx context.Context, req *creationV1.UpdateP
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	reqVal := &creationV1.CreatePostRequest{}
 	err = copier.Copy(reqVal, req)
@@ -239,7 +239,7 @@ func (s *postService) Delete(ctx context.Context, req *creationV1.DeletePostRequ
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断帖子是否存在
 	post, err := s.postDao.GetByID(ctx, req.Id)
@@ -320,7 +320,7 @@ func (s *postService) GetByID(ctx context.Context, req *creationV1.GetPostByIDRe
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	post, err := s.postDao.GetByID(ctx, req.Id)
 	if err != nil {
@@ -353,7 +353,7 @@ func (s *postService) ListByIDs(ctx context.Context, req *creationV1.ListPostByI
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	postMap, err := s.postDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
@@ -387,7 +387,7 @@ func (s *postService) ListByUserID(ctx context.Context, req *creationV1.ListPost
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.userPostDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -434,7 +434,7 @@ func (s *postService) ListLatest(ctx context.Context, req *creationV1.ListPostLa
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.postLatestDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -477,7 +477,7 @@ func (s *postService) ListHot(ctx context.Context, req *creationV1.ListPostHotRe
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.postHotDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -520,7 +520,7 @@ func (s *postService) IncrViewCount(ctx context.Context, req *creationV1.IncrPos
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	err = s.postDao.IncrViewCount(ctx, req.Id)
 	if err != nil {
@@ -538,7 +538,7 @@ func (s *postService) IncrShareCount(ctx context.Context, req *creationV1.IncrPo
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	err = s.postDao.IncrShareCount(ctx, req.Id)
 	if err != nil {

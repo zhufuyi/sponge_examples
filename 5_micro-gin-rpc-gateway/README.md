@@ -1,4 +1,5 @@
-[**micro-gin-rpc-gateway 中文说明**](https://www.bilibili.com/read/cv23189890)
+
+[**micro-gin-rpc-gateway 中文说明**](https://juejin.cn/post/7226745855032737850)
 
 <br>
 

@@ -57,7 +57,7 @@ func (s *teach) Create(ctx context.Context, req *userV1.CreateTeachRequest) (*us
 		return nil, ecode.StatusCreateTeach.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.Create(ctx, record)
 	if err != nil {
 		logger.Error("Create error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
@@ -75,7 +75,7 @@ func (s *teach) DeleteByID(ctx context.Context, req *userV1.DeleteTeachByIDReque
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
 		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", req.Id), interceptor.ServerCtxRequestIDField(ctx))
@@ -93,7 +93,7 @@ func (s *teach) DeleteByIDs(ctx context.Context, req *userV1.DeleteTeachByIDsReq
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.DeleteByIDs(ctx, req.Ids)
 	if err != nil {
 		logger.Error("DeleteByID error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
@@ -118,7 +118,7 @@ func (s *teach) UpdateByID(ctx context.Context, req *userV1.UpdateTeachByIDReque
 	}
 	record.ID = req.Id
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	err = s.iDao.UpdateByID(ctx, record)
 	if err != nil {
 		logger.Error("UpdateByID error", logger.Err(err), logger.Any("teach", record), interceptor.ServerCtxRequestIDField(ctx))
@@ -136,7 +136,7 @@ func (s *teach) GetByID(ctx context.Context, req *userV1.GetTeachByIDRequest) (*
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	record, err := s.iDao.GetByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, query.ErrNotFound) {
@@ -164,7 +164,7 @@ func (s *teach) GetByCondition(ctx context.Context, req *userV1.GetTeachByCondit
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	conditions := &query.Conditions{}
 	for _, v := range req.Conditions.GetColumns() {
 		column := query.Column{}
@@ -206,7 +206,7 @@ func (s *teach) ListByIDs(ctx context.Context, req *userV1.ListTeachByIDsRequest
 		return nil, ecode.StatusInvalidParams.Err()
 	}
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	teachMap, err := s.iDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
 		logger.Error("GetByIDs error", logger.Err(err), logger.Any("ids", req.Ids), interceptor.ServerCtxRequestIDField(ctx))
@@ -243,7 +243,7 @@ func (s *teach) List(ctx context.Context, req *userV1.ListTeachRequest) (*userV1
 	}
 	params.Size = int(req.Params.Limit)
 
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 	records, total, err := s.iDao.GetByColumns(ctx, params)
 	if err != nil {
 		if strings.Contains(err.Error(), "query params error:") {

@@ -1,4 +1,5 @@
-[web-gin-protobuf 中文说明](https://www.bilibili.com/read/cv23040234)
+
+[web-gin-protobuf 中文说明](https://juejin.cn/post/7221521544496250936)
 
 <br>
 

@@ -6,6 +6,7 @@ import (
 	communityV1 "community/api/community/v1"
 	"community/internal/handler"
 
+	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/logger"
 
 	"github.com/gin-gonic/gin"
@@ -35,10 +36,10 @@ func collectServiceRouter(
 		communityV1.WithCollectServiceHTTPResponse(),
 		communityV1.WithCollectServiceLogger(logger.Get()),
 		communityV1.WithCollectServiceErrorToHTTPCode(
-		// Set some error codes to standard http return codes,
-		// by default there is already ecode.InternalServerError and ecode.ServiceUnavailable
-		// example:
-		// 	ecode.Forbidden, ecode.LimitExceed,
+			// Set some error codes to standard http return codes,
+			// by default there is already ecode.InternalServerError and ecode.ServiceUnavailable
+			// example:
+			// 	ecode.Forbidden, ecode.LimitExceed,
 		),
 	)
 }
@@ -49,7 +50,7 @@ func collectServiceRouter(
 func collectServiceMiddlewares(c *middlewareConfig) {
 	// set up group route middleware, group path is left prefix rules,
 	// if the left prefix is hit, the middleware will take effect, e.g. group route is /api/v1, route /api/v1/collectService/:id  will take effect
-	// c.setGroupPath("/api/v1/collect", middleware.Auth())
+	c.setGroupPath("/api/v1/collect", middleware.Auth(middleware.WithVerify(verify)))
 
 	// set up single route middleware, just uncomment the code and fill in the middlewares, nothing else needs to be changed
 	//c.setSinglePath("POST", "/api/v1/collect", middleware.Auth())

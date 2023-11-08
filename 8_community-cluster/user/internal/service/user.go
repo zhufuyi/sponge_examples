@@ -92,7 +92,7 @@ func (s *userService) SendEmailVerifyCode(ctx context.Context, req *userV1.SendE
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 检查邮箱是否已经注册过
 	data, _ := s.iDao.GetByEmail(ctx, req.Email)
@@ -139,7 +139,7 @@ func (s *userService) Register(ctx context.Context, req *userV1.RegisterRequest)
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	if !isTestEmail(req.Email) {
 		// 检查验证码是否存在
@@ -193,7 +193,7 @@ func (s *userService) Login(ctx context.Context, req *userV1.LoginRequest) (*use
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 检查邮箱是否已经注册过
 	data, err := s.iDao.GetByEmail(ctx, req.Email)
@@ -257,7 +257,7 @@ func (s *userService) Logout(ctx context.Context, req *userV1.LogoutRequest) (*u
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
@@ -296,7 +296,7 @@ func (s *userService) DeleteByID(ctx context.Context, req *userV1.DeleteUserByID
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	err = s.iDao.DeleteByID(ctx, req.Id)
 	if err != nil {
@@ -316,7 +316,7 @@ func (s *userService) UpdateByID(ctx context.Context, req *userV1.UpdateUserByID
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	user := &model.User{
 		Name:     req.Name,
@@ -344,7 +344,7 @@ func (s *userService) GetByID(ctx context.Context, req *userV1.GetUserByIDReques
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	user, err := s.iDao.GetByID(ctx, req.Id)
 	if err != nil {
@@ -371,7 +371,7 @@ func (s *userService) List(ctx context.Context, req *userV1.ListUserRequest) (*u
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	params := &query.Params{}
 	err = copier.Copy(params, req.Params)
@@ -414,7 +414,7 @@ func (s *userService) UpdatePassword(ctx context.Context, req *userV1.UpdatePass
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	password, err := gocrypto.HashAndSaltPassword(req.Password)
 	if err != nil {

@@ -75,7 +75,7 @@ func (s *commentService) Create(ctx context.Context, req *creationV1.CreateComme
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断post是否存在
 	_, err = s.postDao.GetByID(ctx, req.PostId)
@@ -198,7 +198,7 @@ func (s *commentService) DeleteByID(ctx context.Context, req *creationV1.DeleteC
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断评论是否存在
 	comment, err := s.commentDao.GetByID(ctx, req.Id)
@@ -295,7 +295,7 @@ func (s *commentService) UpdateByID(ctx context.Context, req *creationV1.UpdateC
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	commentComment, err := s.commentContentDao.GetByCommentID(ctx, req.Id)
 	if err != nil {
@@ -324,7 +324,7 @@ func (s *commentService) Reply(ctx context.Context, req *creationV1.ReplyComment
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	// 判断评论是否存在
 	commentInfo, err := s.commentDao.GetByID(ctx, req.CommentId)
@@ -448,7 +448,7 @@ func (s *commentService) GetByID(ctx context.Context, req *creationV1.GetComment
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	comment, err := s.commentDao.GetByID(ctx, req.Id)
 	if err != nil {
@@ -486,7 +486,7 @@ func (s *commentService) ListByIDs(ctx context.Context, req *creationV1.ListComm
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	commentMap, err := s.commentDao.GetByIDs(ctx, req.Ids)
 	if err != nil {
@@ -527,7 +527,7 @@ func (s *commentService) ListLatest(ctx context.Context, req *creationV1.ListCom
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.commentLatestDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -574,7 +574,7 @@ func (s *commentService) ListHot(ctx context.Context, req *creationV1.ListCommen
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.commentHotDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
@@ -621,7 +621,7 @@ func (s *commentService) ListReply(ctx context.Context, req *creationV1.ListComm
 		logger.Warn("req.Validate error", logger.Err(err), logger.Any("req", req), interceptor.ServerCtxRequestIDField(ctx))
 		return nil, ecode.StatusInvalidParams.Err()
 	}
-	//ctx = interceptor.WrapServerCtx(ctx)
+	ctx = interceptor.WrapServerCtx(ctx)
 
 	records, total, err := s.commentDao.GetByColumns(ctx, &query.Params{
 		Page: int(req.Page),
