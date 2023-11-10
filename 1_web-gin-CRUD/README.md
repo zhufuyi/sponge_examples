@@ -11,9 +11,10 @@
 
 Enter the Sponge UI interface, click on the left menu bar 【SQL】→【Create web project】, fill in some parameters to generate the complete project code for the web service.
 
+![web-http](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_web-http.png)
+
 The web service code is mainly composed of commonly used libraries such as [gin](https://github.com/gin-gonic/gin), [gorm](https://github.com/go-gorm/gorm), [go-redis](https://github.com/go-redis/redis), and also includes swagger documentation, test code, common service governance function code, build deployment scripts, etc.
 
-![web-http](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_web-http.png)
 
 Switch to the web directory and run the command:
 

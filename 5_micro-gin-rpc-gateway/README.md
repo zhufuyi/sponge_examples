@@ -9,9 +9,9 @@ Before creating a grpc gateway project, prepare a proto file that it must contai
 
 Enter the Sponge UI interface, click the left menu bar 【Protobuf】 → 【create grpc gateway project】, fill in some parameters to generate the grpc gateway project code.
 
-The web framework uses [gin](https://github.com/gin-gonic/gin), which also includes Swagger documentation, common service governance code, build deployment scripts, etc.
-
 ![micro-rpc-gw-pb](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_micro-rpc-gw-pb.png)
+
+The web framework uses [gin](https://github.com/gin-gonic/gin), which also includes Swagger documentation, common service governance code, build deployment scripts, etc.
 
 <br>
 

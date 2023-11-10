@@ -11,9 +11,9 @@
 
 Enter the Sponge UI interface, click on the left menu bar 【SQL】→【Create microservice project】, fill in some parameters to generate a complete microservice project code.
 
-The microservice code is mainly composed of commonly used libraries such as [grpc](https://github.com/grpc/grpc-go), [gorm](https://github.com/go-gorm/gorm), [go-redis](https://github.com/go-redis/redis), and also includes grpc client CRUD test code, common service governance function code, build deployment scripts, etc.
-
 ![micro-rpc](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_micro-rpc.png)
+
+The microservice code is mainly composed of commonly used libraries such as [grpc](https://github.com/grpc/grpc-go), [gorm](https://github.com/go-gorm/gorm), [go-redis](https://github.com/go-redis/redis), and also includes grpc client CRUD test code, common service governance function code, build deployment scripts, etc.
 
 Switch to the user directory and run the command:
 

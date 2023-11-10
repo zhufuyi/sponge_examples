@@ -121,7 +121,7 @@ func NewCommentRPCConn() {
 		cliOptions = append(cliOptions, grpccli.WithEnableMetrics())
 	}
 
-	msg := "dialing rpc server"
+	msg := "dialing grpc server"
 	if isUseDiscover {
 		msg += " with discovery from " + grpcClientCfg.RegistryDiscoveryType
 	}

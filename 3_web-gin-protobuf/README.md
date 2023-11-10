@@ -9,9 +9,9 @@ Prepare a proto file before creating a web service. The proto file must contain 
 
 Enter the UI interface of sponge, click 【Protobuf】→【Create Web Project】in the left menu bar, and fill in some parameters to generate the web service project code.
 
-The web framework uses [gin](https://github.com/gin-gonic/gin). It also includes swagger documents, common service governance function codes, and build and deployment scripts. You can choose which database to use.
-
 ![web-http-pb](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_web-http-pb.png)
+
+The web framework uses [gin](https://github.com/gin-gonic/gin). It also includes swagger documents, common service governance function codes, and build and deployment scripts. You can choose which database to use.
 
 Change to the web directory and execute the command:
 

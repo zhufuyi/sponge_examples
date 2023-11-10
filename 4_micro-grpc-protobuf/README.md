@@ -7,9 +7,9 @@
 
 Prepare a proto file before creating a microservice, Enter the sponge UI interface, click on 【Protobuf】→ 【create microservice project】in the left menu bar, fill in some parameters to generate common microservice project code.
 
-The microservice framework uses [grpc](https://github.com/grpc/grpc-go), and also includes commonly used service governance function code, build deployment scripts, etc. The database used is chosen by yourself.
-
 ![micro-rpc-pb](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_micro-rpc-pb.png)
+
+The microservice framework uses [grpc](https://github.com/grpc/grpc-go), and also includes commonly used service governance function code, build deployment scripts, etc. The database used is chosen by yourself.
 
 Switch to the user directory and run the command:
 
