@@ -368,7 +368,7 @@ etcd:
 nacosRd:
   ipAddr : "192.168.3.37"
   port : 8848
-  namespaceID : "3454d2b5-2455-4d0e-bf6d-e033b086bb4c" # namespace id
+  namespaceID : "3195f5fb-1bcc-4340-999a-5028660a4ae2" # namespace id
 ```
 
 <br>
@@ -438,7 +438,7 @@ nacos:
   port: 8848                      # Listening port
   scheme: "http"                # Supports http and https
   contextPath: "/nacos"       # Path
-  namespaceID: "3454d2b5-2455-4d0e-bf6d-e033b086bb4c" # namespace id
+  namespaceID: "3195f5fb-1bcc-4340-999a-5028660a4ae2" # namespace id
   group: "dev"                    # Group name: dev, prod, test
   dataID: "community.yml"  # Configuration file id
   format: "yaml"                 # Configuration file type: json,yaml,toml

@@ -6,7 +6,7 @@ nacos:
   port: 8848                      # listening port
   scheme: "http"               # http or https
   contextPath: "/nacos"     # path
-  namespaceID: "3454d2b5-2455-4d0e-bf6d-e033b086bb4c" # namespace id
+  namespaceID: "3195f5fb-1bcc-4340-999a-5028660a4ae2" # namespace id
   group: "dev"                    # group name: dev, prod, test
   dataID: "comment.yml"  # config file id
   format: "yaml"                 # configuration file type: json,yaml,toml
