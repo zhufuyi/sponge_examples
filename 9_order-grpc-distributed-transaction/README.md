@@ -38,45 +38,45 @@ When a frontend requests the **gRPC gateway service order_gw** to submit an orde
 
 3. Prepare Proto files:
 
-  - [order.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/order/api/order/v1/order.proto) for creating the order service.
-  - [stock.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_stock-grpc-distributed-transaction/stock/api/stock/v1/stock.proto) for creating the stock service.
-  - [coupon.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_coupon-grpc-distributed-transaction/coupon/api/coupon/v1/coupon.proto) for creating the coupon service.
-  - [pay.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_pay-grpc-distributed-transaction/pay/api/pay/v1/pay.proto) for creating the pay service.
-  - [order_gw.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_pay-grpc-distributed-transaction/order_gw.proto/api/order_gw.proto/v1/order_gw.proto) for creating the gRPC gateway service.
+    - [order.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/order/api/order/v1/order.proto) for creating the order service.
+    - [stock.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/stock/api/stock/v1/stock.proto) for creating the stock service.
+    - [coupon.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/coupon/api/coupon/v1/coupon.proto) for creating the coupon service.
+    - [pay.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/pay/api/pay/v1/pay.proto) for creating the pay service.
+    - [order_gw.proto](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/order_gw/api/order_gw/v1/order_gw.proto) for creating the gRPC gateway service.
 
-4. Install the tool [sponge](https://github.com/zhufuyi/sponge/blob/main/assets/install-cn.md). After installing sponge, run the following command to open the UI interface for generating code:
+4. Install the tool [sponge](https://github.com/zhufuyi/sponge/blob/main/assets/install-en.md). After installing sponge, run the following command to open the UI interface for generating code:
 
 ```bash
-   sponge run
+sponge run
 ```
 
 5. Start the DTM service using the `docker-compose.yml` script:
 
 ```yaml
-   version: '3'
-   services:
-     dtm:
-       image: yedf/dtm
-       container_name: dtm
-       restart: always
-       environment:
-         STORE_DRIVER: mysql
-         STORE_HOST: '192.168.3.37'
-         STORE_USER: root
-         STORE_PASSWORD: '123456'
-         STORE_PORT: 3306
-       #volumes:
-       #  - /etc/localtime:/etc/localtime:ro
-       #  - /etc/timezone:/etc/timezone:ro
-       ports:
-         - '36789:36789'
-         - '36790:36790'
+version: '3'
+services:
+  dtm:
+    image: yedf/dtm
+    container_name: dtm
+    restart: always
+    environment:
+      STORE_DRIVER: mysql
+      STORE_HOST: '192.168.3.37'
+      STORE_USER: root
+      STORE_PASSWORD: '123456'
+      STORE_PORT: 3306
+    #volumes:
+    #  - /etc/localtime:/etc/localtime:ro
+    #  - /etc/timezone:/etc/timezone:ro
+    ports:
+      - '36789:36789'
+      - '36790:36790'
 ```
 
 Modify the STORE_xxx related parameters and then start the DTM service:
 
 ```bash
-   docker-compose up -d
+docker-compose up -d
 ```
 
 <br>
@@ -118,24 +118,24 @@ Switch to the stock service directory and perform the following steps:
 1. Generate and automatically merge API-related code:
 
 ```bash
-   make proto
+make proto
 ```
 
 2. Add MySQL connection code:
 
 ```bash
-   make patch TYPE=mysql-init
+make patch TYPE=mysql-init
 ```
 
 3. Open the configuration file `configs/stock.yml` and modify the MySQL address and account information. Change the default gRPC server port to avoid port conflicts.
 
 ```yaml
-   mysql:
-     dsn: "root:123456@(192.168.3.37:3306)/eshop_stock?parseTime=true&loc=Local&charset=utf8mb4"
+mysql:
+  dsn: "root:123456@(192.168.3.37:3306)/eshop_stock?parseTime=true&loc=Local&charset=utf8mb4"
 
-   grpc:
-     port: 28282
-     httpPort: 28283
+grpc:
+  port: 28282
+  httpPort: 28283
 ```
 
 4. Add business logic code for deducting and compensating stock in the generated template code. View the code [internal/service/stock.go](https://github.com/zhufuyi/sponge_examples/blob/main/9_order-grpc-distributed-transaction/stock/internal/service/stock.go).
@@ -236,27 +236,27 @@ make run
    Since the gRPC gateway service order_gw needs to know which API interfaces the order service provides, copy the order service's proto file. In the terminal, navigate to the order_gw directory and execute the command:
 
 ```bash
-   make copy-proto SERVER=../order
+make copy-proto SERVER=../order
 ```
 
 3. Open the configuration file `configs/order_gw.yml` and configure the order service address.
 
 ```yaml
-   grpcClient:
-     - name: "order"
-       host: "127.0.0.1"
-       port: 8282
-       registryDiscoveryType: ""
-       enableLoadBalance: false
+grpcClient:
+  - name: "order"
+    host: "127.0.0.1"
+    port: 8282
+    registryDiscoveryType: ""
+    enableLoadBalance: false
 ```
 
 4. Generate and automatically merge API-related code.
 
 ```bash
-   make proto
+make proto
 ```
 
-5. Fill in the business logic code, which involves converting HTTP requests into gRPC requests. Here, you can directly use the generated template code example. Click to view the code [internall/service/order.go](https://github.com/zhufuyi/sponge_examples/blob/main/9_order-grpc-distributed-transaction/order_gw/internal/service/order_gw.go).
+5. Fill in the business logic code, which involves converting HTTP requests into gRPC requests. Here, you can directly use the generated template code example. Click to view the code [internal/service/order_gw.go](https://github.com/zhufuyi/sponge_examples/blob/main/9_order-grpc-distributed-transaction/order_gw/internal/service/order_gw.go).
 
 <br>
 
