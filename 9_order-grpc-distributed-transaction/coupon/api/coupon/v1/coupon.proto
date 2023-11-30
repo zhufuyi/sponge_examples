@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package api.coupon.v1;
+
+import "validate/validate.proto";
+
+option go_package = "coupon/api/coupon/v1;v1";
+
+service coupon {
+  // 使用优惠券
+  rpc CouponUse(CouponUseRequest) returns (CouponUseReply) {}
+
+  // 补偿优惠券
+  rpc CouponUseRevert(couponUseRevertRequest) returns (couponUseRevertReply) {}
+}
+
+message CouponUseRequest {
+  uint64 couponId = 1 [(validate.rules).uint64.gt  = 0];
+}
+
+message CouponUseReply {
+}
+
+message couponUseRevertRequest {
+  uint64 couponId = 1 [(validate.rules).uint64.gt  = 0];
+}
+
+message couponUseRevertReply {
+}
