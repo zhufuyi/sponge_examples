@@ -1,10 +1,13 @@
-## sponge_examples
 
-[sponge](https://github.com/zhufuyi/sponge) is a powerful golang productivity tool that integrates `automatic code generation`, `web and microservices frameworks`, `basic development framework`.
+## Sponge Examples
 
-Here are some examples of using sponge to develop go projects.
+[Sponge](https://github.com/zhufuyi/sponge) is a basic development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, the use of Go can also be "low-code development".
 
-#### Basic Services examples
+Here are some examples of using sponge to develop go projects, the database used in the example is mysql, also support database postgresql, tidb, sqlite.
+
+<br>
+
+### Basic Services Examples
 
 - [1_web-gin-CRUD](https://github.com/zhufuyi/sponge_examples/tree/main/1_web-gin-CRUD)
 - [2_micro-grpc-CRUD](https://github.com/zhufuyi/sponge_examples/tree/main/2_micro-grpc-CRUD)
@@ -13,11 +16,15 @@ Here are some examples of using sponge to develop go projects.
 - [5_micro-gin-rpc-gateway](https://github.com/zhufuyi/sponge_examples/tree/main/5_micro-gin-rpc-gateway)
 - [6_micro-cluster](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster)
 
-#### Complete project code examples
+<br>
+
+### Complete Project Code Examples
 
 - [7_community-single](https://github.com/zhufuyi/sponge_examples/tree/main/7_community-single)
 - [8_community-cluster](https://github.com/zhufuyi/sponge_examples/tree/main/8_community-cluster)
 
-#### Distributed transaction examples
+<br>
+
+### Distributed Transaction Examples
 
 - [9_order-grpc-distributed-transaction](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction)
