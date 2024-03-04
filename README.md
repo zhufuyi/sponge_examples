@@ -1,9 +1,9 @@
 
 ## Sponge Examples
 
-[Sponge](https://github.com/zhufuyi/sponge) is a basic development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, the use of Go can also be "low-code development".
+[Sponge](https://github.com/zhufuyi/sponge) is a powerful basic development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, the use of Go can also be "low-code development".
 
-Here are some examples of using sponge to develop go projects, the database used in the example is mysql, also support database postgresql, tidb, sqlite.
+Here are some examples of using sponge to develop go projects, the database used in the example is mysql, also support database mongodbi, postgresql, tidb, sqlite.
 
 <br>
 

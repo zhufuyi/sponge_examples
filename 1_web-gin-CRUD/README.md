@@ -1,4 +1,4 @@
-[**web-gin-CRUD 中文说明**](https://juejin.cn/post/7298167437526122496)
+[**web-gin-CRUD 中文说明**](https://www.bilibili.com/read/cv23018269/)
 
 <br>
 
