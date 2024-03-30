@@ -1,0 +1,47 @@
+# Need to package the code first `tar zcf user.tar.gz $(ls)` and move it to the same directory as Dokerfile
+
+# Compile the go code, you can specify the golang version
+FROM golang:1.21-alpine as build
+COPY . /go/src/user
+WORKDIR /go/src/user
+RUN tar zxf user.tar.gz
+RUN go env -w GOPROXY=https://goproxy.cn,direct
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /user cmd/user/main.go
+
+# install grpc-health-probe, for health check of grpc service
+RUN go install github.com/grpc-ecosystem/grpc-health-probe@v0.4.12
+RUN cd $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-health-probe@v0.4.12 \
+    && go mod download \
+    && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "all=-s -w" -o /grpc_health_probe
+
+# compressing binary files
+#cd /
+#upx -9 user
+#upx -9 grpc_health_probe
+
+
+# building images with binary
+FROM alpine:latest
+MAINTAINER zhufuyi "g.zhufuyi@gmail.com"
+
+# set the time zone to Shanghai
+RUN apk add tzdata  \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && apk del tzdata
+
+# add grpc_health_probe for health check of grpc services
+COPY --from=build /grpc_health_probe /bin/grpc_health_probe
+COPY --from=build /user /app/user
+COPY --from=build /go/src/user/configs/user.yml /app/configs/user.yml
+
+# grpc and http port
+EXPOSE 8282 8283
+
+
+WORKDIR /app
+
+CMD ["./user", "-c", "configs/user.yml"]
+# if you use the Configuration Center, user.yml is changed to the Configuration Center configuration.
+#CMD ["./user", "-c", "configs/user.yml", "-enable-cc"]

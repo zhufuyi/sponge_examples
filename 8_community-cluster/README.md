@@ -3,6 +3,12 @@
 
 <br>
 
+The Community-cluster created by using sponge is a `multi-repo` type of microservice. Although multiple service codes are placed under a directory `8_community-cluster`, the codes between different services cannot be reused, so the codes between services are completely independent.
+
+> Tip: Sponge also supports the creation of a microservice `mono-repo` type where code can be reused between different services, which is simpler.
+
+<br>
+
 ## Community-cluster Introduction
 
 The community-cluster is a microservice cluster composed of two types of services: **grpc services** and **grpc gateway services**. grpc services are independent functional implementation modules, while grpc gateway services mainly serve to forward requests to grpc services and assemble data. The community-cluster service cluster is built using the sponge tool, which automatically separates business logic and non-business logic code when generating grpc service and grpc gateway service code. The benefit of separating business logic from non-business logic is that it allows developers to focus on core business logic code, greatly reducing the difficulty of building a microservice cluster and reducing the need for manual coding. Click to view the complete [project code](https://github.com/zhufuyi/sponge_examples/blob/main/8_community-cluster) of the microservice cluster, and the framework diagram is shown below:

@@ -3,6 +3,12 @@
 
 <br>
 
+The microservice cluster currently created by using sponge is a `multi-repo` type of microservice. Although multiple service codes are placed under a directory `6_micro-cluster`, the codes between different services cannot be reused, so the codes between services are completely independent.
+
+> Tip: Sponge also supports the creation of a microservice `mono-repo` type where code can be reused between different services, which is simpler.
+
+<br>
+
 By taking a simple e-commerce microservice cluster as an example, the product details page contains product information, inventory information, and product evaluation information. These data are scattered in different microservices. The grpc gateway service assembles the required data and returns it to the product details page, as shown in the following figure:
 
 ![micro-cluster](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/en_micro-cluster.png)

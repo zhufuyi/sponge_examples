@@ -1,30 +1,27 @@
 
 ## Sponge Examples
 
-[Sponge](https://github.com/zhufuyi/sponge) is a powerful basic development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, the use of Go can also be "low-code development".
+[Sponge](https://github.com/zhufuyi/sponge) is a powerful development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, implementation of "low-code way" development projects.
 
-Here are some examples of using sponge to develop go projects, the database used in the example is mysql, also support database mongodbi, postgresql, tidb, sqlite.
-
-<br>
-
-### Basic Services Examples
-
-- [1_web-gin-CRUD](https://github.com/zhufuyi/sponge_examples/tree/main/1_web-gin-CRUD)
-- [2_micro-grpc-CRUD](https://github.com/zhufuyi/sponge_examples/tree/main/2_micro-grpc-CRUD)
-- [3_web-gin-protobuf](https://github.com/zhufuyi/sponge_examples/tree/main/3_web-gin-protobuf)
-- [4_micro-grpc-protobuf](https://github.com/zhufuyi/sponge_examples/tree/main/4_micro-grpc-protobuf)
-- [5_micro-gin-rpc-gateway](https://github.com/zhufuyi/sponge_examples/tree/main/5_micro-gin-rpc-gateway)
-- [6_micro-cluster](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster)
+Here are some examples of using sponge to develop go projects, the database type used in the example is mysql, also support database mongodb, postgresql, tidb, sqlite.
 
 <br>
 
-### Complete Project Code Examples
+### Examples of creating a service using sponge
 
-- [7_community-single](https://github.com/zhufuyi/sponge_examples/tree/main/7_community-single)
-- [8_community-cluster](https://github.com/zhufuyi/sponge_examples/tree/main/8_community-cluster)
+- [Create **web** service based on **sql** (including CRUD)](https://github.com/zhufuyi/sponge_examples/tree/main/1_web-gin-CRUD)
+- [Create **grpc** service based on **sql** (including CRUD)](https://github.com/zhufuyi/sponge_examples/tree/main/2_micro-grpc-CRUD)
+- [Create **web** service based on **protobuf**](https://github.com/zhufuyi/sponge_examples/tree/main/3_web-gin-protobuf)
+- [Create **grpc** service based on **protobuf** ](https://github.com/zhufuyi/sponge_examples/tree/main/4_micro-grpc-protobuf)
+- [Create **grpc gateway** service based on **protobuf**](https://github.com/zhufuyi/sponge_examples/tree/main/5_micro-gin-rpc-gateway)
+- [Create **grpc+http** service based on **protobuf**](https://github.com/zhufuyi/sponge_examples/tree/main/a_micro-grpc-http-protobuf)
+- [Build a microservice cluster](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster)
 
-<br>
+### Examples of developing a complete project using sponge
 
-### Distributed Transaction Examples
+- [Simple community web backend service](https://github.com/zhufuyi/sponge_examples/tree/main/7_community-single)
+- [Simple community web service broken down into microservice](https://github.com/zhufuyi/sponge_examples/tree/main/8_community-cluster)
 
-- [9_order-grpc-distributed-transaction](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction)
+### Distributed transaction examples
+
+- [Simple distributed order system](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction)

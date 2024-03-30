@@ -3,6 +3,13 @@
 
 <br>
 
+The Order-system created by using sponge is a `multi-repo` type of microservice. Although multiple service codes are placed under a directory `9_order-grpc-distributed-transaction`, the codes between different services cannot be reused, so the codes between services are completely independent.
+
+> Tip: Sponge also supports the creation of a microservice `mono-repo` type where code can be reused between different services, which is simpler.
+
+
+<br>
+
 ### Order System Introduction
 
 The order system is the core system of a trading platform, involving various complex tasks that require careful consideration of factors such as business requirements, performance, scalability, and security.
