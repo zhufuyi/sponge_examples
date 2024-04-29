@@ -22,7 +22,7 @@ import (
 func Test_service_user_methods(t *testing.T) {
 	conn := getRPCClientConnForTest()
 	cli := userV1.NewUserClient(conn)
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*30)
 
 	tests := []struct {
 		name    string
@@ -49,8 +49,8 @@ func Test_service_user_methods(t *testing.T) {
 			fn: func() (interface{}, error) {
 				// todo type in the parameters before testing
 				req := &userV1.LoginRequest{
-					Email:    "",
-					Password: "",
+					Email:    "foo@bar.com",
+					Password: "123456",
 				}
 
 				return cli.Login(ctx, req)
@@ -107,7 +107,11 @@ func Test_service_user_benchmark(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	host := fmt.Sprintf("127.0.0.1:%d", config.Get().Grpc.Port)
+	if len(config.Get().GrpcClient) == 0 {
+		t.Error("grpcClient is not set in user.yml")
+		return
+	}
+	host := fmt.Sprintf("%s:%d", config.Get().GrpcClient[0].Host, config.Get().GrpcClient[0].Port)
 	protoFile := configs.Path("../api/user/v1/user.proto")
 	// If third-party dependencies are missing during the press test,
 	// copy them to the project's third_party directory.

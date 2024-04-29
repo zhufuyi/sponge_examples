@@ -68,7 +68,7 @@ func (s *user) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.Log
 	logger.Info("login successfully", interceptor.ServerCtxRequestIDField(ctx))
 
 	return &userV1.LoginReply{
-		Id:    111,
+		Id:    100,
 		Token: "eydiewnafiaekdfaf......",
 	}, nil
 }

@@ -585,8 +585,8 @@ github.com/yuin/goldmark v1.4.0/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 github.com/yusufpapurcu/wmi v1.2.3 h1:E1ctvB7uKFMOJw3fdOW32DwGE9I7t++CRUEMKvFoFiw=
 github.com/yusufpapurcu/wmi v1.2.3/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
-github.com/zhufuyi/sponge v1.7.0 h1:FxVCn9FTWLcO+R7/sH17rv+WemZBsWIm+UvXpxlNFhk=
-github.com/zhufuyi/sponge v1.7.0/go.mod h1:Y+E7rQaGEkN+E1NLE6THZUvcnRbGLFBzsm3RctvJxJA=
+github.com/zhufuyi/sponge v1.8.0 h1:mGmskfT0q5Oqv/CDNnruZ9617SH2s33KpQQpjHwIHIQ=
+github.com/zhufuyi/sponge v1.8.0/go.mod h1:Y+E7rQaGEkN+E1NLE6THZUvcnRbGLFBzsm3RctvJxJA=
 go.etcd.io/etcd/api/v3 v3.5.4 h1:OHVyt3TopwtUQ2GKdd5wu3PmmipR4FTwCqoEjSyRdIc=
 go.etcd.io/etcd/api/v3 v3.5.4/go.mod h1:5GB2vv4A4AOn3yk7MftYGHkUfGtDHnEraIjym4dYz5A=
 go.etcd.io/etcd/client/pkg/v3 v3.5.4 h1:lrneYvz923dvC14R54XcA7FXoZ3mlGZAgmwhfm7HqOg=

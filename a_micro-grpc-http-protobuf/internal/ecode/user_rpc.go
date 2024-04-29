@@ -9,7 +9,7 @@ import (
 // user business-level rpc error codes.
 // the _userNO value range is 1~100, if the same number appears, it will cause a failure to start the service.
 var (
-	_userNO       = 56
+	_userNO       = 1
 	_userName     = "user"
 	_userBaseCode = errcode.RCode(_userNO)
 

@@ -7,7 +7,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/stretchr/testify v1.8.4
-	github.com/zhufuyi/sponge v1.7.0
+	github.com/zhufuyi/sponge v1.8.0
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.61.0
 	google.golang.org/protobuf v1.32.0

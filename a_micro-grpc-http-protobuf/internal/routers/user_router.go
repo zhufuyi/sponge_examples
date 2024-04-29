@@ -3,10 +3,13 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 
+	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/metadata"
+
+	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 	"github.com/zhufuyi/sponge/pkg/logger"
-	//"github.com/zhufuyi/sponge/pkg/middleware"
 
 	userV1 "user/api/user/v1"
 	"user/internal/handler"
@@ -28,13 +31,20 @@ func userRouter(
 	groupPathMiddlewares map[string][]gin.HandlerFunc,
 	singlePathMiddlewares map[string][]gin.HandlerFunc,
 	iService userV1.UserLogicer) {
+	ctxFn := func(c *gin.Context) context.Context {
+		md := metadata.New(map[string]string{
+			middleware.ContextRequestIDKey: middleware.GCtxRequestID(c),
+		})
+		return metadata.NewIncomingContext(c.Request.Context(), md)
+	}
 	userV1.RegisterUserRouter(
 		r,
 		groupPathMiddlewares,
 		singlePathMiddlewares,
 		iService,
-		userV1.WithUserHTTPResponse(),
 		userV1.WithUserLogger(logger.Get()),
+		userV1.WithUserRPCResponse(),
+		userV1.WithUserWrapCtx(ctxFn),
 		userV1.WithUserErrorToHTTPCode(
 		// Set some error codes to standard http return codes,
 		// by default there is already ecode.InternalServerError and ecode.ServiceUnavailable

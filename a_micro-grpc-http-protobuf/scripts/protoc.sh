@@ -179,7 +179,7 @@ function generateBySpecifiedProto(){
   checkResult $?
 
   protoc --proto_path=. --proto_path=./third_party \
-    --go-gin_out=. --go-gin_opt=paths=source_relative --go-gin_opt=plugin=handler \
+    --go-gin_out=. --go-gin_opt=paths=source_relative --go-gin_opt=plugin=mix \
     --go-gin_opt=moduleName=${moduleName} --go-gin_opt=serverName=${serverName} --go-gin_opt=suitedMonoRepo=${suitedMonoRepo} \
     $specifiedProtoFiles
 
@@ -188,9 +188,9 @@ function generateBySpecifiedProto(){
   sponge merge http-pb
   checkResult $?
 
-  colorCyan='\e[1;36m'
-  highBright='\e[1m'
-  markEnd='\e[0m'
+  colorCyan='\033[1;36m'
+  highBright='\033[1m'
+  markEnd='\033[0m'
 
   echo ""
   echo -e "${highBright}Tip:${markEnd} execute the command ${colorCyan}make run${markEnd} and then"
