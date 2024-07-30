@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package api.transfer.v1;
+
+import "validate/validate.proto";
+
+option go_package = "transfer/api/transfer/v1;v1";
+
+service transfer {
+  // 转账
+  rpc Transfer(TransferRequest) returns (TransferReply) {}
+
+  // 转出
+  rpc TransOut(TransOutRequest) returns (TransOutReply) {}
+  // 转入
+  rpc TransIn(TransInRequest) returns (TransInReply) {}
+}
+
+message TransferRequest {
+  uint32 Amount = 1 [(validate.rules).uint32.gt  = 0];
+  uint64 FromUserId = 2 [(validate.rules).uint64.gt  = 0];
+  uint64 ToUserId = 3 [(validate.rules).uint64.gt  = 0];
+}
+
+message TransferReply {
+}
+
+message TransOutRequest {
+  uint32 Amount = 1 [(validate.rules).uint32.gt  = 0];
+  uint64 UserId = 2 [(validate.rules).uint64.gt  = 0];
+}
+
+message TransOutReply {
+}
+
+message TransInRequest {
+  uint32 Amount = 1 [(validate.rules).uint32.gt  = 0];
+  uint64 UserId = 2 [(validate.rules).uint64.gt  = 0];
+}
+
+message TransInReply {
+}
