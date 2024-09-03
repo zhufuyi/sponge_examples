@@ -1,0 +1,162 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "flash sale api docs",
+    "version": "2.0"
+  },
+  "tags": [
+    {
+      "name": "flashSale"
+    }
+  ],
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/flashSale": {
+      "post": {
+        "summary": "秒杀抢购",
+        "operationId": "flashSale_FlashSale",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FlashSaleReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FlashSaleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "flashSale"
+        ]
+      }
+    },
+    "/api/v1/flashSale/setProductStock": {
+      "post": {
+        "summary": "设置库存数量",
+        "operationId": "flashSale_SetProductStock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SetProductStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SetProductStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "flashSale"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1FlashSaleReply": {
+      "type": "object"
+    },
+    "v1FlashSaleRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1RedisQueryPreparedReply": {
+      "type": "object"
+    },
+    "v1SendSubmitOrderNotifyReply": {
+      "type": "object"
+    },
+    "v1SetProductStockReply": {
+      "type": "object"
+    },
+    "v1SetProductStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

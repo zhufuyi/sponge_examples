@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package api.flashSale.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+
+option go_package = "flashSale/api/flashSale/v1;v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:8080"
+  base_path: ""
+  info: {
+    title: "flash sale api docs";
+    version: "2.0";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+};
+
+service flashSale {
+  // 设置库存数量
+  rpc SetProductStock(SetProductStockRequest) returns (SetProductStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/flashSale/setProductStock"
+      body: "*"
+    };
+  }
+
+  // 秒杀抢购
+  rpc FlashSale(FlashSaleRequest) returns (FlashSaleReply) {
+    option (google.api.http) = {
+      post: "/api/v1/flashSale"
+      body: "*"
+    };
+  }
+
+  // 反查redis数据
+  rpc RedisQueryPrepared(RedisQueryPreparedRequest) returns (RedisQueryPreparedReply) {}
+
+  // 发送提交订单通知到到消息队列
+  rpc SendSubmitOrderNotify(SendSubmitOrderNotifyRequest) returns (SendSubmitOrderNotifyReply) {}
+
+}
+
+
+message SetProductStockRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 stock = 2 [(validate.rules).uint32.gt = 0];  // 库存数量
+}
+
+message SetProductStockReply {}
+
+message FlashSaleRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 amount = 2 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 userID = 3 [(validate.rules).uint64.gt = 0];  // 用户id
+}
+
+message FlashSaleReply {}
+
+message RedisQueryPreparedRequest {}
+
+message RedisQueryPreparedReply {}
+
+message SendSubmitOrderNotifyRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 2 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 3 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 5;  // 优惠券id
+  string orderID = 6;  // 订单id
+  string requestID = 7;  // 请求id
+}
+
+message SendSubmitOrderNotifyReply {}
