@@ -1,0 +1,68 @@
+# Generate the go struct command: sponge config --server-dir=./serverDir
+
+# app settings
+app:
+  name: "transfer"  # server name
+  env: "dev"                           # runtime environment, dev: development environment, prod: production environment, test: test environment
+  version: "v0.0.0"
+  host: "127.0.0.1"                  # domain or ip, for service registration
+  enableHTTPProfile: false        # whether to turn on performance analysis, true:enable, false:disable
+  enableStat: false                   # whether to turn on printing statistics, true:enable, false:disable
+  enableMetrics: true               # whether to turn on indicator collection, true:enable, false:disable
+  enableLimit: false                 # whether to turn on rate limiting (adaptive), true:on, false:off
+  enableCircuitBreaker: false    # whether to turn on circuit breaker(adaptive), true:on, false:off
+  enableTrace: false                 # whether to turn on trace, true:enable, false:disable, if true jaeger configuration must be set
+  tracingSamplingRate: 1.0       # tracing sampling rate, between 0 and 1, 0 means no sampling, 1 means sampling all links
+  registryDiscoveryType: ""       # registry and discovery types: consul, etcd, nacos, if empty, registration and discovery are not used
+  cacheType: ""                        # cache type, "memory" or "redis", if set to redis, must set redis configuration
+
+
+# grpc service settings
+grpc:
+  port: 8282             # listen port
+  httpPort: 8283       # profile and metrics ports
+  readTimeout: 5      # read timeout, unit(second)
+  writeTimeout: 5     # write timeout, unit(second)
+  enableToken: false  # whether to enable server-side token authentication, default appID=grpc, appKey=123456
+  # serverSecure parameter setting
+  # if type="", it means no secure connection, no need to fill in any parameters
+  # if type="one-way", it means server-side certification, only the fields "certFile" and "keyFile" should be filled in
+  # if type="two-way", it means both client and server side certification, fill in all fields
+  serverSecure:
+    type: ""               # secures type, "", "one-way", "two-way"
+    certFile: ""           # server side cert file, absolute path
+    keyFile: ""           # server side key file, absolute path
+    caFile: ""             # ca certificate file, valid only in "two-way", absolute path
+
+
+# grpc client settings, support for setting up multiple grpc clients
+grpcClient:
+  - name: "dtmservice"   # grpc service name, used for service discovery
+    host: "127.0.0.1"                    # grpc service address, used for direct connection
+    port: 36790                              # grpc service port
+    registryDiscoveryType: ""         # registration and discovery types: consul, etcd, nacos, if empty, connecting to server using host and port
+    enableLoadBalance: true
+
+
+# logger settings
+logger:
+  level: "info"             # output log levels debug, info, warn, error, default is debug
+  format: "console"     # output format, console or json, default is console
+  isSave: false           # false:output to terminal, true:output to file, default is false
+
+
+# etcd settings
+etcd:
+  addrs: ["127.0.0.1:2379"]
+
+
+# consul settings
+consul:
+  addr: "127.0.0.1:8500"
+
+
+# nacos settings, used in service registration discovery
+nacosRd:
+  ipAddr: "127.0.0.1"
+  port: 8848
+  namespaceID: "" # namespace id, default is public
