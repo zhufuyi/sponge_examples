@@ -656,8 +656,10 @@ github.com/yusufpapurcu/wmi v1.2.3 h1:E1ctvB7uKFMOJw3fdOW32DwGE9I7t++CRUEMKvFoFi
 github.com/yusufpapurcu/wmi v1.2.3/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
 github.com/zhufuyi/dtmdriver-sponge v1.0.0 h1:4cMdQAQAVrGVYPt89u1/kJlF/gVUTOcJROkE03sddk0=
 github.com/zhufuyi/dtmdriver-sponge v1.0.0/go.mod h1:eQz+TsQnW4BX0cuXlwbiQxwl8u19o1BnuNlntFxDmAU=
-github.com/zhufuyi/sponge v1.9.2 h1:6zqJCWhcsnHfygN09qGgh2YRMwbZHNyiFPwx+9FYuJ0=
-github.com/zhufuyi/sponge v1.9.2/go.mod h1:Dc/e5m8wIDyhD9hu/fF8GCiFjhXbxqBadfvTZZ1rbfY=
+github.com/zhufuyi/sponge v1.9.3 h1:Zv2Gr756fau41XSEnWaZlcVljfjLZO1WZNKsrQ63ENM=
+github.com/zhufuyi/sponge v1.9.3/go.mod h1:Dc/e5m8wIDyhD9hu/fF8GCiFjhXbxqBadfvTZZ1rbfY=
+github.com/zhufuyi/sponge v1.10.1 h1:feB75axQtMJ5EkC9M6WgUC+VIqZlB+K6zmNul9xlB0c=
+github.com/zhufuyi/sponge v1.10.1/go.mod h1:g6oDmwPTUrCL9+RJbSbjQEtmc0yhJ1vUD5rCdF1QNG4=
 go.etcd.io/etcd/api/v3 v3.5.5 h1:BX4JIbQ7hl7+jL+g+2j5UAr0o1bctCm6/Ct+ArBGkf0=
 go.etcd.io/etcd/api/v3 v3.5.5/go.mod h1:KFtNaxGDw4Yx/BA4iPPwevUTAuqcsPxzyX8PHydchN8=
 go.etcd.io/etcd/client/pkg/v3 v3.5.5 h1:9S0JUVvmrVl7wCF39iTQthdaaNIiAaQbmK75ogO6GU8=

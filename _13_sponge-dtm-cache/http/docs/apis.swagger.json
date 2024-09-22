@@ -1,0 +1,849 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stock api docs",
+    "version": "2.0"
+  },
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/stock": {
+      "post": {
+        "summary": "create stock",
+        "description": "submit information to create stock",
+        "operationId": "stock_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    },
+    "/api/v1/stock/deleteCache": {
+      "post": {
+        "summary": "删除缓存",
+        "operationId": "callback_DeleteCache",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCacheReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCacheRequest"
+            }
+          }
+        ],
+        "tags": [
+          "callback"
+        ]
+      }
+    },
+    "/api/v1/stock/downgradeBranch": {
+      "post": {
+        "summary": "升降级中的强一致性分支",
+        "description": "升降级中的强一致性分支",
+        "operationId": "downgrade_DowngradeBranch",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DowngradeBranchReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DowngradeBranchRequest"
+            }
+          }
+        ],
+        "tags": [
+          "case 4: 升降级中的强一致性"
+        ]
+      }
+    },
+    "/api/v1/stock/list": {
+      "post": {
+        "summary": "list of stocks by parameters",
+        "description": "list of stocks by paging and conditions",
+        "operationId": "stock_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    },
+    "/api/v1/stock/queryPrepared": {
+      "get": {
+        "summary": "反查数据",
+        "operationId": "callback_QueryPrepared",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryPreparedReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "callback"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}": {
+      "get": {
+        "summary": "get stock detail",
+        "description": "get stock detail by id",
+        "operationId": "stock_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      },
+      "delete": {
+        "summary": "delete stock",
+        "description": "delete stock by id",
+        "operationId": "stock_DeleteByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      },
+      "put": {
+        "summary": "update stock",
+        "description": "update stock by id",
+        "operationId": "stock_UpdateByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productID": {
+                  "type": "integer",
+                  "format": "uint64"
+                },
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}/atomic": {
+      "get": {
+        "summary": "查询数据",
+        "description": "查询数据",
+        "operationId": "atomic_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryAtomicReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "case 2: 原子性"
+        ]
+      },
+      "put": {
+        "summary": "更新数据",
+        "description": "更新数据，DB和缓存原子性",
+        "operationId": "atomic_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateAtomicRequestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "case 2: 原子性"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}/downgrade": {
+      "get": {
+        "summary": "查询数据",
+        "description": "查询数据",
+        "operationId": "downgrade_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryDowngradeReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "case 4: 升降级中的强一致性"
+        ]
+      },
+      "put": {
+        "summary": "更新数据",
+        "description": "更新数据，升降级中的DB和缓存强一致性",
+        "operationId": "downgrade_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateDowngradeRequestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "case 4: 升降级中的强一致性"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}/final": {
+      "get": {
+        "summary": "查询数据",
+        "description": "查询数据",
+        "operationId": "final_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryFinalReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "case 1: 最终一致性"
+        ]
+      },
+      "put": {
+        "summary": "更新数据",
+        "description": "更新数据，DB和缓存最终一致性",
+        "operationId": "final_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateFinalRequestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "case 1: 最终一致性"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}/strong": {
+      "get": {
+        "summary": "查询数据",
+        "description": "查询数据",
+        "operationId": "strong_Query",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QueryStrongReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "case 3: 强一致性"
+        ]
+      },
+      "put": {
+        "summary": "更新数据",
+        "description": "更新数据，DB和缓存强一致性",
+        "operationId": "strong_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateStrongRequestReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "case 3: 强一致性"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "typesColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "exp": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "logic": {
+          "type": "string"
+        }
+      }
+    },
+    "typesParams": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typesColumn"
+          }
+        }
+      }
+    },
+    "v1CreateStockReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1DeleteCacheReply": {
+      "type": "object"
+    },
+    "v1DeleteCacheRequest": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteStockByIDReply": {
+      "type": "object"
+    },
+    "v1DowngradeBranchReply": {
+      "type": "object"
+    },
+    "v1DowngradeBranchRequest": {
+      "type": "object",
+      "properties": {
+        "gid": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1GetStockByIDReply": {
+      "type": "object",
+      "properties": {
+        "stock": {
+          "$ref": "#/definitions/v1Stock"
+        }
+      }
+    },
+    "v1ListStockReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Stock"
+          }
+        }
+      }
+    },
+    "v1ListStockRequest": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/typesParams"
+        }
+      }
+    },
+    "v1QueryAtomicReply": {
+      "type": "object",
+      "properties": {
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1QueryDowngradeReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1QueryFinalReply": {
+      "type": "object",
+      "properties": {
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1QueryPreparedReply": {
+      "type": "object"
+    },
+    "v1QueryStrongReply": {
+      "type": "object",
+      "properties": {
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1Stock": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateAtomicRequestReply": {
+      "type": "object"
+    },
+    "v1UpdateDowngradeRequestReply": {
+      "type": "object"
+    },
+    "v1UpdateFinalRequestReply": {
+      "type": "object"
+    },
+    "v1UpdateStockByIDReply": {
+      "type": "object"
+    },
+    "v1UpdateStrongRequestReply": {
+      "type": "object"
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "description": "Type Bearer your-jwt-token to Value",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

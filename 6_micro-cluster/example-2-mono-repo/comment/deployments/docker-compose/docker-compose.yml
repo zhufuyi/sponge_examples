@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  comment:
+    image: eshop/comment:latest
+    container_name: comment
+    restart: always
+    command: ["./comment", "-c", "/app/configs/comment.yml"]
+    volumes:
+      - $PWD/configs:/app/configs
+
+    ports:
+      - "8282:8282"   # grpc port
+      - "8283:8283"   # grpc metrics or pprof port
+    healthcheck:
+      test: ["CMD", "grpc_health_probe", "-addr=localhost:8282"]    # grpc health check, note: the image must contain the grpc_health_probe command
+
+      interval: 10s         # interval time
+      timeout: 5s           # timeout time
+      retries: 3              # number of retries
+      start_period: 10s  # how long after start-up does the check begin

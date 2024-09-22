@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package api.stock.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "stock/api/stock/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:8080"
+  base_path: ""
+  info: {
+    title: "stock api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service strong{
+  // 更新数据，DB和缓存强一致性
+  rpc Update(UpdateStrongRequest) returns (UpdateStrongRequestReply) {
+    option (google.api.http) = {
+      put: "/api/v1/stock/{id}/strong"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "更新数据",
+      description: "更新数据，DB和缓存强一致性",
+      tags: "case 3: 强一致性"
+    };
+  }
+
+  //  查询
+  rpc Query(QueryStrongRequest) returns (QueryStrongReply) {
+    option (google.api.http) = {
+      get: "/api/v1/stock/{id}/strong"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "查询数据",
+      description: "查询数据",
+      tags: "case 3: 强一致性"
+    };
+  }
+}
+
+message UpdateStrongRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+  uint32 stock = 2 [(validate.rules).uint32.gt = 0];  // 库存数量
+}
+
+message UpdateStrongRequestReply {
+
+}
+
+message QueryStrongRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message QueryStrongReply {
+  uint32 stock = 1;  // 库存数量
+}

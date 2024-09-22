@@ -1,6 +1,6 @@
 ## Sponge DTM Flash Sale
 
-## Overview
+### Overview
 
-- [**http**](http): http Flash Sale service.
-- [**grpc+http**](grpc+http): Flash Sale service that supports both grpc and http protocols. 
+- [**http**](http): Example of HTTP service with flash sale.
+- [**grpc+http**](grpc+http): Example of gRPC+HTTP service with flash sale.

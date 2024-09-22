@@ -21,7 +21,7 @@ This is a sample project that demonstrates how to use Sponge to implement a flas
 4. **Compile and Start the Service**
     - you can compile and run the service using the following command:
       ```bash
-      cd cmd/stock
+      cd cmd/flashSale
       go run main.go
       ```
     - Alternatively, if sponge is installed, you can directly run the service with:

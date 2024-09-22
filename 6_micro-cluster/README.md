@@ -1,11 +1,19 @@
+## Microservices Cluster Example
 
-[**micro-cluster 中文说明**](https://juejin.cn/post/7230366377705685052)
+Here is an example of quickly creating a microservices cluster using sponge based on protobuf files. It supports two directory structures: multi-repo and mono-repo for microservices. The difference between multi-repo and mono-repo can be seen in [Repository Type Introduction Document](https://go-sponge.com/repository-type).
+
+- [**example-1-multi-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster/example-1-multi-repo): microservice multi repository (multi-repo) example. In a multi-repo structure, multiple repositories are used, with each service completely decoupled and independent. Each service has its own `go.mod` file, as well as separate `api` and `third_party` directories.
+- [**example-2-mono-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster/example-2-mono-repo): microservice monolithic repository (mono-repo) example. In a mono-repo structure, there is only one repository, with a single `go.mod` file, and the `api` and `third_party` directories are shared as common directories among all services.
+
+The development and code generation processes are the same for both structures; the difference lies in the organization of the code. The mono-repo structure is generally recommended.
 
 <br>
+<br>
 
-The microservice cluster currently created by using sponge is a `multi-repo` type of microservice. Although multiple service codes are placed under a directory `6_micro-cluster`, the codes between different services cannot be reused, so the codes between services are completely independent.
+Here is an example of quickly setting up a microservices cluster from scratch based on protobuf files. The setup steps are essentially the same for both `multi-repo` and `mono-repo` repository types, only the following two steps are different:
 
-> Tip: Sponge also supports the creation of a microservice `mono-repo` type where code can be reused between different services, which is simpler.
+- When generating code, the `mono-repo` repository type must select the monolithic repository option, while the `multi-repo` repository type does not require selecting this option.
+- For the `multi-repo` repository type, if the protobuf files in the current service depend on protobuf files from other services, you need to copy the dependent protobuf files into the `api` directory of the current service. A `make copy-proto` command is provided for convenient copying. The `mono-repo` repository type does not require copying the dependent protobuf files.
 
 <br>
 

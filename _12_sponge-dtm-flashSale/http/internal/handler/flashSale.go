@@ -131,9 +131,7 @@ func (h *flashSaleHandler) RedisQueryPrepared(ctx context.Context, req *flashSal
 }
 
 func newGid() string {
-	// 这里生成的订单号格式为：年月日时分秒毫秒微妙+随机数, 长度为26，可以使用uuid、雪花算法等替换
-	dt := time.Now().Format("20060102150405.000000")
-	return dt[:14] + dt[15:] + krand.String(krand.R_NUM, 6)
+	return krand.NewSeriesID()
 }
 
 func getCallbackFlashSaleAddr() string {

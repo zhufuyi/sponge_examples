@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package api.stock.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "stock/api/stock/v1;v1";
+
+service callback {
+  // 反查数据
+  rpc QueryPrepared(QueryPreparedRequest) returns (QueryPreparedReply) {
+    option (google.api.http) = {
+      get: "/api/v1/stock/queryPrepared"
+      selector: "[ctx]"
+    };
+  }
+
+  // 删除缓存
+  rpc DeleteCache(DeleteCacheRequest) returns (DeleteCacheReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/deleteCache"
+      body: "*"
+    };
+  }
+}
+
+message QueryPreparedRequest {}
+message QueryPreparedReply {}
+
+message DeleteCacheRequest {
+  string key = 1 [(validate.rules).string.min_len = 1];
+}
+message DeleteCacheReply {}
