@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package api.pay.v1;
+
+import "validate/validate.proto";
+
+option go_package = "eshop/api/pay/v1;v1";
+
+service pay {
+  // 创建支付订单
+  rpc Create(CreatePayRequest) returns (CreatePayReply) {}
+
+  // 取消支付订单
+  rpc CreateRevert(CreatePayRevertRequest) returns (CreatePayRevertReply) {}
+}
+
+message CreatePayRequest {
+	uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+	string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+	uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+}
+
+message CreatePayReply {
+
+}
+
+message CreatePayRevertRequest{
+  uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+  string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+  uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+}
+
+message CreatePayRevertReply {
+
+}

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pay-dm
+  namespace: eshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pay
+  template:
+    metadata:
+      name: pay-pod
+      labels:
+        app: pay
+    spec:
+      containers:
+        - name: pay
+          image: /eshop/pay:latest
+          # If using a local image, use Never, default is Always
+          #imagePullPolicy: Never
+          command: ["./pay", "-c", "/app/configs/pay.yml"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          volumeMounts:
+            - name: pay-vl
+              mountPath: /app/configs/
+              readOnly: true
+
+          ports:
+            - name: grpc-port
+              containerPort: 8282
+            - name: metrics-port
+              containerPort: 8283
+          readinessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8282"]
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8282"]
+
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      # todo for private repositories, you need to create a secret (here docker-auth-secret) to store the account and password to log into docker
+      imagePullSecrets:
+        - name: docker-auth-secret
+      volumes:
+        - name: pay-vl
+          configMap:
+            name: pay-config

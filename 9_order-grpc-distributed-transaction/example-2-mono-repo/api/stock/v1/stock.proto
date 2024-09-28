@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package api.stock.v1;
+
+import "validate/validate.proto";
+
+option go_package = "eshop/api/stock/v1;v1";
+
+service stock {
+  // 扣减库存
+  rpc StockDeduct(StockDeductRequest) returns (StockDeductReply) {}
+
+  // 补偿库存
+  rpc StockDeductRevert(StockDeductRevertRequest) returns (StockDeductRevertReply) {}
+}
+
+message StockDeductRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt  = 0];
+  uint32 productCount = 2 [(validate.rules).uint32.gt  = 0];
+}
+
+message StockDeductReply {
+
+}
+
+message StockDeductRevertRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt  = 0];
+  uint32 productCount = 2 [(validate.rules).uint32.gt  = 0];
+}
+
+message StockDeductRevertReply {
+
+}
+

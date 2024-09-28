@@ -1,12 +1,14 @@
+## Order System with gRPC and Distributed Transactions Examples
 
-[**order-grpc-distributed-transaction 中文说明**](https://juejin.cn/post/7307811441666850870)
+This is an example of a sponge+dtm implementation order system.  Sponge creates two repository types: `multi-repo` and `mono-repo` for microservice multi repository and microservice monolithic repository types respectively.
 
-<br>
+- [**example-1-multi-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/example-1-multi-repo): microservice multi repository (multi-repo) example. In a multi-repo structure, multiple repositories are used, with each service completely decoupled and independent. Each service has its own `go.mod` file, as well as separate `api` and `third_party` directories.
+- [**example-2-mono-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction/example-2-mono-repo): microservice monolithic repository (mono-repo) example. In a mono-repo structure, there is only one repository, with a single `go.mod` file, and the `api` and `third_party` directories are shared as common directories among all services.
 
-The Order-system created by using sponge is a `multi-repo` type of microservice. Although multiple service codes are placed under a directory `9_order-grpc-distributed-transaction`, the codes between different services cannot be reused, so the codes between services are completely independent.
+The setup steps are essentially the same for both `multi-repo` and `mono-repo` repository types, only the following two steps are different:
 
-> Tip: Sponge also supports the creation of a microservice `mono-repo` type where code can be reused between different services, which is simpler.
-
+- When generating code, the `mono-repo` repository type must select the monolithic repository option, while the `multi-repo` repository type does not require selecting this option.
+- For the `multi-repo` repository type, if the protobuf files in the current service depend on protobuf files from other services, you need to copy the dependent protobuf files into the `api` directory of the current service. A `make copy-proto` command is provided for convenient copying. The `mono-repo` repository type does not require copying the dependent protobuf files.
 
 <br>
 

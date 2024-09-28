@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package api.order.v1;
+
+import "validate/validate.proto";
+
+option go_package = "order/api/order/v1;v1";
+
+service order {
+  // 提交订单(分布式事务)
+  rpc Submit(SubmitRequest) returns (SubmitReply) {}
+
+  // 创建订单
+  rpc Create(CreateOrderRequest) returns (CreateOrderReply) {}
+  // 取消创建订单
+  rpc CreateRevert(CreateOrderRevertRequest) returns (CreateOrderRevertReply) {}
+}
+
+message SubmitRequest {
+	uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+	uint64 productID = 2 [(validate.rules).uint64.gt  = 0];  // 商品id
+	uint32 productCount = 4 [(validate.rules).uint32.gt  = 0];  // 商品数量
+	uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+	uint64 couponID = 5;  // 优惠券id
+}
+
+message SubmitReply {
+	string orderID = 1;
+}
+
+message CreateOrderReply {
+
+}
+
+message CreateOrderRevertRequest{
+	string orderID = 1 [(validate.rules).string.min_len = 16]; // 订单id
+	uint64 userID = 2 [(validate.rules).uint64.gt  = 0];  // 用户id
+	uint64 productID = 3 [(validate.rules).uint64.gt  = 0];  // 商品id
+	uint32 productCount = 5 [(validate.rules).uint32.gt  = 0];  // 商品数量
+	uint32 amount = 4 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+	uint64 couponID = 6;  // 优惠券id
+}
+
+message CreateOrderRevertReply {
+
+}
+
+
+// --------------------- 传递给dtm服务用于调用grpc服务api的参数------------------
+
+message CouponUseRequest {
+	uint64 couponID = 1 [(validate.rules).uint64.gt  = 0]; // 优惠券id
+}
+
+message StockDeductRequest {
+	uint64 productID = 1 [(validate.rules).uint64.gt  = 0]; // 商品id
+	uint32 productCount = 2 [(validate.rules).uint32.gt  = 0]; // 商品数量
+}
+
+message CreateOrderRequest {
+	string orderID = 1 [(validate.rules).string.min_len = 16]; // 订单id
+	uint64 userID = 2 [(validate.rules).uint64.gt  = 0];  // 用户id
+	uint64 productID = 3 [(validate.rules).uint64.gt  = 0];  // 商品id
+	uint32 productCount = 5 [(validate.rules).uint32.gt  = 0];  // 商品数量
+	uint32 amount = 4 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+	uint64 couponID = 6;  // 优惠券id
+}
+
+message CreatePayRequest {
+	uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+	string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+	uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+}

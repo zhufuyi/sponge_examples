@@ -95,7 +95,7 @@ func InitDtmServerResolver() {
 		builder := discovery.NewBuilder(iDiscovery, discovery.WithInsecure(true), discovery.DisableDebugLog())
 		resolver.Register(builder)
 	} else {
-		logger.Infof("using address connect directly, endpoint = %s", dtmServerEndPoint)
+		logger.Infof("using address connect to [dtm] directly, endpoint = %s", dtmServerEndPoint)
 	}
 }
 

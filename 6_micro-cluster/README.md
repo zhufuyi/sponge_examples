@@ -5,7 +5,7 @@ Here is an example of quickly creating a microservices cluster using sponge base
 - [**example-1-multi-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster/example-1-multi-repo): microservice multi repository (multi-repo) example. In a multi-repo structure, multiple repositories are used, with each service completely decoupled and independent. Each service has its own `go.mod` file, as well as separate `api` and `third_party` directories.
 - [**example-2-mono-repo**](https://github.com/zhufuyi/sponge_examples/tree/main/6_micro-cluster/example-2-mono-repo): microservice monolithic repository (mono-repo) example. In a mono-repo structure, there is only one repository, with a single `go.mod` file, and the `api` and `third_party` directories are shared as common directories among all services.
 
-The development and code generation processes are the same for both structures; the difference lies in the organization of the code. The mono-repo structure is generally recommended.
+The development and code generation processes are the same for both structures; the difference lies in the organization of the code.
 
 <br>
 <br>
