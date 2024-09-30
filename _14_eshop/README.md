@@ -15,7 +15,7 @@ This includes [two source code examples](https://github.com/zhufuyi/sponge_examp
 
 To build this e-commerce system, you need the following tools and dependencies:
 
-- **[Sponge](https://github.com/zhufuyi/sponge)**: A tool for rapidly generating service and module code for different systems. Follow the [Sponge installation guide](https://github.com/zhufuyi/sponge/blob/main/assets/install-cn.md) for more information.
+- **[Sponge](https://github.com/zhufuyi/sponge)**: A tool for rapidly generating service and module code for different systems. Follow the [Sponge installation guide](https://github.com/zhufuyi/sponge/blob/main/assets/install-en.md) for more information.
 
 Additionally, the following services are required:
 
