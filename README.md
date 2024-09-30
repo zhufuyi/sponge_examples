@@ -1,7 +1,7 @@
 
 ## Sponge Examples
 
-Here are some examples of using sponge to develop go projects. [Sponge](https://github.com/zhufuyi/sponge) is a powerful development framework that integrates `code auto generation`, `gin and grpc framework`. It is easy to build a complete project from development to deployment, just fill in the business logic code on the generated template code, implementation of "low-code way" development projects.
+Here are some examples of using sponge to develop go projects. [Sponge](https://github.com/zhufuyi/sponge) is a powerful development framework that integrates `code auto generation`, `gin and grpc framework`. It is provides one-stop project development (code generation, development, testing, api documentation, deployment), it greatly improves development efficiency and reduces development difficulty, develop high-quality projects with a "low code approach".
 
 <br>
 
@@ -26,3 +26,4 @@ Here are some examples of using sponge to develop go projects. [Sponge](https://
 - [Flash sale](https://github.com/zhufuyi/sponge_examples/tree/main/_12_sponge-dtm-flashSale)
 - [Cache consistency (redis, mysql)](https://github.com/zhufuyi/sponge_examples/tree/main/_13_sponge-dtm-cache)
 - [Simple distributed order system](https://github.com/zhufuyi/sponge_examples/tree/main/9_order-grpc-distributed-transaction)
+- [E-Commerce system](https://github.com/zhufuyi/sponge_examples/tree/main/_14_eshop)
