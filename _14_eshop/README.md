@@ -271,9 +271,9 @@ Once individual services pass the tests, use the API gateway service of `eshop_g
 
 ### Stress Testing
 
-To perform stress testing on the `eshop_gw` API gateway service and verify the system's performance under high concurrency, use the stress testing tool [k6](https://github.com/grafana/k6). Before conducting the stress test, ensure that enough stock is set to avoid order failure.
+To perform stress testing on the `eshop_gw` API gateway service and verify the system's performance under high concurrency, use the stress testing tool [K6](https://github.com/grafana/k6). Before conducting the stress test, ensure that enough stock is set to avoid order failure.
 
-1. For stress testing the Submit Order API scenario, use the k6 script [submit_order.js](https://github.com/zhufuyi/sponge_examples/blob/main/_14_eshop/test/submit_order.js) and run the following command:
+1. For stress testing the Submit Order API scenario, use the k6 script [submitOrder.js](https://github.com/zhufuyi/sponge_examples/blob/main/_14_eshop/test/submitOrder.js) and run the following command:
 
     ```bash
     # 1000 virtual users, running for 10 seconds
@@ -283,7 +283,7 @@ To perform stress testing on the `eshop_gw` API gateway service and verify the s
     k6 run -u 1000 -i 100000 submit_order.js
     ```
 
-2. For stress testing the Flash Sale API scenario, use the k6 script [flash_sale.js](https://github.com/zhufuyi/sponge_examples/blob/main/_14_eshop/test/flash_sale.js) and run the following command:
+2. For stress testing the Flash Sale API scenario, use the k6 script [flashSale.js](https://github.com/zhufuyi/sponge_examples/blob/main/_14_eshop/test/flashSale.js) and run the following command:
 
    ```bash
    # 10,000 virtual users, running for 1 second
