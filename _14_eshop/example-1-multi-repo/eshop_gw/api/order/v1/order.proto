@@ -1,0 +1,309 @@
+syntax = "proto3";
+
+package api.order.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "eshop_gw/api/order/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30280"
+  base_path: ""
+  info: {
+    title: "order api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service order {
+  // 提交订单(分布式事务)
+  rpc Submit(SubmitOrderRequest) returns (SubmitOrderReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/submit"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "提交订单",
+      description: "提交订单，dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 发送提交订单通知
+  rpc SendSubmitOrderNotify(SendSubmitOrderNotifyRequest) returns (SendSubmitOrderNotifyReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/sendSubmitNotify"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "提交订单(有队列缓冲)",
+      description: "发送提交订单通知到消息队列kafka",
+    };
+  }
+
+  // 创建订单
+  rpc Create(CreateOrderRequest) returns (CreateOrderReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/create"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "创建订单",
+      description: "创建订单，dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 取消创建订单
+  rpc CreateRevert(CreateOrderRevertRequest) returns (CreateOrderRevertReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/createRevert"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "取消创建订单",
+      description: "取消创建订单，dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // delete order by id
+  rpc DeleteByID(DeleteOrderByIDRequest) returns (DeleteOrderByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/order/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete order",
+      description: "delete order by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // update order by id
+  rpc UpdateByID(UpdateOrderByIDRequest) returns (UpdateOrderByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/order/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update order",
+      description: "update order by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // get order by id
+  rpc GetByID(GetOrderByIDRequest) returns (GetOrderByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/order/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get order detail",
+      description: "get order detail by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // list of order by query parameters
+  rpc List(ListOrderRequest) returns (ListOrderReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of orders by parameters",
+      description: "list of orders by paging and conditions",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+}
+
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) Suggest using camel hump naming for message field names, and for names ending in 'id',
+//      use xxxID naming format, such as userID, orderID, etc.
+// (3) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string fieldName = 1 [json_name = "field_name"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (4) If the route contains the path parameter, such as /api/v1/order/{id}, the defined
+//      message  must contain the name of the path parameter and the name should be
+//      added with a new tag, such as int64 id = 1 [(tagger.tags) = "uri:\"id\""];
+// (5) If the request url is followed by a query parameter, such as /api/v1/getOrder?name=Tom,
+//      a form tag must be added when defining the query parameter in the message,
+//      such as string name = 1 [(tagger.tags) = "form:\"name\""].
+
+
+message SubmitOrderRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 2 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 3 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 5;  // 优惠券id
+}
+
+message SubmitOrderReply {
+  string orderID = 1;
+}
+
+message SendSubmitOrderNotifyRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 2 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 3 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 5;  // 优惠券id
+}
+
+message SendSubmitOrderNotifyReply {}
+
+
+message CreateOrderRequest {
+  string orderID = 1 [(validate.rules).string.min_len = 16]; // 订单id
+  uint64 userID = 2 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 3 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 5 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 6;  // 优惠券id
+}
+
+message CreateOrderReply {
+
+}
+
+message CreateOrderRevertRequest{
+  string orderID = 1 [(validate.rules).string.min_len = 16]; // 订单id
+  uint64 userID = 2 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 3 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 5 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 6;  // 优惠券id
+}
+
+message CreatePayRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+  uint32 amount = 3 [(validate.rules).uint32.gt = 0];  // 金额(分)
+}
+
+message CreateOrderRevertReply {
+
+}
+
+message CouponUseRequest {
+  uint64 couponID = 1 [(validate.rules).uint64.gt = 0]; // 优惠券id
+}
+
+message StockDeductRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt = 0]; // 商品id
+  uint32 productCount = 2 [(validate.rules).uint32.gt = 0]; // 商品数量
+}
+
+message DeleteOrderByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\""];
+}
+
+message DeleteOrderByIDReply {
+
+}
+
+message UpdateOrderByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	string orderID = 2;  // 订单id
+	uint64 userID = 3;  // 用户id
+	uint64 productID = 4;  // 商品id
+	uint32 productCount = 5;  // 商品数量
+	uint32 amount = 6;  // 金额(分)
+	uint64 couponID = 7;  // 优惠券id
+	uint32 status = 8;  // 订单状态: 1:待支付, 2:待发货, 3:待收货, 4:已完成, 5:已取消
+}
+
+message UpdateOrderByIDReply {
+
+}
+
+message Order {
+	uint64 id = 1; 
+	string createdAt = 2; 
+	string updatedAt = 3; 
+	string orderID = 4;  // 订单id
+	uint64 userID = 5;  // 用户id
+	uint64 productID = 6;  // 商品id
+	uint32 productCount = 7;  // 商品数量
+	uint32 amount = 8;  // 金额(分)
+	uint64 couponID = 9;  // 优惠券id
+	uint32 status = 10;  // 订单状态: 1:待支付, 2:待发货, 3:待收货, 4:已完成, 5:已取消
+}
+
+message GetOrderByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetOrderByIDReply {
+  Order order = 1;
+}
+
+message ListOrderRequest {
+  api.types.Params params = 1;
+}
+
+message ListOrderReply {
+  int64 total = 1;
+  repeated Order orders = 2;
+}

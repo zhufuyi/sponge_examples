@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package api.types;
+
+option go_package = "coupon/api/types;types";
+
+message Params {
+  int32 page = 1; // page number, starting from 0
+  int32 limit = 2; // number per page
+  string sort = 3; // sorted fields, multi-column sorting separated by commas
+  repeated Column columns = 4; // query conditions
+}
+
+message Column {
+  string  name = 1;  // column name
+  string  exp = 2;   // expressions, which default to = when the value is null, have =, !=, >, >=, <, <=, like, in
+  string value = 3; // column value
+  string  logic = 4; // logical type, defaults to and when value is null, only &(and), ||(or)
+}
+
+message Conditions {
+  repeated Column columns = 1; // query conditions
+}

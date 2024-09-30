@@ -1,0 +1,219 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "eshop/api/user/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30080"
+  base_path: ""
+  info: {
+    title: "user api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service user {
+  // create user
+  rpc Create(CreateUserRequest) returns (CreateUserReply) {
+    option (google.api.http) = {
+      post: "/api/v1/user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create user",
+      description: "submit information to create user",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // delete user by id
+  rpc DeleteByID(DeleteUserByIDRequest) returns (DeleteUserByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/user/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete user",
+      description: "delete user by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // update user by id
+  rpc UpdateByID(UpdateUserByIDRequest) returns (UpdateUserByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/user/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update user",
+      description: "update user by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // get user by id
+  rpc GetByID(GetUserByIDRequest) returns (GetUserByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/user/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get user detail",
+      description: "get user detail by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // list of user by query parameters
+  rpc List(ListUserRequest) returns (ListUserReply) {
+    option (google.api.http) = {
+      post: "/api/v1/user/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of users by parameters",
+      description: "list of users by paging and conditions",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+}
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string foo_bar = 1 [json_name = "foo_bar"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (3) If the route contains the path parameter, such as /api/v1/user/{id}, the defined
+//      message  must contain the name of the path parameter and the name should be
+//      added with a new tag, such as int64 id = 1 [(tagger.tags) = "uri:\"id\""];
+// (4) If the request url is followed by a query parameter, such as /api/v1/getUser?name=Tom,
+//      a form tag must be added when defining the query parameter in the message,
+//      such as string name = 1 [(tagger.tags) = "form:\"name\""];
+
+
+message CreateUserRequest {
+	string name = 1;  // 用户名
+	string password = 2;  // 密码
+	string email = 3;  // 邮箱
+	string phone = 4;  // 电话号码
+	string avatar = 5;  // 头像
+	int32 age = 6;  // age
+	int32 gender = 7;  // 性别, 1:男, 2:女, 其他值:未知
+	int32 status = 8;  // 账号状态, 0:待验证, 1:正常, 2:封禁
+	uint64 loginAt = 9;  // 登录时间戳
+	int32 loginType = 10;  // 登录类型, 1:web, 2:mobile, 3:desktop, 4:api
+}
+
+message CreateUserReply {
+  uint64 id = 1;
+}
+
+message DeleteUserByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\""];
+}
+
+message DeleteUserByIDReply {
+
+}
+
+message UpdateUserByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	string name = 2;  // 用户名
+	string password = 3;  // 密码
+	string email = 4;  // 邮箱
+	string phone = 5;  // 电话号码
+	string avatar = 6;  // 头像
+	int32 age = 7;  // age
+	int32 gender = 8;  // 性别, 1:男, 2:女, 其他值:未知
+	int32 status = 9;  // 账号状态, 0:待验证, 1:正常, 2:封禁
+	uint64 loginAt = 10;  // 登录时间戳
+	int32 loginType = 11;  // 登录类型, 1:web, 2:mobile, 3:desktop, 4:api
+}
+
+message UpdateUserByIDReply {
+
+}
+
+message User {
+	uint64 id = 1; 
+	string createdAt = 2; 
+	string updatedAt = 3; 
+	string name = 4;  // 用户名
+	string password = 5;  // 密码
+	string email = 6;  // 邮箱
+	string phone = 7;  // 电话号码
+	string avatar = 8;  // 头像
+	int32 age = 9;  // age
+	int32 gender = 10;  // 性别, 1:男, 2:女, 其他值:未知
+	int32 status = 11;  // 账号状态, 0:待验证, 1:正常, 2:封禁
+	uint64 loginAt = 12;  // 登录时间戳
+	int32 loginType = 13;  // 登录类型, 1:web, 2:mobile, 3:desktop, 4:api
+}
+
+message GetUserByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetUserByIDReply {
+  User user = 1;
+}
+
+message ListUserRequest {
+  api.types.Params params = 1;
+}
+
+message ListUserReply {
+  int64 total =1;
+  repeated User users = 2;
+}
+
+

@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package api.flashSale.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+
+option go_package = "eshop_gw/api/flashSale/v1;v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30680"
+  base_path: ""
+  info: {
+    title: "flash sale api docs";
+    version: "2.0";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+};
+
+service flashSale {
+  // 秒杀抢购
+  rpc FlashSale(FlashSaleRequest) returns (FlashSaleReply) {
+    option (google.api.http) = {
+      post: "/api/v1/flashSale"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "秒杀抢购",
+      description: "秒杀抢购",
+    };
+  }
+
+  // 反查redis数据
+  rpc RedisQueryPrepared(RedisQueryPreparedRequest) returns (RedisQueryPreparedReply) {
+    option (google.api.http) = {
+      get: "/api/v1/redisQueryPrepared"
+      selector: "[ctx]"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "反查redis数据",
+      description: "反查redis数据",
+    };
+  }
+
+  // 发送提交订单通知
+  rpc SendSubmitOrderNotify(SendSubmitOrderNotifyRequest) returns (SendSubmitOrderNotifyReply) {
+    option (google.api.http) = {
+      post: "/api/v1/SendSubmitOrderNotify"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "发送提交订单通知",
+      description: "发送提交订单通知到消息队列kafka",
+    };
+  }
+}
+
+message FlashSaleRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 2 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+}
+
+message FlashSaleReply {}
+
+message RedisQueryPreparedRequest {}
+
+message RedisQueryPreparedReply {}
+
+message SendSubmitOrderNotifyRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt = 0];  // 用户id
+  uint64 productID = 2 [(validate.rules).uint64.gt = 0];  // 商品id
+  uint32 productCount = 3 [(validate.rules).uint32.gt = 0];  // 商品数量
+  uint32 amount = 4 [(validate.rules).uint32.gt = 0];  // 金额(分)
+  uint64 couponID = 5;  // 优惠券id
+}
+
+message SendSubmitOrderNotifyReply {}

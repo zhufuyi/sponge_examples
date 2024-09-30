@@ -1,0 +1,282 @@
+syntax = "proto3";
+
+package api.stock.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "eshop/api/stock/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30380"
+  base_path: ""
+  info: {
+    title: "stock api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service stock {
+  // 扣减库存
+  rpc StockDeduct(StockDeductRequest) returns (StockDeductReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/deduct"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "扣减库存",
+      description: "扣减库存，dtm saga 事务模式",
+      tags: "dtm saga",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 补偿库存
+  rpc StockDeductRevert(StockDeductRevertRequest) returns (StockDeductRevertReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/deductRevert"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "补偿库存",
+      description: "补偿库存，dtm saga 事务模式",
+      tags: "dtm saga",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 设置秒杀产品的库存，直接更新DB和缓存，这里没有使用dtm+rockscache缓存一致性方案，主要原因是与flashSale服务使用dtm+rockscache操作redis的key相同，会产生冲突。
+  rpc SetFlashSaleStock(SetFlashSaleStockRequest) returns (SetFlashSaleStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/setFlashSale"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "设置秒杀产品的库存",
+      description: "设置秒杀产品的库存",
+      tags: "sync db&cache",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // create stock
+  rpc Create(CreateStockRequest) returns (CreateStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create stock",
+      description: "submit information to create stock",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // delete stock by id
+  rpc DeleteByID(DeleteStockByIDRequest) returns (DeleteStockByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/stock/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete stock",
+      description: "delete stock by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // update stock by id
+  rpc UpdateByID(UpdateStockByIDRequest) returns (UpdateStockByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/stock/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update stock",
+      description: "update stock by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // get stock by id
+  rpc GetByID(GetStockByIDRequest) returns (GetStockByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/stock/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get stock detail",
+      description: "get stock detail by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // list of stock by query parameters
+  rpc List(ListStockRequest) returns (ListStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of stocks by parameters",
+      description: "list of stocks by paging and conditions",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+}
+
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) Suggest using camel hump naming for message field names, and for names ending in 'id',
+//      use xxxID naming format, such as userID, orderID, etc.
+// (3) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string fieldName = 1 [json_name = "field_name"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (4) If the route contains the path parameter, such as /api/v1/stock/{id}, the defined
+//      message  must contain the name of the path parameter and the name should be
+//      added with a new tag, such as int64 id = 1 [(tagger.tags) = "uri:\"id\""];
+// (5) If the request url is followed by a query parameter, such as /api/v1/getStock?name=Tom,
+//      a form tag must be added when defining the query parameter in the message,
+//      such as string name = 1 [(tagger.tags) = "form:\"name\""].
+
+
+message StockDeductRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt  = 0];
+  uint32 productCount = 2 [(validate.rules).uint32.gt  = 0];
+}
+
+message StockDeductReply {
+
+}
+
+message StockDeductRevertRequest {
+  uint64 productID = 1 [(validate.rules).uint64.gt  = 0];
+  uint32 productCount = 2 [(validate.rules).uint32.gt  = 0];
+}
+
+message StockDeductRevertReply {
+
+}
+
+message SetFlashSaleStockRequest {
+	uint64 productID = 1;  // 商品id
+	uint32 stock = 2;  // 库存
+}
+
+message SetFlashSaleStockReply {
+
+}
+
+message CreateStockRequest {
+	uint64 productID = 1;  // 商品id
+	uint32 stock = 2;  // 库存
+}
+
+message CreateStockReply {
+  uint64 id = 1;
+}
+
+message DeleteStockByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\""];
+}
+
+message DeleteStockByIDReply {
+
+}
+
+message UpdateStockByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	uint64 productID = 2;  // 商品id
+	uint32 stock = 3;  // 库存
+}
+
+message UpdateStockByIDReply {
+
+}
+
+message Stock {
+	uint64 id = 1; 
+	uint64 productID = 2;  // 商品id
+	uint32 stock = 3;  // 库存
+	string createdAt = 4; 
+	string updatedAt = 5; 
+}
+
+message GetStockByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetStockByIDReply {
+  Stock stock = 1;
+}
+
+message ListStockRequest {
+  api.types.Params params = 1;
+}
+
+message ListStockReply {
+  int64 total = 1;
+  repeated Stock stocks = 2;
+}
+

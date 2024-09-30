@@ -1,0 +1,514 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stock api docs",
+    "version": "2.0"
+  },
+  "tags": [
+    {
+      "name": "stock"
+    }
+  ],
+  "host": "localhost:30380",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/stock": {
+      "post": {
+        "summary": "create stock",
+        "description": "submit information to create stock",
+        "operationId": "stock_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    },
+    "/api/v1/stock/deduct": {
+      "post": {
+        "summary": "扣减库存",
+        "description": "扣减库存，dtm saga 事务模式",
+        "operationId": "stock_StockDeduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1StockDeductReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1StockDeductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "dtm saga"
+        ]
+      }
+    },
+    "/api/v1/stock/deductRevert": {
+      "post": {
+        "summary": "补偿库存",
+        "description": "补偿库存，dtm saga 事务模式",
+        "operationId": "stock_StockDeductRevert",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1StockDeductRevertReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1StockDeductRevertRequest"
+            }
+          }
+        ],
+        "tags": [
+          "dtm saga"
+        ]
+      }
+    },
+    "/api/v1/stock/list": {
+      "post": {
+        "summary": "list of stocks by parameters",
+        "description": "list of stocks by paging and conditions",
+        "operationId": "stock_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    },
+    "/api/v1/stock/setFlashSale": {
+      "post": {
+        "summary": "设置秒杀产品的库存",
+        "description": "设置秒杀产品的库存",
+        "operationId": "stock_SetFlashSaleStock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SetFlashSaleStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SetFlashSaleStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "sync db\u0026cache"
+        ]
+      }
+    },
+    "/api/v1/stock/{id}": {
+      "get": {
+        "summary": "get stock detail",
+        "description": "get stock detail by id",
+        "operationId": "stock_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      },
+      "delete": {
+        "summary": "delete stock",
+        "description": "delete stock by id",
+        "operationId": "stock_DeleteByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      },
+      "put": {
+        "summary": "update stock",
+        "description": "update stock by id",
+        "operationId": "stock_UpdateByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateStockByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productID": {
+                  "type": "integer",
+                  "format": "uint64"
+                },
+                "stock": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "stock"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "typesColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "exp": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "logic": {
+          "type": "string"
+        }
+      }
+    },
+    "typesParams": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typesColumn"
+          }
+        }
+      }
+    },
+    "v1CreateStockReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1DeleteStockByIDReply": {
+      "type": "object"
+    },
+    "v1GetStockByIDReply": {
+      "type": "object",
+      "properties": {
+        "stock": {
+          "$ref": "#/definitions/v1Stock"
+        }
+      }
+    },
+    "v1ListStockReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Stock"
+          }
+        }
+      }
+    },
+    "v1ListStockRequest": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/typesParams"
+        }
+      }
+    },
+    "v1SetFlashSaleStockReply": {
+      "type": "object"
+    },
+    "v1SetFlashSaleStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1Stock": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1StockDeductReply": {
+      "type": "object"
+    },
+    "v1StockDeductRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1StockDeductRevertReply": {
+      "type": "object"
+    },
+    "v1StockDeductRevertRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1UpdateStockByIDReply": {
+      "type": "object"
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "description": "Type Bearer your-jwt-token to Value",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

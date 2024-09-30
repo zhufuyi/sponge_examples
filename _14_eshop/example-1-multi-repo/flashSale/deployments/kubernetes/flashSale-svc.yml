@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flash-sale-svc
+  namespace: eshop
+spec:
+  selector:
+    app: flash-sale
+  type: ClusterIP
+  ports:
+    - name: flash-sale-svc-grpc-port
+      port: 8282
+      targetPort: 8282
+    - name: flash-sale-svc-grpc-metrics-port
+      port: 8283
+      targetPort: 8283
+

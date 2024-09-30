@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-svc
+  namespace: eshop
+spec:
+  selector:
+    app: stock
+  type: ClusterIP
+  ports:
+    - name: stock-svc-grpc-port
+      port: 8282
+      targetPort: 8282
+    - name: stock-svc-grpc-metrics-port
+      port: 8283
+      targetPort: 8283
+

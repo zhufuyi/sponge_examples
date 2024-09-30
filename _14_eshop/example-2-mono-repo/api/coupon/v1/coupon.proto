@@ -1,0 +1,253 @@
+syntax = "proto3";
+
+package api.coupon.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "eshop/api/coupon/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30480"
+  base_path: ""
+  info: {
+    title: "coupon api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service coupon {
+  // 使用优惠券
+  rpc CouponUse(CouponUseRequest) returns (CouponUseReply) {
+    option (google.api.http) = {
+      post: "/api/v1/coupon/use"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "使用优惠券",
+      description: "使用优惠券，dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 补偿优惠券
+  rpc CouponUseRevert(couponUseRevertRequest) returns (couponUseRevertReply) {
+    option (google.api.http) = {
+      post: "/api/v1/coupon/useRevert"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "补偿优惠券",
+      description: "补偿优惠券，dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // create coupon
+  rpc Create(CreateCouponRequest) returns (CreateCouponReply) {
+    option (google.api.http) = {
+      post: "/api/v1/coupon"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create coupon",
+      description: "submit information to create coupon",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // delete coupon by id
+  rpc DeleteByID(DeleteCouponByIDRequest) returns (DeleteCouponByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/coupon/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete coupon",
+      description: "delete coupon by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // update coupon by id
+  rpc UpdateByID(UpdateCouponByIDRequest) returns (UpdateCouponByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/coupon/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update coupon",
+      description: "update coupon by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // get coupon by id
+  rpc GetByID(GetCouponByIDRequest) returns (GetCouponByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/coupon/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get coupon detail",
+      description: "get coupon detail by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // list of coupon by query parameters
+  rpc List(ListCouponRequest) returns (ListCouponReply) {
+    option (google.api.http) = {
+      post: "/api/v1/coupon/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of coupons by parameters",
+      description: "list of coupons by paging and conditions",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+}
+
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) Suggest using camel hump naming for message field names, and for names ending in 'id',
+//      use xxxID naming format, such as userID, orderID, etc.
+// (3) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string fieldName = 1 [json_name = "field_name"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (4) If the route contains the path parameter, such as /api/v1/coupon/{id}, the defined
+//      message  must contain the name of the path parameter and the name should be
+//      added with a new tag, such as int64 id = 1 [(tagger.tags) = "uri:\"id\""];
+// (5) If the request url is followed by a query parameter, such as /api/v1/getCoupon?name=Tom,
+//      a form tag must be added when defining the query parameter in the message,
+//      such as string name = 1 [(tagger.tags) = "form:\"name\""].
+
+
+message CouponUseRequest {
+  uint64 couponID = 1 [(validate.rules).uint64.gt  = 0];
+}
+
+message CouponUseReply {
+  
+}
+
+message couponUseRevertRequest {
+  uint64 couponID = 1 [(validate.rules).uint64.gt  = 0];
+}
+
+message couponUseRevertReply {
+  
+}
+
+message CreateCouponRequest {
+	uint64 userID = 1;  // 用户id
+	uint32 amount = 2;  // 优惠券金额(分)
+	uint32 status = 3;  // 是否使用, 1:未使用, 2:已使用, 3:已过期
+}
+
+message CreateCouponReply {
+  uint64 id = 1;
+}
+
+message DeleteCouponByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\""];
+}
+
+message DeleteCouponByIDReply {
+
+}
+
+message UpdateCouponByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	uint64 userID = 2;  // 用户id
+	uint32 amount = 3;  // 优惠券金额(分)
+	uint32 status = 4;  // 是否使用, 1:未使用, 2:已使用, 3:已过期
+}
+
+message UpdateCouponByIDReply {
+
+}
+
+message Coupon {
+	uint64 id = 1; 
+	uint64 userID = 2;  // 用户id
+	uint32 amount = 3;  // 优惠券金额(分)
+	uint32 status = 4;  // 是否使用, 1:未使用, 2:已使用, 3:已过期
+	string createdAt = 5; 
+	string updatedAt = 6; 
+}
+
+message GetCouponByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetCouponByIDReply {
+  Coupon coupon = 1;
+}
+
+message ListCouponRequest {
+  api.types.Params params = 1;
+}
+
+message ListCouponReply {
+  int64 total = 1;
+  repeated Coupon coupons = 2;
+}
+
+

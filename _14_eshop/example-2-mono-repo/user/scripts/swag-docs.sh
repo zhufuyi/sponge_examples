@@ -1,0 +1,44 @@
+#!/bin/bash
+
+bash scripts/patch-mono.sh
+
+HOST_ADDR=$1
+
+function checkResult() {
+    result=$1
+    if [ ${result} -ne 0 ]; then
+        exit ${result}
+    fi
+}
+
+echo "go mod tidy"
+go mod tidy
+checkResult $?
+gofmt -s -w .
+
+# change host addr
+if [ "X${HOST_ADDR}" = "X" ];then
+  HOST_ADDR=$(cat cmd/user/main.go | grep "@host" | awk '{print $3}')
+  HOST_ADDR=$(echo  ${HOST_ADDR} | cut -d ':' -f 1)
+else
+    sed -i "s/@host .*:8080/@host ${HOST_ADDR}:8080/g" cmd/user/main.go
+fi
+
+# generate api docs
+swag init -g cmd/user/main.go
+checkResult $?
+
+# modify duplicate numbers and error codes
+sponge patch modify-dup-num --dir=user/internal/ecode
+sponge patch modify-dup-err-code --dir=user/internal/ecode
+
+colorGreen='\033[1;32m'
+colorCyan='\033[1;36m'
+highBright='\033[1m'
+markEnd='\033[0m'
+
+echo ""
+echo -e "${highBright}Tip:${markEnd} execute the command ${colorCyan}make run${markEnd} and then visit ${colorCyan}http://${HOST_ADDR}:8080/swagger/index.html${markEnd} in your browser."
+echo ""
+echo -e "${colorGreen}generated api docs done.${markEnd}"
+echo ""

@@ -1,0 +1,605 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "order api docs",
+    "version": "2.0"
+  },
+  "tags": [
+    {
+      "name": "order"
+    }
+  ],
+  "host": "localhost:30280",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/order/create": {
+      "post": {
+        "summary": "创建订单",
+        "description": "创建订单，dtm saga 事务模式",
+        "operationId": "order_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    },
+    "/api/v1/order/createRevert": {
+      "post": {
+        "summary": "取消创建订单",
+        "description": "取消创建订单，dtm saga 事务模式",
+        "operationId": "order_CreateRevert",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateOrderRevertReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateOrderRevertRequest"
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    },
+    "/api/v1/order/list": {
+      "post": {
+        "summary": "list of orders by parameters",
+        "description": "list of orders by paging and conditions",
+        "operationId": "order_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    },
+    "/api/v1/order/sendSubmitNotify": {
+      "post": {
+        "summary": "提交订单(有队列缓冲)",
+        "description": "发送提交订单通知到消息队列kafka",
+        "operationId": "order_SendSubmitOrderNotify",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendSubmitOrderNotifyReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SendSubmitOrderNotifyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    },
+    "/api/v1/order/submit": {
+      "post": {
+        "summary": "提交订单",
+        "description": "提交订单，dtm saga 事务模式",
+        "operationId": "order_Submit",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SubmitOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SubmitOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    },
+    "/api/v1/order/{id}": {
+      "get": {
+        "summary": "get order detail",
+        "description": "get order detail by id",
+        "operationId": "order_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetOrderByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      },
+      "delete": {
+        "summary": "delete order",
+        "description": "delete order by id",
+        "operationId": "order_DeleteByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteOrderByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      },
+      "put": {
+        "summary": "update order",
+        "description": "update order by id",
+        "operationId": "order_UpdateByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateOrderByIDReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "orderID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "integer",
+                  "format": "uint64"
+                },
+                "productID": {
+                  "type": "integer",
+                  "format": "uint64"
+                },
+                "productCount": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "amount": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "couponID": {
+                  "type": "integer",
+                  "format": "uint64"
+                },
+                "status": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "order"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "typesColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "exp": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "logic": {
+          "type": "string"
+        }
+      }
+    },
+    "typesParams": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typesColumn"
+          }
+        }
+      }
+    },
+    "v1CreateOrderReply": {
+      "type": "object"
+    },
+    "v1CreateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "orderID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateOrderRevertReply": {
+      "type": "object"
+    },
+    "v1CreateOrderRevertRequest": {
+      "type": "object",
+      "properties": {
+        "orderID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1DeleteOrderByIDReply": {
+      "type": "object"
+    },
+    "v1GetOrderByIDReply": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "$ref": "#/definitions/v1Order"
+        }
+      }
+    },
+    "v1ListOrderReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Order"
+          }
+        }
+      }
+    },
+    "v1ListOrderRequest": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/typesParams"
+        }
+      }
+    },
+    "v1Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "orderID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1SendSubmitOrderNotifyReply": {
+      "type": "object"
+    },
+    "v1SendSubmitOrderNotifyRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1SubmitOrderReply": {
+      "type": "object",
+      "properties": {
+        "orderID": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SubmitOrderRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1UpdateOrderByIDReply": {
+      "type": "object"
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "description": "Type Bearer your-jwt-token to Value",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

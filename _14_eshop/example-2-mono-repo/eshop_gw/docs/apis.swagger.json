@@ -1,0 +1,1010 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "eshop gateway api docs",
+    "version": "2.0"
+  },
+  "tags": [
+    {
+      "name": "eshop"
+    }
+  ],
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/coupon": {
+      "post": {
+        "summary": "create coupon",
+        "description": "submit information to create coupon",
+        "operationId": "eshop_CreateCoupon",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCouponReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCouponRequest"
+            }
+          }
+        ],
+        "tags": [
+          "优惠券服务 api"
+        ]
+      }
+    },
+    "/api/v1/coupon/list": {
+      "get": {
+        "summary": "list of coupons by parameters",
+        "description": "list of coupons by paging and conditions",
+        "operationId": "eshop_ListCoupon",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCouponReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": "page number, start from 0",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "description": "Size per page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "优惠券服务 api"
+        ]
+      }
+    },
+    "/api/v1/flashSale": {
+      "post": {
+        "summary": "秒杀抢购",
+        "description": "秒杀抢购",
+        "operationId": "eshop_FlashSale",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1FlashSaleReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FlashSaleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "秒杀服务 api"
+        ]
+      }
+    },
+    "/api/v1/order/list": {
+      "get": {
+        "summary": "list of orders by parameters",
+        "description": "list of orders by paging and conditions",
+        "operationId": "eshop_ListOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": "page number, start from 0",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "description": "Size per page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "订单服务 api"
+        ]
+      }
+    },
+    "/api/v1/order/sendSubmitNotify": {
+      "post": {
+        "summary": "提交订单(有队列缓冲)",
+        "description": "发送提交订单通知到消息队列kafka",
+        "operationId": "eshop_SendSubmitOrderNotify",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiorderv1SendSubmitOrderNotifyReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiorderv1SendSubmitOrderNotifyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "订单服务 api"
+        ]
+      }
+    },
+    "/api/v1/order/submit": {
+      "post": {
+        "summary": "提交订单",
+        "description": "提交订单，dtm saga 事务模式",
+        "operationId": "eshop_SubmitOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SubmitOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SubmitOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "订单服务 api"
+        ]
+      }
+    },
+    "/api/v1/product": {
+      "post": {
+        "summary": "create product",
+        "description": "submit information to create product",
+        "operationId": "eshop_CreateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateProductReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "商品服务 api"
+        ]
+      }
+    },
+    "/api/v1/product/list": {
+      "get": {
+        "summary": "list of products by parameters",
+        "description": "list of products by paging and conditions",
+        "operationId": "eshop_ListProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": "page number, start from 0",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "description": "Size per page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "商品服务 api"
+        ]
+      }
+    },
+    "/api/v1/stock": {
+      "post": {
+        "summary": "create stock",
+        "description": "submit information to create stock",
+        "operationId": "eshop_CreateStock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "库存服务 api"
+        ]
+      }
+    },
+    "/api/v1/stock/list": {
+      "get": {
+        "summary": "list of stocks by parameters",
+        "description": "list of stocks by paging and conditions",
+        "operationId": "eshop_ListStock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": "page number, start from 0",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "description": "Size per page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "库存服务 api"
+        ]
+      }
+    },
+    "/api/v1/stock/setFlashSale": {
+      "post": {
+        "summary": "设置产品的库存",
+        "description": "设置产品的库存(幂等)",
+        "operationId": "eshop_SetFlashSaleStock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SetFlashSaleStockReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SetFlashSaleStockRequest"
+            }
+          }
+        ],
+        "tags": [
+          "库存服务 api"
+        ]
+      }
+    },
+    "/api/v1/user": {
+      "post": {
+        "summary": "create user",
+        "description": "submit information to create user",
+        "operationId": "eshop_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateUserReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "用户服务 api"
+        ]
+      }
+    },
+    "/api/v1/user/list": {
+      "get": {
+        "summary": "list of users by parameters",
+        "description": "list of users by paging and conditions",
+        "operationId": "eshop_ListUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "description": "page number, start from 0",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "limit",
+            "description": "Size per page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "用户服务 api"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "apiorderv1SendSubmitOrderNotifyReply": {
+      "type": "object"
+    },
+    "apiorderv1SendSubmitOrderNotifyRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Coupon": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateCouponReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateCouponRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1CreateProductReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "photo": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateStockReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1CreateUserReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "loginAt": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "loginType": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1FlashSaleReply": {
+      "type": "object"
+    },
+    "v1FlashSaleRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListCouponReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "coupons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Coupon"
+          }
+        }
+      }
+    },
+    "v1ListOrderReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Order"
+          }
+        }
+      }
+    },
+    "v1ListProductReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Product"
+          }
+        }
+      }
+    },
+    "v1ListStockReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Stock"
+          }
+        }
+      }
+    },
+    "v1ListUserReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1User"
+          }
+        }
+      }
+    },
+    "v1Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "orderID": {
+          "type": "string"
+        },
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "photo": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SetFlashSaleStockReply": {
+      "type": "object"
+    },
+    "v1SetFlashSaleStockRequest": {
+      "type": "object",
+      "properties": {
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v1Stock": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "stock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SubmitOrderReply": {
+      "type": "object",
+      "properties": {
+        "orderID": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SubmitOrderRequest": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "productCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "couponID": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "loginAt": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "loginType": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "description": "Type Bearer your-jwt-token to Value",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

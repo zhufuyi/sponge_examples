@@ -1,0 +1,231 @@
+syntax = "proto3";
+
+package api.pay.v1;
+
+import "api/types/types.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "pay/api/pay/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:30580"
+  base_path: ""
+  info: {
+    title: "pay api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service pay {
+  // 创建支付订单
+  rpc Create(CreatePayRequest) returns (CreatePayReply) {
+    option (google.api.http) = {
+      post: "/api/v1/pay/create"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "创建支付订单",
+      description: "创建支付订单, dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // 取消支付订单
+  rpc CreateRevert(CreatePayRevertRequest) returns (CreatePayRevertReply) {
+    option (google.api.http) = {
+      post: "/api/v1/pay/createRevert"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "取消支付订单",
+      description: "取消支付订单, dtm saga 事务模式",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // delete pay by id
+  rpc DeleteByID(DeletePayByIDRequest) returns (DeletePayByIDReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/pay/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "delete pay",
+      description: "delete pay by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // update pay by id
+  rpc UpdateByID(UpdatePayByIDRequest) returns (UpdatePayByIDReply) {
+    option (google.api.http) = {
+      put: "/api/v1/pay/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "update pay",
+      description: "update pay by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // get pay by id
+  rpc GetByID(GetPayByIDRequest) returns (GetPayByIDReply) {
+    option (google.api.http) = {
+      get: "/api/v1/pay/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get pay detail",
+      description: "get pay detail by id",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+
+  // list of pay by query parameters
+  rpc List(ListPayRequest) returns (ListPayReply) {
+    option (google.api.http) = {
+      post: "/api/v1/pay/list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of pays by parameters",
+      description: "list of pays by paging and conditions",
+      //security: {
+      //  security_requirement: {
+      //    key: "BearerAuth";
+      //    value: {}
+      //  }
+      //}
+    };
+  }
+}
+
+
+// Some notes on defining fields under message:
+// (1) Fill in the validate rules https://github.com/envoyproxy/protoc-gen-validate#constraint-rules
+// (2) Suggest using camel hump naming for message field names, and for names ending in 'id',
+//      use xxxID naming format, such as userID, orderID, etc.
+// (3) When using the protoc-gen-openapiv2 plugin, if the defined fields are snake case,
+//      you must add annotations for snake case names, such as string fieldName = 1 [json_name = "field_name"],
+//      to ensure that the front end and back end JSON naming is consistent.
+// (4) If the route contains the path parameter, such as /api/v1/pay/{id}, the defined
+//      message  must contain the name of the path parameter and the name should be
+//      added with a new tag, such as int64 id = 1 [(tagger.tags) = "uri:\"id\""];
+// (5) If the request url is followed by a query parameter, such as /api/v1/getPay?name=Tom,
+//      a form tag must be added when defining the query parameter in the message,
+//      such as string name = 1 [(tagger.tags) = "form:\"name\""].
+
+
+message CreatePayRequest {
+  uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+  string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+  uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+}
+
+message CreatePayReply {
+  uint64 id = 1;
+}
+
+message CreatePayRevertRequest{
+  uint64 userID = 1 [(validate.rules).uint64.gt  = 0];  // 用户id
+  string orderID = 2 [(validate.rules).string.min_len = 16];  // 订单id
+  uint32 amount = 3 [(validate.rules).uint32.gt  = 0];  // 金额(分)
+}
+
+message CreatePayRevertReply {
+
+}
+
+message DeletePayByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\""];
+}
+
+message DeletePayByIDReply {
+
+}
+
+message UpdatePayByIDRequest {
+	uint64 id = 1 [(tagger.tags) = "uri:\"id\"" ]; 
+	uint64 userID = 2;  // 用户id
+	string orderID = 3;  // 订单id
+	uint32 amount = 4;  // 金额(分)
+	uint32 status = 5;  // 支付状态, 1:待支付, 2:已支付
+}
+
+message UpdatePayByIDReply {
+
+}
+
+message Pay {
+	uint64 id = 1; 
+	uint64 userID = 2;  // 用户id
+	string orderID = 3;  // 订单id
+	uint32 amount = 4;  // 金额(分)
+	uint32 status = 5;  // 支付状态, 1:待支付, 2:已支付
+	string createdAt = 6; 
+	string updatedAt = 7; 
+}
+
+message GetPayByIDRequest {
+  uint64 id =1 [(validate.rules).uint64.gt = 0, (tagger.tags) = "uri:\"id\"" ];
+}
+
+message GetPayByIDReply {
+  Pay pay = 1;
+}
+
+message ListPayRequest {
+  api.types.Params params = 1;
+}
+
+message ListPayReply {
+  int64 total = 1;
+  repeated Pay pays = 2;
+}
+
+

@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package api.eshop_gw.v1;
+
+import "api/user/v1/user.proto";
+import "api/product/v1/product.proto";
+import "api/order/v1/order.proto";
+import "api/stock/v1/stock.proto";
+import "api/coupon/v1/coupon.proto";
+import "api/flashSale/v1/flashSale.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "tagger/tagger.proto";
+import "validate/validate.proto";
+
+option go_package = "eshop_gw/api/eshop_gw/v1;v1";
+
+// Default settings for generating swagger documents
+// NOTE: because json does not support 64 bits, the int64 and uint64 types under *.swagger.json are automatically converted to string types
+// Reference https://github.com/grpc-ecosystem/grpc-gateway/blob/db7fbefff7c04877cdb32e16d4a248a024428207/examples/internal/proto/examplepb/a_bit_of_everything.proto  
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  host: "localhost:8080"
+  base_path: ""
+  info: {
+    title: "eshop gateway api docs";
+    version: "2.0";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BearerAuth";
+      value: {
+        type: TYPE_API_KEY;
+        in: IN_HEADER;
+        name: "Authorization";
+        description: "Type Bearer your-jwt-token to Value";
+      }
+    }
+  }
+};
+
+service eshop {
+  // create user
+  rpc CreateUser(api.user.v1.CreateUserRequest) returns (api.user.v1.CreateUserReply) {
+    option (google.api.http) = {
+      post: "/api/v1/user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create user",
+      description: "submit information to create user",
+      tags: "用户服务 api",
+    };
+  }
+  // list of user by query parameters
+  rpc ListUser(PageParam) returns (api.user.v1.ListUserReply) {
+    option (google.api.http) = {
+      get: "/api/v1/user/list"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of users by parameters",
+      description: "list of users by paging and conditions",
+      tags: "用户服务 api",
+    };
+  }
+
+  // create product
+  rpc CreateProduct(api.product.v1.CreateProductRequest) returns (api.product.v1.CreateProductReply) {
+    option (google.api.http) = {
+      post: "/api/v1/product"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create product",
+      description: "submit information to create product",
+      tags: "商品服务 api",
+    };
+  }
+  // list of product by query parameters
+  rpc ListProduct(PageParam) returns (api.product.v1.ListProductReply) {
+    option (google.api.http) = {
+      get: "/api/v1/product/list"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of products by parameters",
+      description: "list of products by paging and conditions",
+      tags: "商品服务 api",
+    };
+  }
+
+  // 提交订单
+  rpc SubmitOrder(api.order.v1.SubmitOrderRequest) returns (api.order.v1.SubmitOrderReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/submit"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "提交订单",
+      description: "提交订单，dtm saga 事务模式",
+      tags: "订单服务 api",
+    };
+  }
+  // 发送提交订单通知
+  rpc SendSubmitOrderNotify(api.order.v1.SendSubmitOrderNotifyRequest) returns (api.order.v1.SendSubmitOrderNotifyReply) {
+    option (google.api.http) = {
+      post: "/api/v1/order/sendSubmitNotify"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "提交订单(有队列缓冲)",
+      description: "发送提交订单通知到消息队列kafka",
+      tags: "订单服务 api",
+    };
+  }
+  // list of order by query parameters
+  rpc ListOrder(PageParam) returns (api.order.v1.ListOrderReply) {
+    option (google.api.http) = {
+      get: "/api/v1/order/list"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of orders by parameters",
+      description: "list of orders by paging and conditions",
+      tags: "订单服务 api",
+    };
+  }
+
+  // create coupon
+  rpc CreateCoupon(api.coupon.v1.CreateCouponRequest) returns (api.coupon.v1.CreateCouponReply) {
+    option (google.api.http) = {
+      post: "/api/v1/coupon"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create coupon",
+      description: "submit information to create coupon",
+      tags: "优惠券服务 api",
+    };
+  }
+  // list of coupon by query parameters
+  rpc ListCoupon(PageParam) returns (api.coupon.v1.ListCouponReply) {
+    option (google.api.http) = {
+      get: "/api/v1/coupon/list"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of coupons by parameters",
+      description: "list of coupons by paging and conditions",
+      tags: "优惠券服务 api",
+    };
+  }
+
+  // create stock
+  rpc CreateStock(api.stock.v1.CreateStockRequest) returns (api.stock.v1.CreateStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create stock",
+      description: "submit information to create stock",
+      tags: "库存服务 api",
+    };
+  }
+  // list of stock by query parameters
+  rpc ListStock(PageParam) returns (api.stock.v1.ListStockReply) {
+    option (google.api.http) = {
+      get: "/api/v1/stock/list"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list of stocks by parameters",
+      description: "list of stocks by paging and conditions",
+      tags: "库存服务 api",
+    };
+  }
+
+  // 设置秒杀产品的库存，直接更新DB和缓存，这里没有使用dtm+rockscache缓存一致性方案，主要原因是与flashSale服务使用dtm+rockscache操作redis的key相同，会产生冲突。
+  rpc SetFlashSaleStock(api.stock.v1.SetFlashSaleStockRequest) returns (api.stock.v1.SetFlashSaleStockReply) {
+    option (google.api.http) = {
+      post: "/api/v1/stock/setFlashSale"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "设置产品的库存",
+      description: "设置产品的库存(幂等)",
+      tags: "库存服务 api",
+    };
+  }
+
+  // 秒杀抢购
+  rpc FlashSale(api.flashSale.v1.FlashSaleRequest) returns (api.flashSale.v1.FlashSaleReply) {
+    option (google.api.http) = {
+      post: "/api/v1/flashSale"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "秒杀抢购",
+      description: "秒杀抢购",
+      tags: "秒杀服务 api",
+    };
+  }
+
+}
+
+message PageParam {
+  // page number, start from 0
+  int32 page = 1 [(tagger.tags) = "form:\"page\""];
+  // Size per page
+  int32 limit = 2 [(tagger.tags) = "form:\"limit\"", (validate.rules).int32.gt = 0];
+}
