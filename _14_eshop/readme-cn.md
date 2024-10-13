@@ -1,7 +1,7 @@
 
-使用Sponge快速构建的微服务示例，主要实现抢购和订单功能，并通过分布式事务管理器DTM确保数据一致性，系统架构如下图所示：
+使用Sponge快速构建的微服务示例，主要实现秒杀抢购和订单功能，并通过分布式事务管理器DTM确保数据一致性，系统架构如下图所示：
 
-![flash-sale-order-cache](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/flash-sale-order-cache.png)
+![eshop-framework](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/eshop-framework.png)
 
 <br>
 
@@ -11,7 +11,7 @@
 
 ### 准备环境
 
-为了构建这个电商系统，准备生成代码工具：
+准备一个快速构建微服务的工具：
 
 - **[Sponge](https://github.com/zhufuyi/sponge)**: 快速创建不同类型服务和模块代码。点击 [Sponge 安装说明](https://github.com/zhufuyi/sponge/blob/main/assets/install-cn.md) 以获取更多信息。
 
@@ -106,9 +106,9 @@ DTM下载地址：https://github.com/dtm-labs/dtm/releases/tag/v1.18.0
 
 <br>
 
-### 使用sponge快速构建电商系统
+### 使用sponge快速构建微服务
 
-简易版电商系统由以下 8 个微服务组成：
+系统主要由以下 8 个微服务组成：
 
 - **eshop_gw**：API 网关服务
 - **user**：用户服务

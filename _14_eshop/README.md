@@ -2,7 +2,7 @@
 
 The microservice example built quickly by Sponge mainly realizes the flash sale and order functions, and ensures data consistency through the distributed transaction manager DTM. The system architecture is shown in the following figure:
 
-![flash-sale-order-cache](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/flash-sale-order-cache.png)
+![eshop-framework](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/eshop-framework.png)
 
 <br>
 
@@ -12,7 +12,7 @@ This includes [two source code examples](https://github.com/zhufuyi/sponge_examp
 
 ### Environment Setup
 
-To build this e-commerce system, you need the following tools and dependencies:
+Prepare a tool for building microservices quickly:
 
 - **[Sponge](https://github.com/zhufuyi/sponge)**: A tool for rapidly generating service and module code for different systems. Follow the [Sponge installation guide](https://github.com/zhufuyi/sponge/blob/main/assets/install-en.md) for more information.
 
@@ -85,9 +85,9 @@ All services will be running on a virtual machine with the IP address `192.168.3
 
 <br>
 
-### Rapid Development of an E-Commerce System Using Sponge
+### Quickly build microservices with sponge
 
-The simplified e-commerce system consists of the following eight microservices:
+The system consists of 8 microservices:
 
 - **eshop_gw**: API gateway service
 - **user**: User service
