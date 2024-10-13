@@ -1,7 +1,6 @@
+## English | [简体中文](readme-cn.md)
 
-## Eshop Microservices Example with Sponge
-
-This article demonstrates how to use the Sponge framework to quickly build a simplified high-performance e-commerce system, implementing flash sale and order functionality, while ensuring data consistency through the Distributed Transaction Manager (DTM). The architecture of the e-commerce system is shown below:
+The microservice example built quickly by Sponge mainly realizes the flash sale and order functions, and ensures data consistency through the distributed transaction manager DTM. The system architecture is shown in the following figure:
 
 ![flash-sale-order-cache](https://raw.githubusercontent.com/zhufuyi/sponge_examples/main/assets/flash-sale-order-cache.png)
 
@@ -293,7 +292,3 @@ To perform stress testing on the `eshop_gw` API gateway service and verify the s
 > Note: The results of stress testing depend on factors such as machine configuration, network environment, and database setup. Adjust accordingly based on actual conditions.
 
 <br>
-
-### Conclusion
-
-By using the **Sponge** framework and the **DTM** distributed transaction manager, this example demonstrates how to quickly build a high-performance e-commerce system. The system architecture is divided into multiple services, including user, product, order, stock, and payment. Each service can implement CRUD operations through automatically generated code and business logic, ensuring data consistency in high-concurrency flash sale scenarios. By integrating Redis and Kafka, the system also supports efficient caching and message queuing, improving overall performance and scalability.
