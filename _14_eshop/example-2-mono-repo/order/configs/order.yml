@@ -122,6 +122,7 @@ kafka:
   brokers: ["192.168.3.37:9092"]
   groupID: "activity-order-group"
   orderTopic: "flash-sale-order"
+  mode: "producer,consumer"
 
 
 # jaeger settings

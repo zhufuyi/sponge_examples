@@ -55,20 +55,6 @@ logger:
     #isCompression: true    # Whether to compress/archive old files (default is false)
 
 
-# set database configuration. reference-db-config-url
-database:
-  driver: "mysql"           # database driver
-  # mysql settings
-  mysql:
-    # dsn format,  <username>:<password>@(<hostname>:<port>)/<db>?[k=v& ......]
-    dsn: "root:123456@(192.168.3.37:3306)/account?parseTime=true&loc=Local&charset=utf8,utf8mb4"
-    enableLog: true         # whether to turn on printing of all logs
-    maxIdleConns: 10        # set the maximum number of connections in the idle connection pool
-    maxOpenConns: 100       # set the maximum number of open database connections
-    connMaxLifetime: 30     # sets the maximum time for which the connection can be reused, in minutes
-
-
-
 # redis settings
 redis:
   # dsn format, [user]:<pass>@127.0.0.1:6379/[db], the default user is default, redis version 6.0 and above only supports user.

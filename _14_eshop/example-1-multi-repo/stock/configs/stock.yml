@@ -41,14 +41,9 @@ grpc:
 
 # grpc client-side settings, support for setting up multiple grpc clients.
 grpcClient:
-  - name: "dtmservice"   # grpc service name, used for service discovery
-    host: "192.168.3.37"                    # grpc service address, used for direct connection
-    port: 36790                              # grpc service port
-    registryDiscoveryType: ""         # registration and discovery types: consul, etcd, nacos, if empty, connecting to server using host and port
-    enableLoadBalance: true
-  - name: "stock"          # grpc service name, used for service discovery
-    host: "192.168.3.90"                    # grpc service address, used for direct connection
-    port: 30382                              # grpc service port
+  - name: "your_grpc_service_name"          # grpc service name, used for service discovery
+    host: "127.0.0.1"                    # grpc service address, used for direct connection
+    port: 8282                              # grpc service port
     registryDiscoveryType: ""         # registration and discovery types: consul, etcd, nacos, if empty, connecting to server using host and port
     enableLoadBalance: true
 
