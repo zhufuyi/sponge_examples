@@ -36,8 +36,10 @@ func InitConsumerGroup() error {
 
 	go func() {
 		time.Sleep(time.Second * 5)
-		err := cg.Consume(context.Background(), []string{config.Get().Kafka.OrderTopic}, submitOrder())
-		logger.Infof("kafka consumer group exited, err: %v", err)
+		for {
+			err := cg.Consume(context.Background(), []string{config.Get().Kafka.OrderTopic}, submitOrder())
+			logger.Infof("kafka consumer group exited, err: %v", err)
+		}
 	}()
 
 	return err
